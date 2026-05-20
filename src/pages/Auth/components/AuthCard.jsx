@@ -84,7 +84,8 @@ export default function AuthCard({ visualContent = defaultSide, formContent = fo
 						component={RouterLink}
 						to={visualContent.ctaTo}
 						sx={{
-							alignSelf: "flex-start",
+							width: "fit-content",
+							justifyContent: "flex-start",
 							borderColor: "rgba(255,255,255,0.6)",
 							color: "inherit",
 						}}

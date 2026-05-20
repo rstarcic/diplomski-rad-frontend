@@ -13,6 +13,33 @@ const colors = {
 	border: "#e5eaf6",
 	inputBorder: "#e5e7eb",
 	inputHover: "#c7d2fe",
+	success: "#22c55e",
+	info: "#2563eb",
+	warning: "#f59e0b",
+	error: "#ef4444",
+};
+
+const alerts = {
+	success: {
+		background: "#ecfdf5",
+		color: "#047857",
+		border: "#a7f3d0",
+	},
+	info: {
+		background: "#eff6ff",
+		color: "#1d4ed8",
+		border: "#bfdbfe",
+	},
+	warning: {
+		background: "#fffbeb",
+		color: "#92400e",
+		border: "#fde68a",
+	},
+	error: {
+		background: "#fef2f2",
+		color: "#991b1b",
+		border: "#fecaca",
+	},
 };
 
 const theme = createTheme({
@@ -22,6 +49,18 @@ const theme = createTheme({
 			dark: colors.primaryDark,
 			light: colors.primaryLight,
 			contrastText: colors.white,
+		},
+		success: {
+			main: colors.success,
+		},
+		info: {
+			main: colors.info,
+		},
+		warning: {
+			main: colors.warning,
+		},
+		error: {
+			main: colors.error,
 		},
 		background: {
 			default: colors.page,
@@ -69,6 +108,7 @@ const theme = createTheme({
 
 	custom: {
 		colors,
+		alerts,
 		sizes: {
 			field: {
 				sm: 40,
