@@ -1,6 +1,8 @@
 import { lazy, Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "./App.css";
 
 import AuthLayout from "./layouts/AuthLayout";
@@ -12,16 +14,18 @@ const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
 
 const ClientDashboard = lazy(() => import("./pages/Dashboards/ClientDashboard"));
 const ContractorDashboard = lazy(() => import("./pages/Dashboards/ContractorDashboard"));
+const CreateJobPage = lazy(() => import("./pages/Jobs/CreateJobPage"));
 function App() {
 	return (
-		<Suspense
-			fallback={
-				<Box sx={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
-					<CircularProgress />
-				</Box>
-			}
-		>
-			<Routes>
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
+			<Suspense
+				fallback={
+					<Box sx={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
+						<CircularProgress />
+					</Box>
+				}
+			>
+				<Routes>
 				<Route element={<AuthLayout />}>
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/signup" element={<SignupPage />} />
@@ -31,6 +35,7 @@ function App() {
 				<Route element={<AppLayout />}>
 					<Route path="/client">
 						<Route path="dashboard" element={<ClientDashboard />} />
+						<Route path="create" element={<CreateJobPage />} />
 					</Route>
 					<Route path="/contractor">
 						<Route path="dashboard" element={<ContractorDashboard />} />
@@ -39,7 +44,8 @@ function App() {
 
 				<Route path="*" element={<Navigate to="/login" replace />} />
 			</Routes>
-		</Suspense>
+			</Suspense>
+		</LocalizationProvider>
 	);
 }
 

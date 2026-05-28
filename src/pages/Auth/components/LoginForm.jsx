@@ -16,6 +16,13 @@ export default function LoginForm() {
 
 	const { errors, setErrors, clearErrors } = useFormErrors();
 
+	const updateField = (field) => (event) => {
+		setFormData((prev) => ({
+			...prev,
+			[field]: event.target.value,
+		}));
+	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		clearErrors();
@@ -45,7 +52,7 @@ export default function LoginForm() {
 				label="Email"
 				type="email"
 				value={formData.email}
-				onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+				onChange={updateField("email")}
 				errors={errors}
 				autoComplete="email"
 				required
@@ -55,7 +62,7 @@ export default function LoginForm() {
 				name="password"
 				label="Password"
 				value={formData.password}
-				onChange={(event) => setFormData({ ...formData, password: event.target.value })}
+				onChange={updateField("password")}
 				errors={errors}
 				required
 			/>
