@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import GoogleIcon from "@mui/icons-material/Google";
-import { TextField, InputAdornment, IconButton, Button, Divider, Stack } from "@mui/material";
-import AppAlert from "../../../components/Alert";
-import PrimaryTextField from "../../../components/PrimaryTextField";
+import { Button, Divider, Stack } from "@mui/material";
+import FormTextField from "../../../components/FormTextField";
+import PasswordTextField from "../../../components/PasswordTextField";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import FORM_ERRORS from "../../../constants/formError";
 
 export default function SignupForm() {
 	const [formData, setFormData] = useState({
@@ -11,100 +12,78 @@ export default function SignupForm() {
 		password: "",
 		confirmPassword: "",
 	});
-	const [showPassword, setShowPassword] = useState(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const [passwordError, setPasswordError] = useState("");
+	const { errors, setErrors, clearErrors } = useFormErrors();
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+		clearErrors();
 
-		if (formData.password !== formData.confirmPassword) {
-			setPasswordError("Passwords do not match.");
-			return;
+		const nextErrors = {};
+
+		if (!formData.email) {
+			nextErrors.email = FORM_ERRORS.EMAIL_REQUIRED;
 		}
 
-		setPasswordError("");
+		if (!formData.password) {
+			nextErrors.password = FORM_ERRORS.PASSWORD_REQUIRED;
+		}
+
+		if (!formData.confirmPassword) {
+			nextErrors.confirmPassword = FORM_ERRORS.CONFIRM_PASSWORD_REQUIRED;
+		}
+
+		if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+			nextErrors.confirmPassword = FORM_ERRORS.PASSWORDS_DO_NOT_MATCH;
+		}
+
+		if (Object.keys(nextErrors).length > 0) {
+			setErrors(nextErrors);
+			return;
+		}
 	};
 
 	return (
-		<Stack component="form" spacing={2} width="100%" onSubmit={handleSubmit}>
-			<PrimaryTextField
+		<Stack component="form" width="100%" onSubmit={handleSubmit} noValidate>
+			<FormTextField
+				name="email"
 				label="Email"
 				type="email"
 				value={formData.email}
 				onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+				errors={errors}
 				autoComplete="email"
 				required
 			/>
 
-			<TextField
+			<PasswordTextField
+				name="password"
 				label="Password"
-				type={showPassword ? "text" : "password"}
-				fullWidth
 				value={formData.password}
 				onChange={(event) => setFormData({ ...formData, password: event.target.value })}
-				autoComplete="new-password"
+				errors={errors}
 				required
-				slotProps={{
-					input: {
-						endAdornment: (
-							<InputAdornment position="end">
-								<IconButton
-									aria-label={showPassword ? "Hide password" : "Show password"}
-									onClick={() => setShowPassword((prev) => !prev)}
-									onMouseDown={(event) => event.preventDefault()}
-									edge="end"
-								>
-									{showPassword ? <VisibilityOff /> : <Visibility />}
-								</IconButton>
-							</InputAdornment>
-						),
-					},
-				}}
 			/>
 
-			<TextField
+			<PasswordTextField
+				name="confirmPassword"
 				label="Confirm password"
-				type={showConfirmPassword ? "text" : "password"}
-				fullWidth
 				value={formData.confirmPassword}
 				onChange={(event) => setFormData({ ...formData, confirmPassword: event.target.value })}
-				autoComplete="new-password"
-				error={Boolean(passwordError)}
+				errors={errors}
 				required
-				slotProps={{
-					input: {
-						endAdornment: (
-							<InputAdornment position="end">
-								<IconButton
-									aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-									onClick={() => setShowConfirmPassword((prev) => !prev)}
-									onMouseDown={(event) => event.preventDefault()}
-									edge="end"
-								>
-									{showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-								</IconButton>
-							</InputAdornment>
-						),
-					},
-				}}
 			/>
 
-			<Button type="submit" variant="contained" size="large">
-				Create Account
-			</Button>
+			<Stack spacing={{ xs: 0.75, sm: 1 }} sx={{ pt: { xs: 1, sm: 2 } }}>
+				<Button type="submit" variant="contained" size="large">
+					Create Account
+				</Button>
 
-			<Divider>or</Divider>
+				<Divider>or</Divider>
 
-			<Button type="button" variant="outlined" size="large" startIcon={<GoogleIcon />}>
-				Continue with Google
-			</Button>
-
-			{passwordError ? (
-				<AppAlert severity="error" title="Password error">
-					{passwordError}
-				</AppAlert>
-			) : null}
+				<Button type="button" variant="outlined" size="large" startIcon={<GoogleIcon />}>
+					Continue with Google
+				</Button>
+			</Stack>
 		</Stack>
 	);
 }

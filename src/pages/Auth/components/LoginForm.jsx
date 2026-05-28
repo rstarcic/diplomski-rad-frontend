@@ -1,63 +1,82 @@
 import { useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import GoogleIcon from "@mui/icons-material/Google";
-import { Button, Divider, Link, Stack, TextField, InputAdornment, IconButton } from "@mui/material";
+import { Button, Divider, Link, Stack } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import PrimaryTextField from "../../../components/PrimaryTextField";
+import FormTextField from "../../../components/FormTextField";
+import PasswordTextField from "../../../components/PasswordTextField";
+import AppAlert from "../../../components/Alert";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import FORM_ERRORS from "../../../constants/formError";
+
 export default function LoginForm() {
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
 	});
-	const [showPassword, setShowPassword] = useState(false);
+
+	const { errors, setErrors, clearErrors } = useFormErrors();
+
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		clearErrors();
+
+		const nextErrors = {};
+
+		if (!formData.email) {
+			nextErrors.email = FORM_ERRORS.EMAIL_REQUIRED;
+		}
+
+		if (!formData.password) {
+			nextErrors.password = FORM_ERRORS.PASSWORD_REQUIRED;
+		}
+
+		if (Object.keys(nextErrors).length > 0) {
+			setErrors(nextErrors);
+			return;
+		}
+
+		// login API call ide ovdje
+	};
 
 	return (
-		<Stack component="form" spacing={2} width="100%" onSubmit={(e) => e.preventDefault()}>
-			<PrimaryTextField
+		<Stack component="form" width="100%" onSubmit={handleSubmit} noValidate>
+			<FormTextField
+				name="email"
 				label="Email"
 				type="email"
 				value={formData.email}
 				onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+				errors={errors}
 				autoComplete="email"
 				required
 			/>
 
-			<TextField
+			<PasswordTextField
+				name="password"
 				label="Password"
-				type={showPassword ? "text" : "password"}
-				fullWidth
 				value={formData.password}
 				onChange={(event) => setFormData({ ...formData, password: event.target.value })}
-				slotProps={{
-					input: {
-						endAdornment: (
-							<InputAdornment position="end">
-								<IconButton
-									aria-label={showPassword ? "Hide password" : "Show password"}
-									onClick={() => setShowPassword((prev) => !prev)}
-									onMouseDown={(event) => event.preventDefault()}
-									edge="end"
-								>
-									{showPassword ? <VisibilityOff /> : <Visibility />}
-								</IconButton>
-							</InputAdornment>
-						),
-					},
-				}}
+				errors={errors}
+				required
 			/>
+
+			{errors.form && <AppAlert severity="error">{errors.form}</AppAlert>}
+
 			<Link component={RouterLink} to="/forgot-password" variant="body2">
 				Forgot password?
 			</Link>
 
-			<Button type="submit" variant="contained" size="large">
-				Sign in
-			</Button>
+			<Stack spacing={{ xs: 0.75, sm: 1 }} sx={{ pt: { xs: 1, sm: 2 } }}>
+				<Button type="submit" variant="contained" size="large">
+					Sign in
+				</Button>
 
-			<Divider>or</Divider>
+				<Divider>or</Divider>
 
-			<Button type="button" variant="outlined" size="large" startIcon={<GoogleIcon />}>
-				Continue with Google
-			</Button>
+				<Button type="button" variant="outlined" size="large" startIcon={<GoogleIcon />}>
+					Continue with Google
+				</Button>
+			</Stack>
 		</Stack>
 	);
 }

@@ -42,6 +42,34 @@ const alerts = {
 	},
 };
 
+const pageHeader = {
+	background: `linear-gradient(135deg, ${colors.primaryDark} 0%, ${colors.primary} 58%, ${colors.primaryLight} 100%)`,
+	color: "#ffffff",
+	label: "rgba(255, 255, 255, 0.78)",
+	subtitle: "rgba(255, 255, 255, 0.76)",
+	border: "1px solid rgba(255, 255, 255, 0.14)",
+	radius: 10,
+	shadow: "0 18px 42px rgba(70, 48, 159, 0.22)",
+	minHeight: { xs: "auto", md: 180 },
+};
+
+const statCard = {
+	background: colors.primary,
+	color: colors.white,
+	iconColor: "rgba(255, 255, 255, 0.9)",
+	mutedColor: "rgba(255, 255, 255, 0.72)",
+	border: "1px solid rgba(255, 255, 255, 0.16)",
+};
+
+const dashboardList = {
+	cardBackground: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75))",
+	cardBorder: "1px solid rgba(255,255,255,0.2)",
+	cardShadow: "0 8px 32px rgba(15, 23, 42, 0.08)",
+	accent: colors.primaryLight,
+	chipBackground: "rgba(124, 99, 240, 0.14)",
+	chipColor: colors.primaryDark,
+};
+
 const theme = createTheme({
 	palette: {
 		primary: {
@@ -83,7 +111,7 @@ const theme = createTheme({
 	},
 
 	shape: {
-		borderRadius: 10,
+		borderRadius: 3,
 	},
 
 	components: {
@@ -104,11 +132,14 @@ const theme = createTheme({
 				size: "small",
 			},
 		},
-	},
 
+	},
 	custom: {
+		pageHeader,
 		colors,
 		alerts,
+		statCard,
+		dashboardList,
 		sizes: {
 			field: {
 				sm: 40,

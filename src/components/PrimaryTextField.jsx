@@ -17,6 +17,12 @@ export default function PrimaryTextField({ fieldSize = "small", sx, ...props }) 
 				"& .MuiInputBase-root": {
 					minHeight: theme.custom.sizes.field[fieldSizes[fieldSize]] ?? theme.custom.sizes.field.height,
 				},
+				"& .MuiFormHelperText-root": {
+					mt: { xs: 0.25, sm: 0.5 },
+					minHeight: { xs: 16, sm: 18 },
+					fontSize: { xs: "0.72rem", sm: "0.75rem" },
+					lineHeight: 1.35,
+				},
 				...(typeof sx === "function" ? sx(theme) : sx),
 			})}
 		/>
