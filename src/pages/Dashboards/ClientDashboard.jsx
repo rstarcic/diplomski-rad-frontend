@@ -5,9 +5,9 @@ import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import DrawRoundedIcon from "@mui/icons-material/DrawRounded";
 import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
 
-import PageHeader from "../../components/PageHeader";
-import PrimaryButton from "../../components/PrimaryButton";
-import SecondaryButton from "../../components/SecondaryButton";
+import PageHeader from "../../components/ui/PageHeader";
+import PrimaryButton from "../../components/ui/PrimaryButton";
+import SecondaryButton from "../../components/ui/SecondaryButton";
 import NextStepsCard from "./components/NextStepsCard";
 import RecentActivity from "./components/RecentActivity";
 import StatsCard from "./components/StatsCard";

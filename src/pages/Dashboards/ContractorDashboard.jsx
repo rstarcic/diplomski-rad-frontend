@@ -3,11 +3,11 @@ import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedI
 import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
 import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
+import StickyNote2RoundedIcon from "@mui/icons-material/StickyNote2Rounded";
 
-import PageHeader from "../../components/PageHeader";
-import PrimaryButton from "../../components/PrimaryButton";
-import SecondaryButton from "../../components/SecondaryButton";
+import PageHeader from "../../components/ui/PageHeader";
+import PrimaryButton from "../../components/ui/PrimaryButton";
+import SecondaryButton from "../../components/ui/SecondaryButton";
 import NextStepsCard from "./components/NextStepsCard";
 import RecentActivity from "./components/RecentActivity";
 import StatsCard from "./components/StatsCard";
@@ -76,10 +76,10 @@ export default function ContractorDashboardPage() {
 					<SecondaryButton
 						variant="contained"
 						color="secondary"
-						startIcon={<WorkOutlineRoundedIcon />}
+						startIcon={<StickyNote2RoundedIcon />}
 						sx={{ width: { xs: "100%", sm: "auto" } }}
 					>
-						View Contracts
+						View Applications
 					</SecondaryButton>
 				</Stack>
 			</PageHeader>

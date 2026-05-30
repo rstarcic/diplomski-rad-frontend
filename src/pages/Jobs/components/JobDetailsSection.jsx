@@ -1,14 +1,8 @@
 import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers";
 
-import PrimaryTextField from "../../../components/PrimaryTextField";
-
-const sectionSx = (theme) => ({
-	p: { xs: 2, sm: 3 },
-	border: `1px solid ${theme.palette.divider}`,
-	borderRadius: 3,
-	bgcolor: "background.paper",
-});
+import PrimaryTextField from "../../../components/ui/PrimaryTextField";
+import { surfaceSectionSx } from "../../../theme/layout";
 
 const titleSx = {
 	mb: 2,
@@ -62,7 +56,7 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 	};
 
 	return (
-		<Box sx={sectionSx}>
+		<Box sx={surfaceSectionSx}>
 			<Typography variant="h6" sx={titleSx}>
 				Job details
 			</Typography>

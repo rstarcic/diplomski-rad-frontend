@@ -1,13 +1,7 @@
 import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
 
-import PrimaryTextField from "../../../components/PrimaryTextField";
-
-const sectionSx = (theme) => ({
-	p: { xs: 2, sm: 3 },
-	border: `1px solid ${theme.palette.divider}`,
-	borderRadius: 3,
-	bgcolor: "background.paper",
-});
+import PrimaryTextField from "../../../components/ui/PrimaryTextField";
+import { surfaceSectionSx } from "../../../theme/layout";
 
 const budgetTypes = [
 	{ value: "fixed", label: "Fixed price" },
@@ -31,7 +25,7 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 	};
 
 	return (
-		<Box sx={sectionSx}>
+		<Box sx={surfaceSectionSx}>
 			<Typography variant="h6" sx={{ mb: 2, fontWeight: 800 }}>
 				Budget and workload
 			</Typography>

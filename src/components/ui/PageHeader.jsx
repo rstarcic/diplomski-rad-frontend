@@ -8,7 +8,7 @@ const headerSx = (theme) => ({
 	gap: { xs: 2, md: 3 },
 	p: { xs: 2.25, sm: 3, md: 4 },
 	border: theme.custom.pageHeader.border,
-	borderRadius: theme.custom.pageHeader.radius,
+	borderRadius: theme.custom.pageHeader.borderRadius,
 	background: theme.custom.pageHeader.background,
 	color: theme.custom.pageHeader.color,
 	boxShadow: theme.custom.pageHeader.shadow,
@@ -61,11 +61,7 @@ export default function PageHeader({ label, title, subtitle, children }) {
 				)}
 			</Box>
 
-			{children && (
-				<Box sx={actionsSx}>
-					{children}
-				</Box>
-			)}
+			{children && <Box sx={actionsSx}>{children}</Box>}
 		</Box>
 	);
 }

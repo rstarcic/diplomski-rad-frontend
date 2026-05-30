@@ -2,14 +2,8 @@ import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRou
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 
-import PrimaryTextField from "../../../components/PrimaryTextField";
-
-const sectionSx = (theme) => ({
-	p: { xs: 2, sm: 3 },
-	border: `1px solid ${theme.palette.divider}`,
-	borderRadius: 3,
-	bgcolor: "background.paper",
-});
+import PrimaryTextField from "../../../components/ui/PrimaryTextField";
+import { surfaceSectionSx } from "../../../theme/layout";
 
 const titleSx = {
 	mb: 2,
@@ -61,7 +55,7 @@ export default function ContractSection({ jobData, setJobData }) {
 	};
 
 	return (
-		<Box sx={sectionSx}>
+		<Box sx={surfaceSectionSx}>
 			<Typography variant="h6" sx={titleSx}>
 				Contract expectations
 			</Typography>

@@ -48,7 +48,7 @@ const pageHeader = {
 	label: "rgba(255, 255, 255, 0.78)",
 	subtitle: "rgba(255, 255, 255, 0.76)",
 	border: "1px solid rgba(255, 255, 255, 0.14)",
-	radius: 10,
+	borderRadius: 4,
 	shadow: "0 18px 42px rgba(70, 48, 159, 0.22)",
 	minHeight: { xs: "auto", md: 180 },
 };

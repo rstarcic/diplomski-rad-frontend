@@ -1,8 +1,8 @@
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { Button, Divider, Stack } from "@mui/material";
-import FormTextField from "../../../components/FormTextField";
-import PasswordTextField from "../../../components/PasswordTextField";
+import FormTextField from "../../../components/ui/FormTextField";
+import PasswordTextField from "../../../components/ui/PasswordTextField";
 import { useFormErrors } from "../../../hooks/useFormErrors";
 import FORM_ERRORS from "../../../constants/formError";
 
@@ -50,7 +50,7 @@ export default function SignupForm() {
 	};
 
 	return (
-		<Stack component="form" width="100%" onSubmit={handleSubmit} noValidate>
+		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit} noValidate>
 			<FormTextField
 				name="email"
 				label="Email"

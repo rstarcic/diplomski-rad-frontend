@@ -15,6 +15,7 @@ const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
 const ClientDashboard = lazy(() => import("./pages/Dashboards/ClientDashboard"));
 const ContractorDashboard = lazy(() => import("./pages/Dashboards/ContractorDashboard"));
 const CreateJobPage = lazy(() => import("./pages/Jobs/CreateJobPage"));
+const ClientProfilePage = lazy(() => import("./pages/Profiles/ClientProfilePage"));
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -26,24 +27,25 @@ function App() {
 				}
 			>
 				<Routes>
-				<Route element={<AuthLayout />}>
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/signup" element={<SignupPage />} />
-					<Route path="/forgot-password" element={<ForgotPassword />} />
-				</Route>
-
-				<Route element={<AppLayout />}>
-					<Route path="/client">
-						<Route path="dashboard" element={<ClientDashboard />} />
-						<Route path="create" element={<CreateJobPage />} />
+					<Route element={<AuthLayout />}>
+						<Route path="/login" element={<LoginPage />} />
+						<Route path="/signup" element={<SignupPage />} />
+						<Route path="/forgot-password" element={<ForgotPassword />} />
 					</Route>
-					<Route path="/contractor">
-						<Route path="dashboard" element={<ContractorDashboard />} />
-					</Route>
-				</Route>
 
-				<Route path="*" element={<Navigate to="/login" replace />} />
-			</Routes>
+					<Route element={<AppLayout />}>
+						<Route path="/client">
+							<Route path="dashboard" element={<ClientDashboard />} />
+							<Route path="create" element={<CreateJobPage />} />
+							<Route path="settings/profile" element={<ClientProfilePage />} />
+						</Route>
+						<Route path="/contractor">
+							<Route path="dashboard" element={<ContractorDashboard />} />
+						</Route>
+					</Route>
+
+					<Route path="*" element={<Navigate to="/login" replace />} />
+				</Routes>
 			</Suspense>
 		</LocalizationProvider>
 	);

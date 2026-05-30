@@ -1,12 +1,6 @@
 import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
 import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../utils";
-
-const sectionSx = (theme) => ({
-	p: { xs: 2, sm: 3 },
-	border: `1px solid ${theme.palette.divider}`,
-	borderRadius: 3,
-	bgcolor: "background.paper",
-});
+import { surfaceSectionSx } from "../../../theme/layout";
 
 const previewCardSx = (theme) => ({
 	p: 2,
@@ -35,7 +29,7 @@ export default function PreviewSection({ jobData }) {
 	const budgetType = formatOption(jobData.budgetType, "Budget type");
 	const estimatedCost = getEstimatedCost(jobData);
 	return (
-		<Box sx={sectionSx}>
+		<Box sx={surfaceSectionSx}>
 			<Typography variant="h6" sx={{ mb: 2, fontWeight: 800 }}>
 				Preview Job post
 			</Typography>

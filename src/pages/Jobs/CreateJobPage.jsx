@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Box, Grid, Stack } from "@mui/material";
-import PageHeader from "../../components/PageHeader";
+import { Box, Grid, Stack, Typography } from "@mui/material";
+import PageHeader from "../../components/ui/PageHeader";
 import JobDetailsSection from "./components/JobDetailsSection";
 import ContractSection from "./components/ContractSection";
 import BudgetWorkloadSection from "./components/BudgetWorkloadSection";
 import PreviewSection from "./components/PreviewSection";
-import PrimaryButton from "../../components/PrimaryButton";
+import PrimaryButton from "../../components/ui/PrimaryButton";
+import AccountSetupAlert from "../../components/account/AccountAlert";
+import { getMissingFields } from "./utils";
+import { getAccountSetupMock } from "../../mock/AccountSetup";
 
 const pageSx = {
 	width: "100%",
@@ -33,6 +36,21 @@ const initialJobData = {
 
 export default function CreateJobPage() {
 	const [jobData, setJobData] = useState(initialJobData);
+	const accountSetup = getAccountSetupMock("client");
+	const accountIsComplete = accountSetup.profileCompleted && accountSetup.paymentCompleted;
+
+	const missingFields = getMissingFields(jobData);
+	const formIsComplete = missingFields.length === 0;
+	const canPublish = formIsComplete && accountIsComplete;
+	const showSetupAlert = !accountIsComplete;
+
+	const handleSubmit = (event) => {
+		event.preventDefault();
+
+		if (!canPublish) {
+			return;
+		}
+	};
 
 	return (
 		<Box sx={pageSx}>
@@ -41,18 +59,38 @@ export default function CreateJobPage() {
 				title="Create New Job"
 				subtitle="Fill in the details below to create a new job."
 			/>
-
-			<Box component="form" sx={{ mt: 3 }}>
+			{showSetupAlert && (
+				<AccountSetupAlert
+					accountSetup={accountSetup}
+					actionName="publish a job"
+					settingsPath="/client/settings"
+					sx={{ mt: 3 }}
+				/>
+			)}
+			<Box component="form" noValidate sx={{ mt: 3 }} onSubmit={handleSubmit} noValidate>
 				<Grid container spacing={3}>
 					{/* LEFT COLUMN */}
 					<Grid size={{ xs: 12, md: 8 }}>
 						<Stack spacing={3}>
 							<JobDetailsSection jobData={jobData} setJobData={setJobData} />
 							<ContractSection jobData={jobData} setJobData={setJobData} />
-							<Box sx={{ display: { xs: "none", md: "flex" }, justifyContent: "flex-end" }}>
-								<PrimaryButton type="submit" size="large">
-									Publish job
-								</PrimaryButton>
+							<Box
+								sx={{
+									display: { xs: "none", md: "flex" },
+									justifyContent: "flex-end",
+								}}
+							>
+								<Stack spacing={0.75} sx={{ width: "50%" }}>
+									<PrimaryButton type="submit" size="large" fullWidth disabled={!canPublish}>
+										Publish job
+									</PrimaryButton>
+
+									{!formIsComplete && (
+										<Typography variant="caption" color="text.secondary">
+											Complete required fields to publish.
+										</Typography>
+									)}
+								</Stack>
 							</Box>
 						</Stack>
 					</Grid>
@@ -61,10 +99,16 @@ export default function CreateJobPage() {
 					<Grid size={{ xs: 12, md: 4 }}>
 						<Stack spacing={3}>
 							<BudgetWorkloadSection jobData={jobData} setJobData={setJobData} />
-							<Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "center" }}>
-								<PrimaryButton type="submit" size="large">
+							<Box sx={{ display: { xs: "flex", md: "none" }, flexDirection: "column", gap: 0.75 }}>
+								<PrimaryButton type="submit" size="large" fullWidth disabled={!canPublish}>
 									Publish job
 								</PrimaryButton>
+
+								{!formIsComplete && (
+									<Typography variant="caption" color="text.secondary">
+										Complete required fields to publish.
+									</Typography>
+								)}
 							</Box>
 							<PreviewSection jobData={jobData} />
 						</Stack>

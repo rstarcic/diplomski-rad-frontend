@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import SecondaryButton from "../../../components/SecondaryButton";
+import SecondaryButton from "../../../components/ui/SecondaryButton";
 
 const defaultSide = {
 	title: "Welcome back to WorkLink.",
