@@ -1,8 +1,9 @@
 import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers";
 
-import PrimaryTextField from "../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../theme/layout";
+import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
+import { surfaceSectionSx } from "../../../../theme/layout";
+import { LOCATION_TYPES } from "../../constants/jobFilters";
 
 const titleSx = {
 	mb: 2,
@@ -20,12 +21,6 @@ const dateFieldSx = (theme) => ({
 		lineHeight: 1.35,
 	},
 });
-
-const locationTypes = [
-	{ value: "remote", label: "Remote" },
-	{ value: "onsite", label: "On-site" },
-	{ value: "hybrid", label: "Hybrid" },
-];
 
 export default function JobDetailsSection({ jobData, setJobData }) {
 	const requiresLocation = jobData.locationType === "onsite" || jobData.locationType === "hybrid";
@@ -98,7 +93,7 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 							placeholder="Select location type"
 							required
 						>
-							{locationTypes.map((option) => (
+							{LOCATION_TYPES.map((option) => (
 								<MenuItem key={option.value} value={option.value}>
 									{option.label}
 								</MenuItem>

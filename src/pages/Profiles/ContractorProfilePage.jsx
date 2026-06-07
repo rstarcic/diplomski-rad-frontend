@@ -7,7 +7,7 @@ import ProfileImageUpload from "./components/ProfileImageUpload";
 import ProfileProgressCard from "./components/ProfileProgressCard";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
-import { clientProfileReviewData } from "../../mock/ProfileReviews";
+import { contractorProfileReviewData } from "../../mock/ProfileReviews";
 import pageSx from "../../theme/layout";
 
 const initialProfileData = {
@@ -21,7 +21,7 @@ const initialProfileData = {
 	image: null,
 };
 
-export default function ClientProfilePage() {
+export default function ContractorProfilePage() {
 	const [profileData, setProfileData] = useState(initialProfileData);
 
 	const updateField = (field) => (event) => {
@@ -56,7 +56,7 @@ export default function ClientProfilePage() {
 		<Box sx={pageSx}>
 			<PageHeader
 				label="Settings"
-				title="Client Profile"
+				title="Contractor Profile"
 				subtitle="Complete your profile before publishing jobs and starting contracts."
 			>
 				<ProfileProgressCard profileData={profileData} />
@@ -77,10 +77,10 @@ export default function ClientProfilePage() {
 							<ProfileImageUpload image={profileData.image} onImageChange={updateImage} />
 
 							<ReviewSummaryCard
-								title="Reviews from contractors"
-								summary={clientProfileReviewData.summary}
-								criteria={reviewCriteria.client}
-								reviews={clientProfileReviewData.reviews}
+								title="Reviews from clients"
+								summary={contractorProfileReviewData.summary}
+								criteria={reviewCriteria.contractor}
+								reviews={contractorProfileReviewData.reviews}
 							/>
 						</Stack>
 					</Grid>

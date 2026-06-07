@@ -13,6 +13,7 @@ import RecentActivity from "./components/RecentActivity";
 import StatsCard from "./components/StatsCard";
 
 import { clientDashboardData } from "../../mock/Dashboard";
+import pageSx from "../../theme/layout";
 
 const clientStatCardConfig = {
 	active_jobs: {
@@ -31,14 +32,6 @@ const clientStatCardConfig = {
 		icon: <PaymentsRoundedIcon />,
 		accent: "#1d4ed8",
 	},
-};
-
-const pageSx = {
-	width: "100%",
-	maxWidth: "1440px",
-	mx: "auto",
-	px: { xs: 0, md: 1 },
-	pb: { xs: 3, md: 5 },
 };
 
 const statsGridSx = {

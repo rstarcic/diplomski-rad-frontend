@@ -1,6 +1,6 @@
 import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
-import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../utils";
-import { surfaceSectionSx } from "../../../theme/layout";
+import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../../utils";
+import { surfaceSectionSx } from "../../../../theme/layout";
 
 const previewCardSx = (theme) => ({
 	p: 2,

@@ -1,12 +1,8 @@
 import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
 
-import PrimaryTextField from "../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../theme/layout";
-
-const budgetTypes = [
-	{ value: "fixed", label: "Fixed price" },
-	{ value: "hourly", label: "Hourly rate" },
-];
+import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
+import { surfaceSectionSx } from "../../../../theme/layout";
+import { BUDGET_TYPES } from "../../constants/jobFilters";
 
 const positiveNumberInputProps = {
 	htmlInput: {
@@ -39,7 +35,7 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 					onChange={updateField("budgetType")}
 					required
 				>
-					{budgetTypes.map((option) => (
+					{BUDGET_TYPES.map((option) => (
 						<MenuItem key={option.value} value={option.value}>
 							{option.label}
 						</MenuItem>

@@ -1,22 +1,15 @@
 import { useState } from "react";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import PageHeader from "../../components/ui/PageHeader";
-import JobDetailsSection from "./components/JobDetailsSection";
-import ContractSection from "./components/ContractSection";
-import BudgetWorkloadSection from "./components/BudgetWorkloadSection";
-import PreviewSection from "./components/PreviewSection";
+import JobDetailsSection from "./components/create/JobDetailsSection";
+import ContractSection from "./components/create/ContractSection";
+import BudgetWorkloadSection from "./components/create/BudgetWorkloadSection";
+import PreviewSection from "./components/create/PreviewSection";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
 import { getMissingFields } from "./utils";
 import { getAccountSetupMock } from "../../mock/AccountSetup";
-
-const pageSx = {
-	width: "100%",
-	maxWidth: "1440px",
-	mx: "auto",
-	px: { xs: 0, md: 1 },
-	pb: { xs: 3, md: 5 },
-};
+import pageSx from "../../theme/layout";
 
 const initialJobData = {
 	title: "",

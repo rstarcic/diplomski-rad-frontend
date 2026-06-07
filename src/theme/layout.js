@@ -13,3 +13,13 @@ export const surfaceSectionSx = {
     ...sectionPaddingSx,
     ...surfaceSx,
 };
+
+export const pageSx = {
+    width: "100%",
+    maxWidth: "1440px",
+    mx: "auto",
+    px: { xs: 0, md: 1 },
+    pb: { xs: 3, md: 5 },
+};
+
+export default pageSx;

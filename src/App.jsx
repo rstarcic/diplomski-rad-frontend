@@ -7,6 +7,8 @@ import "./App.css";
 
 import AuthLayout from "./layouts/AuthLayout";
 import AppLayout from "./layouts/AppLayout";
+import SearchJobsPage from "./pages/Jobs/SearchJobsPage";
+import JobDetailsPage from "./pages/Jobs/JobDetailsPage";
 
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/Auth/SignupPage"));
@@ -16,6 +18,7 @@ const ClientDashboard = lazy(() => import("./pages/Dashboards/ClientDashboard"))
 const ContractorDashboard = lazy(() => import("./pages/Dashboards/ContractorDashboard"));
 const CreateJobPage = lazy(() => import("./pages/Jobs/CreateJobPage"));
 const ClientProfilePage = lazy(() => import("./pages/Profiles/ClientProfilePage"));
+const ContractorProfilePage = lazy(() => import("./pages/Profiles/ContractorProfilePage"));
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -41,6 +44,9 @@ function App() {
 						</Route>
 						<Route path="/contractor">
 							<Route path="dashboard" element={<ContractorDashboard />} />
+							<Route path="jobs/search" element={<SearchJobsPage />} />
+							<Route path="jobs/:jobId" element={<JobDetailsPage />} />
+							<Route path="settings/profile" element={<ContractorProfilePage />} />
 						</Route>
 					</Route>
 

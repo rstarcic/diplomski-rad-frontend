@@ -46,3 +46,52 @@ export const clientProfileReviewData = {
         },
     ],
 };
+
+export const contractorProfileReviewData = {
+    targetType: "contractor",
+    targetId: "contractor-1",
+
+    summary: {
+        totalReviews: 24,
+        overallRating: 4.8,
+        ratings: {
+            workQualityRating: 4.9,
+            communicationRating: 4.7,
+        },
+    },
+
+    reviews: [
+        {
+            id: "contractor-review-1",
+            comment: "Excellent work quality and very professional communication.",
+            createdAt: "2026-05-30T12:00:00",
+            reviewer: {
+                id: "client-1",
+                firstName: "Luka",
+                lastName: "M.",
+                imageUrl: "",
+            },
+            overallRating: 5,
+            ratings: {
+                workQualityRating: 5,
+                communicationRating: 5,
+            },
+        },
+        {
+            id: "contractor-review-2",
+            comment: "Delivered everything on time and kept us updated throughout the project.",
+            createdAt: "2026-05-27T14:20:00",
+            reviewer: {
+                id: "client-2",
+                firstName: "Ana",
+                lastName: "B.",
+                imageUrl: "",
+            },
+            overallRating: 4.5,
+            ratings: {
+                workQualityRating: 4.5,
+                communicationRating: 4.5,
+            },
+        },
+    ],
+};

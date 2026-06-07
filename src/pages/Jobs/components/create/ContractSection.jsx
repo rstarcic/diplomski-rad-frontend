@@ -2,8 +2,8 @@ import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRou
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 
-import PrimaryTextField from "../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../theme/layout";
+import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
+import { surfaceSectionSx } from "../../../../theme/layout";
 
 const titleSx = {
 	mb: 2,
