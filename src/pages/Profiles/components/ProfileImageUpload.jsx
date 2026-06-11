@@ -7,7 +7,7 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import PrimaryButton from "../../../components/ui/PrimaryButton";
-import { surfaceSectionSx } from "../../../theme/layout";
+import { sectionTitleSx, surfaceSectionSx } from "../../../theme/layout";
 
 const avatarSx = {
 	width: 98,
@@ -64,7 +64,7 @@ export default function ProfileImageUpload({ image, onImageChange }) {
 				<PersonRoundedIcon sx={{ fontSize: 48 }} />
 			</Avatar>
 
-			<Typography variant="h6" sx={{ fontWeight: 800 }}>
+			<Typography variant="h6" sx={sectionTitleSx}>
 				Profile photo
 			</Typography>
 

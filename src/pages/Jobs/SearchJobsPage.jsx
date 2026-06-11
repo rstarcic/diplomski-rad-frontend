@@ -6,7 +6,7 @@ import pageSx from "../../theme/layout";
 import Filters from "./components/search/Filters";
 import SearchJobsHeader from "./components/search/SearchJobsHeader";
 import JobsResultsSection from "./components/search/JobsResultsSection";
-import { INITIAL_JOB_FILTERS } from "./constants/jobFilters";
+import { INITIAL_JOB_FILTERS } from "../../constants/jobFilters";
 import { MOCK_JOBS } from "../../mock/Jobs";
 
 const mobileFilterButtonSx = {
@@ -49,13 +49,7 @@ export default function SearchJobsPage() {
 			</Box>
 
 			<Box sx={desktopFiltersSx}>
-				<Filters
-					filters={filters}
-					onChange={setFilters}
-					onReset={resetFilters}
-					showSearchField={false}
-					showWorkModeField={false}
-				/>
+				<Filters filters={filters} onChange={setFilters} onReset={resetFilters} showSearchField={false} />
 			</Box>
 
 			<Drawer

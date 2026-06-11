@@ -1,8 +1,8 @@
 import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../../theme/layout";
-import { BUDGET_TYPES } from "../../constants/jobFilters";
+import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import { BUDGET_TYPES } from "../../../../constants/jobFilters";
 
 const positiveNumberInputProps = {
 	htmlInput: {
@@ -22,7 +22,7 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={{ mb: 2, fontWeight: 800 }}>
+			<Typography variant="h6" sx={{ mb: 2, ...sectionTitleSx }}>
 				Budget and workload
 			</Typography>
 

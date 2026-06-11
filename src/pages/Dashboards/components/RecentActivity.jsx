@@ -1,11 +1,5 @@
 import { Box, Card, Chip, Paper, Stack, Typography } from "@mui/material";
-
-const sectionSx = (theme) => ({
-	p: { xs: 2, sm: 3 },
-	height: "100%",
-	border: `1px solid ${theme.palette.divider}`,
-	bgcolor: "background.paper",
-});
+import { sectionTitleSx, sectionSx } from "../../../theme/layout";
 
 const itemSx = (theme) => ({
 	position: "relative",
@@ -46,7 +40,7 @@ const chipSx = (theme) => ({
 export default function RecentActivity({ activities }) {
 	return (
 		<Paper elevation={0} sx={sectionSx}>
-			<Typography variant="h6" sx={{ fontWeight: 800 }}>
+			<Typography variant="h6" sx={sectionTitleSx}>
 				Recent activity
 			</Typography>
 

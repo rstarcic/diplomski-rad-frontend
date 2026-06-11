@@ -14,6 +14,37 @@ export const surfaceSectionSx = {
     ...surfaceSx,
 };
 
+export const sectionTitleSx = {
+    fontWeight: 800,
+};
+
+export const detailGridSx = {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: 1.25,
+};
+
+export const rowDetailSx = {
+    display: "grid",
+    gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
+    gap: 1.25,
+};
+
+export const hoverLiftSx = {
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    "&:hover": {
+        transform: "translateY(-3px)",
+        boxShadow: "0 16px 36px rgba(15, 23, 42, 0.12)",
+    },
+};
+
+export const sectionSx = {
+    p: { xs: 2, sm: 3 },
+    height: "100%",
+    border: `1px solid colors.border`,
+    bgcolor: "background.paper",
+};
+
 export const pageSx = {
     width: "100%",
     maxWidth: "1440px",

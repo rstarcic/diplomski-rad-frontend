@@ -1,6 +1,6 @@
 import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
-import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../../utils";
-import { surfaceSectionSx } from "../../../../theme/layout";
+import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../../../../utils/jobs";
+import { detailGridSx, sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 
 const previewCardSx = (theme) => ({
 	p: 2,
@@ -15,12 +15,6 @@ const metaRowSx = {
 	gap: 1,
 };
 
-const detailGridSx = {
-	display: "grid",
-	gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-	gap: 1.25,
-};
-
 export default function PreviewSection({ jobData }) {
 	const hasRequirements = jobData.requirements?.some(Boolean);
 	const budgetLabel = jobData.budgetType === "hourly" ? "Hourly rate" : "Fixed budget";
@@ -30,7 +24,7 @@ export default function PreviewSection({ jobData }) {
 	const estimatedCost = getEstimatedCost(jobData);
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={{ mb: 2, fontWeight: 800 }}>
+			<Typography variant="h6" sx={{ mb: 2, ...sectionTitleSx }}>
 				Preview Job post
 			</Typography>
 
@@ -59,7 +53,7 @@ export default function PreviewSection({ jobData }) {
 					<Divider />
 
 					<Stack spacing={1}>
-						<Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
+						<Typography variant="subtitle2" sx={sectionTitleSx}>
 							Budget details
 						</Typography>
 
@@ -99,7 +93,7 @@ export default function PreviewSection({ jobData }) {
 					<Divider />
 
 					<Stack spacing={1}>
-						<Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
+						<Typography variant="subtitle2" sx={sectionTitleSx}>
 							Contract expectations
 						</Typography>
 
@@ -109,7 +103,7 @@ export default function PreviewSection({ jobData }) {
 
 						{hasRequirements && (
 							<>
-								<Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
+								<Typography variant="subtitle2" sx={sectionTitleSx}>
 									Requirements
 								</Typography>
 

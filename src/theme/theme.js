@@ -20,6 +20,12 @@ const colors = {
 	error: "#ef4444",
 };
 
+const tint = {
+	primarySubtle: "rgba(91, 63, 214, 0.03)",
+	primarySoft: "rgba(91, 63, 214, 0.07)",
+	primaryBorder: "rgba(91, 63, 214, 0.3)",
+};
+
 const alerts = {
 	success: {
 		background: "#ecfdf5",
@@ -133,11 +139,33 @@ const theme = createTheme({
 				size: "small",
 			},
 		},
-
+		MuiToggleButtonGroup: {
+			styleOverrides: {
+				root: {
+					"& .MuiToggleButton-root": {
+						textTransform: "none",
+						fontWeight: 700,
+						color: colors.textSecondary,
+						borderColor: colors.border,
+					},
+					"& .Mui-selected": {
+						color: colors.white,
+						backgroundColor: colors.primary,
+						"&:hover": { backgroundColor: colors.primaryDark },
+					},
+				},
+			},
+		},
+		MuiChip: {
+			styleOverrides: {
+				root: { fontWeight: 600 },
+			},
+		},
 	},
 	custom: {
 		pageHeader,
 		colors,
+		tint,
 		alerts,
 		statCard,
 		dashboardList,

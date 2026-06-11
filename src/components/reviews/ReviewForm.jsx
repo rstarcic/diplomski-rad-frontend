@@ -46,7 +46,7 @@ export default function ReviewForm({
 
 	return (
 		<Card sx={surfaceSectionSx}>
-			<Box component="form" onSubmit={handleSubmit}>
+			<Box component="form" noValidate onSubmit={handleSubmit}>
 				<Stack spacing={2}>
 					<Box>
 						<Typography variant="h6" sx={{ fontWeight: 800 }}>

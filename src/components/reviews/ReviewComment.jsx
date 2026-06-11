@@ -37,7 +37,7 @@ export default function ReviewComment({ review, criteria = [] }) {
 		<Box sx={reviewItemSx}>
 			<Stack spacing={1.25}>
 				<Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start" }}>
-					<Avatar src={review.reviewer?.image} sx={{ width: 36, height: 36 }}>
+					<Avatar src={review.reviewer?.imageUrl} sx={{ width: 36, height: 36 }}>
 						{reviewerName.charAt(0)}
 					</Avatar>
 

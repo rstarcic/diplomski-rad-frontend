@@ -7,7 +7,7 @@ import BudgetWorkloadSection from "./components/create/BudgetWorkloadSection";
 import PreviewSection from "./components/create/PreviewSection";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
-import { getMissingFields } from "./utils";
+import { getMissingFields } from "../../utils/jobs";
 import { getAccountSetupMock } from "../../mock/AccountSetup";
 import pageSx from "../../theme/layout";
 

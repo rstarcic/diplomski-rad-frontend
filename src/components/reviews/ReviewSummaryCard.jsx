@@ -1,7 +1,7 @@
 import { Box, Card, Divider, Rating, Stack, Typography } from "@mui/material";
 import ReviewRatingRow from "./ReviewRatingRow";
 import ReviewComment from "./ReviewComment";
-import { surfaceSectionSx } from "../../theme/layout";
+import { sectionTitleSx, surfaceSectionSx } from "../../theme/layout";
 
 const commentsListSx = {
 	maxHeight: 300,
@@ -20,7 +20,7 @@ export default function ReviewSummaryCard({ title = "Reviews", summary = {}, cri
 		<Card sx={surfaceSectionSx}>
 			<Stack spacing={2}>
 				<Box>
-					<Typography variant="h6" sx={{ fontWeight: 800 }}>
+					<Typography variant="h6" sx={sectionTitleSx}>
 						{title}
 					</Typography>
 
@@ -29,13 +29,13 @@ export default function ReviewSummaryCard({ title = "Reviews", summary = {}, cri
 					</Typography>
 				</Box>
 
-				<Box>
-					<Typography variant="h3" sx={{ fontWeight: 900, lineHeight: 1 }}>
+				<Stack direction="row" spacing={2} alignItems="center">
+					<Typography variant="h5" sx={{ fontWeight: 900, lineHeight: 1 }}>
 						{overallRating.toFixed(1)}
 					</Typography>
 
 					<Rating value={overallRating} precision={0.5} readOnly />
-				</Box>
+				</Stack>
 
 				<Divider />
 

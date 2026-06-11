@@ -1,8 +1,13 @@
+import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import {
 	Autocomplete,
 	Box,
 	Card,
+	Divider,
 	FormControl,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
 	Select,
@@ -10,13 +15,67 @@ import {
 	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
+	Typography,
 } from "@mui/material";
-import InputAdornment from "@mui/material/InputAdornment";
 
-import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { surfaceSectionSx } from "../../../../theme/layout";
-import { BUDGET_TYPES, INITIAL_JOB_FILTERS, LOCATION_TYPES, WORK_MODES } from "../../constants/jobFilters";
+import { BUDGET_TYPES, INITIAL_JOB_FILTERS, LOCATION_TYPES, WORK_MODES } from "../../../../constants/jobFilters";
+
+const filterCardSx = {
+	...surfaceSectionSx,
+	p: { xs: 2, md: 2.5 },
+};
+
+const resetButtonSx = {
+	display: "flex",
+	alignItems: "center",
+	gap: 0.5,
+	background: "none",
+	border: "none",
+	cursor: "pointer",
+	color: "text.secondary",
+	fontSize: "0.8125rem",
+	fontWeight: 600,
+	p: 0,
+	transition: "color 0.15s",
+	"&:hover": { color: "primary.main" },
+};
+
+const filterGridSx = {
+	display: "grid",
+	gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+	gap: 2,
+	alignItems: "center",
+};
+
+const budgetSectionSx = (theme) => ({
+	mt: 2,
+	p: { xs: 1.5, md: 2 },
+	border: "1px solid",
+	borderColor: "divider",
+	borderRadius: 2,
+	bgcolor: theme.custom.tint.primarySubtle,
+});
+
+const budgetLabelSx = {
+	display: "block",
+	mb: 1.5,
+	textTransform: "uppercase",
+	letterSpacing: 0.8,
+	fontSize: "0.7rem",
+};
+
+const budgetToggleGroupSx = {
+	height: 40,
+	flexShrink: 0,
+	"& .MuiToggleButton-root": {
+		px: 2.5,
+		fontSize: "0.8125rem",
+		"&:first-of-type": { borderRadius: "20px 0 0 20px" },
+		"&:last-of-type": { borderRadius: "0 20px 20px 0" },
+	},
+};
 
 export default function Filters({
 	filters = INITIAL_JOB_FILTERS,
@@ -31,14 +90,12 @@ export default function Filters({
 
 	const minValue = isFixedBudget ? filters.minFixedBudget : filters.minHourlyRate;
 	const maxValue = isFixedBudget ? filters.maxFixedBudget : filters.maxHourlyRate;
-
 	const minField = isFixedBudget ? "minFixedBudget" : "minHourlyRate";
 	const maxField = isFixedBudget ? "maxFixedBudget" : "maxHourlyRate";
 	const budgetAdornment = isFixedBudget ? "€" : "€/h";
 
 	const handleChange = (field) => (event) => {
 		const value = event.target.value;
-
 		onChange?.({
 			...filters,
 			[field]: value,
@@ -48,7 +105,6 @@ export default function Filters({
 
 	const handleBudgetTypeChange = (event, value) => {
 		if (!value) return;
-
 		onChange?.({
 			...filters,
 			budgetType: value,
@@ -62,25 +118,44 @@ export default function Filters({
 	};
 
 	return (
-		<Card elevation={0} sx={{ ...surfaceSectionSx, p: { xs: 2, md: 2.5 } }}>
-			<Box
-				sx={{
-					display: "grid",
-					gridTemplateColumns: {
-						xs: "1fr",
-						sm: "repeat(2, 1fr)",
-						lg: "repeat(3, 1fr)",
-					},
-					gap: 2,
-					alignItems: "center",
-				}}
-			>
+		<Card elevation={0} sx={filterCardSx}>
+			{/* Header */}
+			<Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+				<Stack direction="row" alignItems="center" gap={1}>
+					<FilterListRoundedIcon sx={{ color: "primary.main", fontSize: 20 }} />
+					<Typography variant="subtitle2" fontWeight={700} color="text.primary">
+						Filters
+					</Typography>
+				</Stack>
+				<Box
+					component="button"
+					onClick={handleReset}
+					sx={resetButtonSx}
+				>
+					<RestartAltRoundedIcon sx={{ fontSize: 16 }} />
+					Reset
+				</Box>
+			</Stack>
+
+			<Divider sx={{ mb: 2 }} />
+
+			{/* Search, category, work mode, city */}
+			<Box sx={filterGridSx}>
 				{showSearchField && (
 					<PrimaryTextField
 						label="Search jobs"
 						placeholder="Search by title, skill, or keyword"
 						value={filters.search}
 						onChange={handleChange("search")}
+						slotProps={{
+							input: {
+								startAdornment: (
+									<InputAdornment position="start">
+										<SearchRoundedIcon sx={{ color: "text.disabled", fontSize: 18 }} />
+									</InputAdornment>
+								),
+							},
+						}}
 					/>
 				)}
 
@@ -119,79 +194,66 @@ export default function Filters({
 						getOptionLabel={(option) => option.label}
 						isOptionEqualToValue={(option, value) => option.value === value.value}
 						onChange={(event, newValue) => {
-							onChange?.({
-								...filters,
-								city: newValue?.value || "",
-							});
+							onChange?.({ ...filters, city: newValue?.value || "" });
 						}}
 						renderInput={(params) => <TextField {...params} label="City" size="small" />}
 					/>
 				)}
+			</Box>
 
-				<ToggleButtonGroup
-					exclusive
-					size="small"
-					value={filters.budgetType}
-					onChange={handleBudgetTypeChange}
-					sx={{
-						width: "100%",
-						height: 40,
-						"& .MuiToggleButton-root": {
-							flex: 1,
-							textTransform: "none",
-							fontWeight: 700,
-						},
-						"& .Mui-selected": {
-							color: "white",
-							bgcolor: "primary.main",
-							"&:hover": {
-								bgcolor: "primary.dark",
-							},
-						},
-					}}
+			{/* Budget section */}
+			<Box sx={budgetSectionSx}>
+				<Typography
+					variant="caption"
+					fontWeight={700}
+					color="text.secondary"
+					sx={budgetLabelSx}
 				>
-					{BUDGET_TYPES.map((type) => (
-						<ToggleButton key={type.value} value={type.value}>
-							{type.label}
-						</ToggleButton>
-					))}
-				</ToggleButtonGroup>
+					Budget
+				</Typography>
 
-				<Stack direction="row" spacing={1}>
-					<TextField
-						label="Min"
-						type="number"
-						value={minValue}
-						onChange={handleChange(minField)}
+				<Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
+					<ToggleButtonGroup
+						exclusive
 						size="small"
-						fullWidth
-						slotProps={{
-							input: {
-								endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment>,
-							},
-							htmlInput: { min: 0 },
-						}}
-					/>
+						value={filters.budgetType}
+						onChange={handleBudgetTypeChange}
+						sx={budgetToggleGroupSx}
+					>
+						{BUDGET_TYPES.map((type) => (
+							<ToggleButton key={type.value} value={type.value}>
+								{type.label}
+							</ToggleButton>
+						))}
+					</ToggleButtonGroup>
 
-					<TextField
-						label="Max"
-						type="number"
-						value={maxValue}
-						onChange={handleChange(maxField)}
-						size="small"
-						fullWidth
-						slotProps={{
-							input: {
-								endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment>,
-							},
-							htmlInput: { min: 0 },
-						}}
-					/>
+					<Stack direction="row" spacing={1} flex={1} width="100%">
+						<TextField
+							label="Min"
+							type="number"
+							value={minValue}
+							onChange={handleChange(minField)}
+							size="small"
+							fullWidth
+							slotProps={{
+								input: { endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment> },
+								htmlInput: { min: 0 },
+							}}
+						/>
+						<TextField
+							label="Max"
+							type="number"
+							value={maxValue}
+							onChange={handleChange(maxField)}
+							size="small"
+							fullWidth
+							slotProps={{
+								input: { endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment> },
+								htmlInput: { min: 0 },
+							}}
+						/>
+					</Stack>
 				</Stack>
-
-				<PrimaryButton variant="outlined" onClick={handleReset} sx={{ height: 40, whiteSpace: "nowrap" }}>
-					Reset filters
-				</PrimaryButton>
 			</Box>
 		</Card>
 	);

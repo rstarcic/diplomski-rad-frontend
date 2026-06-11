@@ -2,11 +2,14 @@ import { useNavigate } from "react-router-dom";
 import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
 import { Avatar, Box, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
-
+import StatusChip from "../../../../components/ui/StatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-import { formatBudget, formatDeadline } from "../../utils";
+import { formatBudget, formatDeadline } from "../../../../utils/jobs";
+import { JOB_STATUSES } from "../../../../constants/statuses";
+import { hoverLiftSx } from "../../../../theme/layout";
 
 const cardSx = {
+	...hoverLiftSx,
 	width: "100%",
 	height: "100%",
 	display: "flex",
@@ -16,11 +19,6 @@ const cardSx = {
 	borderColor: "divider",
 	bgcolor: "background.paper",
 	boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
-	transition: "transform 0.2s ease, box-shadow 0.2s ease",
-	"&:hover": {
-		transform: "translateY(-3px)",
-		boxShadow: "0 16px 36px rgba(15, 23, 42, 0.12)",
-	},
 };
 
 const detailsButtonSx = {
@@ -55,17 +53,7 @@ export default function JobCard({ job }) {
 							</Stack>
 						</Box>
 
-						{job.status && (
-							<Chip
-								label={job.status}
-								size="small"
-								color="success"
-								sx={{
-									fontWeight: 800,
-									flexShrink: 0,
-								}}
-							/>
-						)}
+						{job.status && <StatusChip status={job.status} config={JOB_STATUSES[job.status]} />}
 					</Stack>
 
 					<Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap" }}>

@@ -2,12 +2,12 @@ import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../../theme/layout";
-import { LOCATION_TYPES } from "../../constants/jobFilters";
+import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import { LOCATION_TYPES } from "../../../../constants/jobFilters";
 
 const titleSx = {
 	mb: 2,
-	fontWeight: 800,
+	...sectionTitleSx,
 };
 
 const dateFieldSx = (theme) => ({
