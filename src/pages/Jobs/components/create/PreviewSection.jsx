@@ -9,6 +9,8 @@ const previewCardSx = (theme) => ({
 	bgcolor: "background.default",
 });
 
+const titleSx = { mb: 2, ...sectionTitleSx };
+
 const metaRowSx = {
 	display: "flex",
 	flexWrap: "wrap",
@@ -24,7 +26,7 @@ export default function PreviewSection({ jobData }) {
 	const estimatedCost = getEstimatedCost(jobData);
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={{ mb: 2, ...sectionTitleSx }}>
+			<Typography variant="h6" sx={titleSx}>
 				Preview Job post
 			</Typography>
 
@@ -35,7 +37,7 @@ export default function PreviewSection({ jobData }) {
 							{formatValue(jobData.title, "Untitled job")}
 						</Typography>
 
-						<Typography variant="body" sx={{ fontWeight: 900 }}>
+						<Typography variant="body1" sx={{ fontWeight: 900 }}>
 							{formatValue(jobData.category, "No category")}
 						</Typography>
 					</Box>

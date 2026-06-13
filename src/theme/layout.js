@@ -41,7 +41,19 @@ export const hoverLiftSx = {
 export const sectionSx = {
     p: { xs: 2, sm: 3 },
     height: "100%",
-    border: `1px solid colors.border`,
+    border: "1px solid",
+    borderColor: "divider",
+    bgcolor: "background.paper",
+};
+
+export const jobCardBaseSx = {
+    ...hoverLiftSx,
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    border: "1px solid",
+    borderColor: "divider",
     bgcolor: "background.paper",
 };
 

@@ -18,6 +18,8 @@ const colors = {
 	info: "#2563eb",
 	warning: "#f59e0b",
 	error: "#ef4444",
+	teal: "#0d9488",
+	orange: "#f97316",
 };
 
 const tint = {
@@ -169,6 +171,20 @@ const theme = createTheme({
 		alerts,
 		statCard,
 		dashboardList,
+		iconPalette: {
+			applications: {
+				bg: "rgba(91, 63, 214, 0.12)",
+				color: colors.primary,
+			},
+			contract: {
+				bg: "rgba(13, 148, 136, 0.12)",
+				color: colors.teal,
+			},
+			payment: {
+				bg: "rgba(249, 115, 22, 0.12)",
+				color: colors.orange,
+			},
+		},
 		sizes: {
 			field: {
 				sm: 40,

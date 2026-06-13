@@ -1,12 +1,14 @@
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import { Button, Divider, Link, Stack } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import FormTextField from "../../../components/ui/FormTextField";
 import PasswordTextField from "../../../components/ui/PasswordTextField";
 import AppAlert from "../../../components/ui/Alert";
 import { useFormErrors } from "../../../hooks/useFormErrors";
 import FORM_ERRORS from "../../../constants/formError";
+import { useAuth } from "../../../hooks/useAuth";
+import { ROLES, getHomePath } from "../../../constants/roles";
 
 export default function LoginForm() {
 	const [formData, setFormData] = useState({
@@ -15,6 +17,9 @@ export default function LoginForm() {
 	});
 
 	const { errors, setErrors, clearErrors } = useFormErrors();
+	const { login } = useAuth();
+	const navigate = useNavigate();
+	const location = useLocation();
 
 	const updateField = (field) => (event) => {
 		setFormData((prev) => ({
@@ -41,8 +46,12 @@ export default function LoginForm() {
 			setErrors(nextErrors);
 			return;
 		}
+		// TODO
+		const role = formData.email.toLowerCase().includes("client") ? ROLES.CLIENT : ROLES.CONTRACTOR;
+		login({ email: formData.email, role });
 
-		// login API call ide ovdje
+		const redirectTo = location.state?.from?.pathname ?? getHomePath(role);
+		navigate(redirectTo, { replace: true });
 	};
 
 	return (

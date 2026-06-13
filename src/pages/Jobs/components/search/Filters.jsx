@@ -120,20 +120,13 @@ export default function Filters({
 	return (
 		<Card elevation={0} sx={filterCardSx}>
 			{/* Header */}
-			<Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-				<Stack direction="row" alignItems="center" gap={1}>
-					<FilterListRoundedIcon sx={{ color: "primary.main", fontSize: 20 }} />
-					<Typography variant="subtitle2" fontWeight={700} color="text.primary">
-						Filters
-					</Typography>
+			<Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+				<Stack direction="row" sx={{ alignItems: "center", gap: 1 }}>
+					<FilterListRoundedIcon sx={{ color: "primary.main", fontSize: 25 }} />
 				</Stack>
-				<Box
-					component="button"
-					onClick={handleReset}
-					sx={resetButtonSx}
-				>
-					<RestartAltRoundedIcon sx={{ fontSize: 16 }} />
-					Reset
+				<Box component="button" onClick={handleReset} sx={resetButtonSx}>
+					<RestartAltRoundedIcon sx={{ color: "primary.main", fontSize: 25 }} />
+					<Typography>Reset</Typography>
 				</Box>
 			</Stack>
 
@@ -203,16 +196,11 @@ export default function Filters({
 
 			{/* Budget section */}
 			<Box sx={budgetSectionSx}>
-				<Typography
-					variant="caption"
-					fontWeight={700}
-					color="text.secondary"
-					sx={budgetLabelSx}
-				>
+				<Typography variant="caption" fontWeight={700} color="text.secondary" sx={budgetLabelSx}>
 					Budget
 				</Typography>
 
-				<Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
+				<Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ alignItems: { sm: "center" } }}>
 					<ToggleButtonGroup
 						exclusive
 						size="small"

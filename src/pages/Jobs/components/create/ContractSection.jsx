@@ -5,10 +5,8 @@ import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { surfaceSectionSx } from "../../../../theme/layout";
 
-const titleSx = {
-	mb: 2,
-	fontWeight: 800,
-};
+const titleSx = { mb: 2, fontWeight: 800 };
+const addRequirementSx = { mt: 1.5, fontWeight: 800 };
 
 const requirementRowSx = {
 	display: "grid",
@@ -89,7 +87,7 @@ export default function ContractSection({ jobData, setJobData }) {
 								<IconButton
 									aria-label="Remove requirement"
 									onClick={() => removeRequirement(index)}
-									disabled={jobData.requirements.length > 5}
+									disabled={jobData.requirements.length <= 1}
 									sx={{ mt: 0.25 }}
 								>
 									<DeleteOutlineRoundedIcon />
@@ -104,7 +102,7 @@ export default function ContractSection({ jobData, setJobData }) {
 						startIcon={<AddCircleOutlineRoundedIcon />}
 						onClick={addRequirement}
 						disabled={jobData.requirements.length >= 5}
-						sx={{ mt: 1.5, fontWeight: 800 }}
+						sx={addRequirementSx}
 					>
 						Add requirement
 					</Button>

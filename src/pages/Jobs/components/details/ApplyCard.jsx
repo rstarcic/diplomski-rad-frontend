@@ -5,7 +5,7 @@ import AccountSetupAlert from "../../../../components/account/AccountAlert";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { getAccountSetupMock } from "../../../../mock/AccountSetup";
-import { surfaceSectionSx } from "../../../../theme/layout";
+import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 
 const COVER_LETTER_MAX = 1500;
 const COVER_LETTER_MIN = 50;
@@ -72,7 +72,7 @@ export default function ApplyCard({ job, onApply }) {
 			<Stack spacing={2}>
 				{/* Header */}
 				<Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 2 }}>
-					<Typography variant="h6" sx={{ fontWeight: 800 }}>
+					<Typography variant="h6" sx={sectionTitleSx}>
 						Submit a proposal
 					</Typography>
 

@@ -49,7 +49,6 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 			deadline: value,
 		}));
 	};
-
 	return (
 		<Box sx={surfaceSectionSx}>
 			<Typography variant="h6" sx={titleSx}>

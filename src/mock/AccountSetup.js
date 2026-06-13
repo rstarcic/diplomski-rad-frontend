@@ -3,7 +3,7 @@ export const accountSetupMock = {
 		userId: "user-1",
 		role: "client",
 		profileCompleted: true,
-		paymentCompleted: false,
+		paymentCompleted: true,
 	},
 	contractor: {
 		userId: "contractor-1",

@@ -4,6 +4,8 @@ import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { BUDGET_TYPES } from "../../../../constants/jobFilters";
 
+const titleSx = { mb: 2, ...sectionTitleSx };
+
 const positiveNumberInputProps = {
 	htmlInput: {
 		min: 0,
@@ -22,7 +24,7 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={{ mb: 2, ...sectionTitleSx }}>
+			<Typography variant="h6" sx={titleSx}>
 				Budget and workload
 			</Typography>
 
