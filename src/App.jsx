@@ -7,8 +7,9 @@ import "./App.css";
 
 import AuthLayout from "./layouts/AuthLayout";
 import AppLayout from "./layouts/AppLayout";
-import SearchJobsPage from "./pages/Jobs/SearchJobsPage";
-import JobDetailsPage from "./pages/Jobs/JobDetailsPage";
+import RequireRole from "./components/auth/RequireRole";
+import RoleRedirect from "./components/auth/RoleRedirect";
+import { ROLES } from "./constants/roles";
 
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/Auth/SignupPage"));
@@ -16,7 +17,14 @@ const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
 
 const ClientDashboard = lazy(() => import("./pages/Dashboards/ClientDashboard"));
 const ContractorDashboard = lazy(() => import("./pages/Dashboards/ContractorDashboard"));
+
+const MyJobsPage = lazy(() => import("./pages/Jobs/MyJobsPage"));
 const CreateJobPage = lazy(() => import("./pages/Jobs/CreateJobPage"));
+const EditJobPage = lazy(() => import("./pages/Jobs/EditJobPage"));
+const JobApplicationsPage = lazy(() => import("./pages/Applications/JobApplicationsPage"));
+const SearchJobsPage = lazy(() => import("./pages/Jobs/SearchJobsPage"));
+const JobDetailsPage = lazy(() => import("./pages/Jobs/JobDetailsPage"));
+
 const ClientProfilePage = lazy(() => import("./pages/Profiles/ClientProfilePage"));
 const ContractorProfilePage = lazy(() => import("./pages/Profiles/ContractorProfilePage"));
 function App() {
@@ -37,12 +45,17 @@ function App() {
 					</Route>
 
 					<Route element={<AppLayout />}>
-						<Route path="/client">
+						<Route path="/client" element={<RequireRole role={ROLES.CLIENT} />}>
+							<Route index element={<Navigate to="dashboard" replace />} />
 							<Route path="dashboard" element={<ClientDashboard />} />
-							<Route path="create" element={<CreateJobPage />} />
+							<Route path="jobs" element={<MyJobsPage />} />
+							<Route path="jobs/create" element={<CreateJobPage />} />
+							<Route path="jobs/:jobId/edit" element={<EditJobPage />} />
+							<Route path="jobs/:jobId/applications" element={<JobApplicationsPage />} />
 							<Route path="settings/profile" element={<ClientProfilePage />} />
 						</Route>
-						<Route path="/contractor">
+						<Route path="/contractor" element={<RequireRole role={ROLES.CONTRACTOR} />}>
+							<Route index element={<Navigate to="dashboard" replace />} />
 							<Route path="dashboard" element={<ContractorDashboard />} />
 							<Route path="jobs/search" element={<SearchJobsPage />} />
 							<Route path="jobs/:jobId" element={<JobDetailsPage />} />
@@ -50,7 +63,8 @@ function App() {
 						</Route>
 					</Route>
 
-					<Route path="*" element={<Navigate to="/login" replace />} />
+					<Route path="/" element={<RoleRedirect />} />
+					<Route path="*" element={<RoleRedirect />} />
 				</Routes>
 			</Suspense>
 		</LocalizationProvider>

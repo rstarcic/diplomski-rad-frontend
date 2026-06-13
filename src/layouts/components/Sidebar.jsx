@@ -2,13 +2,12 @@ import { useState } from "react";
 import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { sidebarItems } from "./SidebarConfig";
+import { useAuth } from "../../hooks/useAuth";
+import { ROLES } from "../../constants/roles";
 
 export const sidebarWidth = 270;
-
-const isClient = false;
-const currentRole = isClient ? "client" : "contractor";
 
 const sidebarSx = (theme) => ({
 	width: sidebarWidth,
@@ -91,7 +90,7 @@ function SidebarItem({ item, currentPath, onNavigate }) {
 	const [isOpen, setIsOpen] = useState(() => item.children?.some((child) => currentPath === child.path));
 	const Icon = item.icon;
 	const hasChildren = Boolean(item.children?.length);
-	const isActive = currentPath === item.path || item.children?.some((child) => currentPath === child.path);
+	const isActive = !hasChildren && currentPath === item.path;
 
 	const toggleChildren = () => {
 		setIsOpen((prev) => !prev);
@@ -149,11 +148,18 @@ function SidebarItem({ item, currentPath, onNavigate }) {
 
 export default function Sidebar({ onNavigate }) {
 	const { pathname } = useLocation();
-	const workspaceItems = sidebarItems[currentRole];
+	const navigate = useNavigate();
+	const { role, logout } = useAuth();
+	const workspaceItems = sidebarItems[role] ?? [];
+
+	const handleSignOut = () => {
+		logout();
+		navigate("/login", { replace: true });
+	};
 
 	return (
 		<Box sx={sidebarSx}>
-			<SidebarHeader isClientWorkspace={isClient} />
+			<SidebarHeader isClientWorkspace={role === ROLES.CLIENT} />
 
 			<List>
 				{workspaceItems.map((item) => (
@@ -162,7 +168,7 @@ export default function Sidebar({ onNavigate }) {
 			</List>
 
 			<Box sx={{ mt: "auto", pt: 3 }}>
-				<ListItemButton>
+				<ListItemButton onClick={handleSignOut}>
 					<ListItemIcon sx={itemIconSx}>
 						<LogoutRoundedIcon />
 					</ListItemIcon>

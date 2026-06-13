@@ -22,7 +22,7 @@ const contractorSettingsItems = [
 export const sidebarItems = {
 	client: [
 		{ label: "Dashboard", path: "/client/dashboard", icon: DashboardRoundedIcon },
-		{ label: "Create job", path: "/client/create", icon: WorkOutlineRoundedIcon },
+		{ label: "Create job", path: "/client/jobs/create", icon: WorkOutlineRoundedIcon },
 		{ label: "My jobs", path: "/client/jobs", icon: WorkHistoryRoundedIcon },
 		{
 			label: "Settings",
@@ -33,7 +33,7 @@ export const sidebarItems = {
 	],
 	contractor: [
 		{ label: "Dashboard", path: "/contractor/dashboard", icon: DashboardRoundedIcon },
-		{ label: "Search jobs", path: "/contractor/search", icon: ScreenSearchDesktopRoundedIcon },
+		{ label: "Search jobs", path: "/contractor/jobs/search", icon: ScreenSearchDesktopRoundedIcon },
 		{ label: "Applications", path: "/contractor/applications", icon: StickyNote2RoundedIcon },
 		{
 			label: "Settings",
