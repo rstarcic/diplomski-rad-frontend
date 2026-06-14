@@ -44,25 +44,24 @@ const memberSinceSx = (theme) => ({
 	bgcolor: theme.custom.tint.primarySubtle,
 });
 
-export default function ClientProfileSection({ client }) {
-	if (!client) return null;
+export default function ContractorProfileSection({ contractor }) {
+	if (!contractor) return null;
 
-	const fullName = `${client.firstName} ${client.lastName}`;
+	const fullName = `${contractor.firstName} ${contractor.lastName}`;
 	const location =
-		client.city && client.country ? `${client.city}, ${client.country}` : "Location not provided";
-	const memberSince = client.createdAt || client.created_at;
+		contractor.city && contractor.country ? `${contractor.city}, ${contractor.country}` : "Location not provided";
 
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
 				<Typography variant="h6" sx={sectionTitleSx}>
-					About the client
+					About the contractor
 				</Typography>
 
 				<Divider />
 
 				<Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-					<Avatar alt={fullName} src={client.profileImageUrl} sx={avatarSx}>
+					<Avatar alt={fullName} src={contractor.profileImageUrl} sx={avatarSx}>
 						<PersonOutlineRoundedIcon />
 					</Avatar>
 
@@ -70,9 +69,9 @@ export default function ClientProfileSection({ client }) {
 						<Typography variant="subtitle1" sx={{ fontWeight: 900, lineHeight: 1.25 }}>
 							{fullName}
 						</Typography>
-						{client.title && (
+						{contractor.title && (
 							<Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-								{client.title}
+								{contractor.title}
 							</Typography>
 						)}
 						<Stack direction="row" spacing={0.5} sx={{ mt: 0.5, alignItems: "center" }}>
@@ -84,40 +83,38 @@ export default function ClientProfileSection({ client }) {
 					</Box>
 				</Stack>
 
-				{client.about && (
+				{contractor.about && (
 					<Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
-						{client.about}
+						{contractor.about}
 					</Typography>
 				)}
 
 				<Divider />
 
 				<Stack spacing={1}>
-					<Stack spacing={1}>
-						<Box sx={contactBoxSx}>
-							<EmailOutlinedIcon sx={contactIconSx} />
-							<Typography
-								variant="body2"
-								sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-							>
-								{client.email ?? "Not provided"}
-							</Typography>
-						</Box>
-						<Box sx={contactBoxSx}>
-							<PhoneOutlinedIcon sx={contactIconSx} />
-							<Typography
-								variant="body2"
-								sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-							>
-								{client.phone ?? "Not provided"}
-							</Typography>
-						</Box>
-					</Stack>
+					<Box sx={contactBoxSx}>
+						<EmailOutlinedIcon sx={contactIconSx} />
+						<Typography
+							variant="body2"
+							sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+						>
+							{contractor.email ?? "Not provided"}
+						</Typography>
+					</Box>
+					<Box sx={contactBoxSx}>
+						<PhoneOutlinedIcon sx={contactIconSx} />
+						<Typography
+							variant="body2"
+							sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+						>
+							{contractor.phone ?? "Not provided"}
+						</Typography>
+					</Box>
 
 					<Box sx={memberSinceSx}>
 						<CalendarMonthRoundedIcon sx={contactIconSx} />
 						<Typography variant="body2" sx={{ fontWeight: 700 }}>
-							Member since {formatDate(memberSince)}
+							Member since {formatDate(contractor.createdAt)}
 						</Typography>
 					</Box>
 				</Stack>
