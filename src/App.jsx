@@ -22,6 +22,7 @@ const MyJobsPage = lazy(() => import("./pages/Jobs/MyJobsPage"));
 const CreateJobPage = lazy(() => import("./pages/Jobs/CreateJobPage"));
 const EditJobPage = lazy(() => import("./pages/Jobs/EditJobPage"));
 const JobApplicationsPage = lazy(() => import("./pages/Applications/JobApplicationsPage"));
+const ApplicationDetailsPage = lazy(() => import("./pages/Applications/ApplicationDetailsPage"));
 const SearchJobsPage = lazy(() => import("./pages/Jobs/SearchJobsPage"));
 const JobDetailsPage = lazy(() => import("./pages/Jobs/JobDetailsPage"));
 
@@ -52,14 +53,15 @@ function App() {
 							<Route path="jobs/create" element={<CreateJobPage />} />
 							<Route path="jobs/:jobId/edit" element={<EditJobPage />} />
 							<Route path="jobs/:jobId/applications" element={<JobApplicationsPage />} />
-							<Route path="settings/profile" element={<ClientProfilePage />} />
+							<Route path="jobs/:jobId/applications/:applicationId" element={<ApplicationDetailsPage />} />
+							<Route path="profile" element={<ClientProfilePage />} />
 						</Route>
 						<Route path="/contractor" element={<RequireRole role={ROLES.CONTRACTOR} />}>
 							<Route index element={<Navigate to="dashboard" replace />} />
 							<Route path="dashboard" element={<ContractorDashboard />} />
 							<Route path="jobs/search" element={<SearchJobsPage />} />
 							<Route path="jobs/:jobId" element={<JobDetailsPage />} />
-							<Route path="settings/profile" element={<ContractorProfilePage />} />
+							<Route path="profile" element={<ContractorProfilePage />} />
 						</Route>
 					</Route>
 

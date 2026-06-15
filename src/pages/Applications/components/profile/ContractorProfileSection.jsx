@@ -55,7 +55,7 @@ export default function ContractorProfileSection({ contractor }) {
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
 				<Typography variant="h6" sx={sectionTitleSx}>
-					About the contractor
+					Contractor summary profile
 				</Typography>
 
 				<Divider />

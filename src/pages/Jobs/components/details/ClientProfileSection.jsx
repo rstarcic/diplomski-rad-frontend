@@ -48,15 +48,14 @@ export default function ClientProfileSection({ client }) {
 	if (!client) return null;
 
 	const fullName = `${client.firstName} ${client.lastName}`;
-	const location =
-		client.city && client.country ? `${client.city}, ${client.country}` : "Location not provided";
+	const location = client.city && client.country ? `${client.city}, ${client.country}` : "Location not provided";
 	const memberSince = client.createdAt || client.created_at;
 
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
 				<Typography variant="h6" sx={sectionTitleSx}>
-					About the client
+					Client summary profile
 				</Typography>
 
 				<Divider />
