@@ -1,4 +1,3 @@
-@ -1,81 +0,0 @@
 import { useEffect, useMemo } from "react";
 
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
@@ -7,8 +6,8 @@ import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateR
 import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-import PrimaryButton from "../../../components/ui/PrimaryButton";
-import { sectionTitleSx, surfaceSectionSx } from "../../../theme/layout";
+import PrimaryButton from "../../../../components/ui/PrimaryButton";
+import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 
 const avatarSx = {
 	width: 98,

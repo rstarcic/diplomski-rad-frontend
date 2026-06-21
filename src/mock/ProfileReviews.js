@@ -4,10 +4,12 @@ export const clientProfileReviewData = {
 
     summary: {
         totalReviews: 18,
-        overallRating: 4.9,
+        overallRating: 5.0,
         ratings: {
-            requirementsClarityRating: 4.7,
-            communicationRating: 4.8,
+            communicationRating: 5.0,
+            clarityRating: 5.0,
+            reliabilityRating: 5.0,
+            collaborationRating: 5.0,
         },
     },
 
@@ -22,10 +24,13 @@ export const clientProfileReviewData = {
                 lastName: "K.",
                 imageUrl: "",
             },
-            overallRating: 5,
+            rawOverallRating: 4.9,
+            overallRating: 5.0,
             ratings: {
-                requirementsClarityRating: 5,
-                communicationRating: 5,
+                communicationRating: 5.0,
+                clarityRating: 5.0,
+                reliabilityRating: 5.0,
+                collaborationRating: 5.0,
             },
         },
         {
@@ -40,8 +45,10 @@ export const clientProfileReviewData = {
             },
             overallRating: 4.5,
             ratings: {
-                requirementsClarityRating: 4.5,
                 communicationRating: 4.5,
+                clarityRating: 4.5,
+                reliabilityRating: 4.5,
+                collaborationRating: 4.5,
             },
         },
     ],
@@ -53,17 +60,20 @@ export const contractorProfileReviewData = {
 
     summary: {
         totalReviews: 24,
-        overallRating: 4.8,
+        overallRating: 4.5,
+        rawOverallRating: 4.9,
         ratings: {
-            workQualityRating: 4.9,
-            communicationRating: 4.7,
+            communicationRating: 4.5,
+            clarityRating: 3.0,
+            reliabilityRating: 4.5,
+            collaborationRating: 4.0,
         },
     },
 
     reviews: [
         {
             id: "contractor-review-1",
-            comment: "Excellent work quality and very professional communication.",
+            comment: "Delivered everything ahead of schedule. Communication was excellent and progress updates were frequent.",
             createdAt: "2026-05-30T12:00:00",
             reviewer: {
                 id: "client-1",
@@ -71,15 +81,18 @@ export const contractorProfileReviewData = {
                 lastName: "M.",
                 imageUrl: "",
             },
-            overallRating: 5,
+            rawOverallRating: 4.9,
+            overallRating: 5.0,
             ratings: {
-                workQualityRating: 5,
-                communicationRating: 5,
+                communicationRating: 5.0,
+                clarityRating: 5.0,
+                reliabilityRating: 5.0,
+                collaborationRating: 5.0,
             },
         },
         {
             id: "contractor-review-2",
-            comment: "Delivered everything on time and kept us updated throughout the project.",
+            comment: "Very skilled developer. The final result matched our expectations and minor revisions were handled quickly.",
             createdAt: "2026-05-27T14:20:00",
             reviewer: {
                 id: "client-2",
@@ -87,10 +100,89 @@ export const contractorProfileReviewData = {
                 lastName: "B.",
                 imageUrl: "",
             },
+            rawOverallRating: 4.7,
             overallRating: 4.5,
             ratings: {
-                workQualityRating: 4.5,
                 communicationRating: 4.5,
+                clarityRating: 4.5,
+                reliabilityRating: 5.0,
+                collaborationRating: 4.5,
+            },
+        },
+        {
+            id: "contractor-review-3",
+            comment: "Great experience overall. The contractor was proactive and suggested several improvements we hadn't considered.",
+            createdAt: "2026-05-21T10:15:00",
+            reviewer: {
+                id: "client-3",
+                firstName: "Sara",
+                lastName: "K.",
+                imageUrl: "",
+            },
+            rawOverallRating: 5.0,
+            overallRating: 5.0,
+            ratings: {
+                communicationRating: 5.0,
+                clarityRating: 5.0,
+                reliabilityRating: 5.0,
+                collaborationRating: 5.0,
+            },
+        },
+        {
+            id: "contractor-review-4",
+            comment: "Work quality was excellent. There were a few delays in responses, but the project was delivered successfully.",
+            createdAt: "2026-05-15T08:45:00",
+            reviewer: {
+                id: "client-4",
+                firstName: "Petra",
+                lastName: "N.",
+                imageUrl: "",
+            },
+            rawOverallRating: 4.4,
+            overallRating: 4.5,
+            ratings: {
+                communicationRating: 4.0,
+                clarityRating: 4.5,
+                reliabilityRating: 4.5,
+                collaborationRating: 4.5,
+            },
+        },
+        {
+            id: "contractor-review-5",
+            comment: "Professional, reliable, and easy to work with. Would definitely hire again for future projects.",
+            createdAt: "2026-05-10T16:30:00",
+            reviewer: {
+                id: "client-5",
+                firstName: "Ivan",
+                lastName: "R.",
+                imageUrl: "",
+            },
+            rawOverallRating: 4.8,
+            overallRating: 5.0,
+            ratings: {
+                communicationRating: 5.0,
+                clarityRating: 4.5,
+                reliabilityRating: 5.0,
+                collaborationRating: 5.0,
+            },
+        },
+        {
+            id: "contractor-review-6",
+            comment: "Professional, reliable, and easy to work with. Would definitely hire again for future projects.",
+            createdAt: "2026-05-10T16:30:00",
+            reviewer: {
+                id: "client-5",
+                firstName: "Ivan",
+                lastName: "R.",
+                imageUrl: "",
+            },
+            rawOverallRating: 4.8,
+            overallRating: 5.0,
+            ratings: {
+                communicationRating: 5.0,
+                clarityRating: 4.5,
+                reliabilityRating: 5.0,
+                collaborationRating: 5.0,
             },
         },
     ],

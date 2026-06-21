@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
 
 import PageHeader from "../../components/ui/PageHeader";
-import ProfileDetailsSection from "./components/ProfileDetailsSection";
-import ProfileImageUpload from "./components/ProfileImageUpload";
-import ProfileProgressCard from "./components/ProfileProgressCard";
+import ProfileDetailsSection from "./components/edit/ProfileDetailsSection";
+import ProfileImageUpload from "./components/edit/ProfileImageUpload";
+import ProfileProgressCard from "./components/edit/ProfileProgressCard";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
+
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
 import { clientProfileReviewData } from "../../mock/ProfileReviews";
 import pageSx from "../../theme/layout";

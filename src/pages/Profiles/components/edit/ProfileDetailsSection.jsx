@@ -1,9 +1,9 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 
-import PrimaryTextField from "../../../components/ui/PrimaryTextField";
-import PrimaryButton from "../../../components/ui/PrimaryButton";
+import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
+import PrimaryButton from "../../../../components/ui/PrimaryButton";
 
-import { surfaceSectionSx } from "../../../theme/layout";
+import { surfaceSectionSx } from "../../../../theme/layout";
 
 export default function ProfileDetailsSection({
 	profileData,
