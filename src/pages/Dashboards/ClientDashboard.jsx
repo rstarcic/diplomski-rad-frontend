@@ -1,49 +1,15 @@
 import { Box, Stack } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
-import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
-import DrawRoundedIcon from "@mui/icons-material/DrawRounded";
-import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
-
 import PageHeader from "../../components/ui/PageHeader";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import SecondaryButton from "../../components/ui/SecondaryButton";
 import NextStepsCard from "./components/NextStepsCard";
 import RecentActivity from "./components/RecentActivity";
-import StatsCard from "./components/StatsCard";
+import DashboardStatsSection from "./components/DashboardStatsSection";
 
+import { dashboardStatCardConfig } from "./dashboardStats";
 import { clientDashboardData } from "../../mock/Dashboard";
 import pageSx from "../../theme/layout";
-
-const clientStatCardConfig = {
-	active_jobs: {
-		icon: <WorkOutlineRoundedIcon />,
-		accent: "#0f766e",
-	},
-	applications: {
-		icon: <MailOutlineRoundedIcon />,
-		accent: "#ea580c",
-	},
-	signed_contracts: {
-		icon: <DrawRoundedIcon />,
-		accent: "#7c3aed",
-	},
-	hiring_spend: {
-		icon: <PaymentsRoundedIcon />,
-		accent: "#1d4ed8",
-	},
-};
-
-const statsGridSx = {
-	mt: { xs: 2, md: 3.5 },
-	display: "grid",
-	gridTemplateColumns: {
-		xs: "1fr",
-		sm: "repeat(2, minmax(0, 1fr))",
-		lg: "repeat(4, minmax(0, 1fr))",
-	},
-	gap: { xs: 1.25, sm: 2, md: 2.5 },
-};
 
 const contentGridSx = {
 	mt: { xs: 2, md: 3.5 },
@@ -77,22 +43,7 @@ export default function ClientDashboardPage() {
 				</Stack>
 			</PageHeader>
 
-			<Box sx={statsGridSx}>
-				{dashboardData.stats_cards.map((stat) => {
-					const config = clientStatCardConfig[stat.id];
-					return (
-						<Box key={stat.id}>
-							<StatsCard
-								label={stat.title}
-								value={stat.value}
-								subtitle={stat.subtitle}
-								icon={config?.icon}
-								accent={config?.accent}
-							/>
-						</Box>
-					);
-				})}
-			</Box>
+			<DashboardStatsSection stats={dashboardData.stats_cards} config={dashboardStatCardConfig.client} />
 
 			<Box sx={contentGridSx}>
 				<RecentActivity activities={dashboardData.recent_activity} />

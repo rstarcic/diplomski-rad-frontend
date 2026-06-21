@@ -1,9 +1,3 @@
-export const clientDashboardUser = {
-    id: "user-1",
-    firstName: "Roberta",
-    role: "client",
-};
-
 export const clientDashboardData = {
     stats_cards: [
         {
