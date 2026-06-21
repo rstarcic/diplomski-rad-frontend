@@ -45,14 +45,15 @@ function TermCell({ label, value, editedBy, isEditing, inputType, multiline, edi
 	);
 }
 
-export default function CurrentOfferCard({ negotiation, isEditing, editValues, onEditChange }) {
+export default function CurrentOfferCard({ offer, isEditing, editValues, onEditChange }) {
+	if (!offer) return null;
+
 	return (
 		<Stack spacing={1.5}>
 			<Box sx={termBoxSx}>
 				<TermCell
 					label="Budget amount"
-					value={`${negotiation.budgetAmount} €`}
-					editedBy={negotiation.budgetEditedBy}
+					value={`${offer.budgetAmount} ${offer.currency ?? "€"}`}
 					isEditing={isEditing}
 					inputType="number"
 					editValue={editValues.budgetAmount}
@@ -62,8 +63,7 @@ export default function CurrentOfferCard({ negotiation, isEditing, editValues, o
 			<Box sx={termBoxSx}>
 				<TermCell
 					label="Hours per week"
-					value={`${negotiation.hoursPerWeek} h/week`}
-					editedBy={negotiation.hoursPerWeek}
+					value={`${offer.hoursPerWeek} h/week`}
 					isEditing={isEditing}
 					inputType="number"
 					editValue={editValues.hoursPerWeek}
@@ -73,8 +73,7 @@ export default function CurrentOfferCard({ negotiation, isEditing, editValues, o
 			<Box sx={termBoxSx}>
 				<TermCell
 					label="Duration"
-					value={`${negotiation.duration}`}
-					editedBy={negotiation.duration}
+					value={`${offer.duration} days`}
 					isEditing={isEditing}
 					inputType="number"
 					editValue={editValues.duration}
@@ -84,8 +83,7 @@ export default function CurrentOfferCard({ negotiation, isEditing, editValues, o
 			<Box sx={termBoxSx}>
 				<TermCell
 					label="Deliverables"
-					value={negotiation.deliverables}
-					editedBy={negotiation.deliverables}
+					value={offer.deliverables}
 					isEditing={isEditing}
 					multiline
 					editValue={editValues.deliverables}

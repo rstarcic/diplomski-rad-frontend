@@ -4,59 +4,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-
-const actionCardSx = (theme) => ({
-	p: 2,
-	borderRadius: 2,
-	border: "1px solid",
-	borderColor: theme.custom.tint.primaryBorder,
-	bgcolor: theme.custom.tint.primarySubtle,
-});
-
-const waitingCardSx = (theme) => ({
-	p: 2,
-	borderRadius: 2,
-	border: "1px dashed",
-	borderColor: "divider",
-	bgcolor: theme.palette.background.default,
-	textAlign: "center",
-});
-
-const acceptBtnSx = {
-	fontWeight: 800,
-	textTransform: "none",
-	borderRadius: 2,
-	bgcolor: "success.main",
-	color: "#fff",
-	px: 1.5,
-	py: 1.1,
-	"&:hover": { bgcolor: "success.dark" },
-};
-
-const rejectBtnSx = {
-	fontWeight: 800,
-	textTransform: "none",
-	borderRadius: 2,
-	bgcolor: "error.main",
-	color: "#fff",
-	px: 1.5,
-	py: 1.1,
-	"&:hover": { bgcolor: "error.dark" },
-};
-
-const counterBtnSx = {
-	fontWeight: 800,
-	textTransform: "none",
-	px: 1.5,
-	py: 1.1,
-	borderRadius: 2,
-};
-
-const cancelBtnSx = {
-	fontWeight: 800,
-	textTransform: "none",
-	borderRadius: 2,
-};
+import { actionCardSx, waitingCardSx, acceptBtnSx, rejectBtnSx, counterBtnSx, cancelBtnSx } from "./DecisionSection.styles";
 
 function EditingCard({ onSubmit, onCancel }) {
 	return (

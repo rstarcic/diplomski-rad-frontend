@@ -6,8 +6,8 @@ const rightPanelTitleSx = {
 	mb: 1.5,
 };
 
-export default function NegotiationTimeline({ rounds }) {
-	if (!rounds?.length) return null;
+export default function NegotiationTimeline({ updates }) {
+	if (!updates?.length) return null;
 
 	return (
 		<Box>
@@ -15,10 +15,10 @@ export default function NegotiationTimeline({ rounds }) {
 				Negotiation Timeline
 			</Typography>
 			<Stack spacing={0}>
-				{rounds.map((round, index) => {
-					const isLast = index === rounds.length - 1;
+				{updates.map((update, index) => {
+					const isLast = index === updates.length - 1;
 					return (
-						<Box key={round.number} sx={{ display: "flex", gap: 1.5 }}>
+						<Box key={update.id} sx={{ display: "flex", gap: 1.5 }}>
 							<Stack sx={{ width: 16, alignItems: "center", flexShrink: 0, mt: 0.3 }}>
 								<Box
 									sx={{
@@ -37,7 +37,7 @@ export default function NegotiationTimeline({ rounds }) {
 							<Box sx={{ pb: isLast ? 0 : 2, minWidth: 0 }}>
 								<Stack direction="row" spacing={0.75} sx={{ alignItems: "center", flexWrap: "wrap" }}>
 									<Typography variant="body2" fontWeight={800}>
-										Offer #{round.number}
+										Offer #{update.roundNumber}
 									</Typography>
 									{isLast && (
 										<Chip
@@ -53,10 +53,10 @@ export default function NegotiationTimeline({ rounds }) {
 									color="text.secondary"
 									sx={{ textTransform: "capitalize", display: "block" }}
 								>
-									{round.by} · {formatDate(round.at)}
+									{update.submittedBy} · {formatDate(update.submittedAt)}
 								</Typography>
 								<Typography variant="caption" color="primary.main" fontWeight={800}>
-									€{round.price}
+									€{update.budgetAmount}
 								</Typography>
 							</Box>
 						</Box>

@@ -8,6 +8,7 @@ import {
 	MOCK_CONTRACTS,
 	MOCK_CONTRACTORS,
 	MOCK_NEGOTIATIONS,
+	MOCK_NEGOTIATION_UPDATES,
 	MOCK_PAYMENTS,
 } from "../../mock/MockData";
 import { contractorProfileReviewData } from "../../mock/ProfileReviews";
@@ -29,14 +30,15 @@ function getInitialTab({ negotiation, contract, payments }) {
 
 export default function ApplicationDetailsPage() {
 	const { applicationId } = useParams();
-
 	const application = MOCK_APPLICATIONS.find((a) => a.id === applicationId);
 	const contractor = MOCK_CONTRACTORS.find((c) => c.id === application?.contractorId);
 	const negotiation = MOCK_NEGOTIATIONS.find((n) => n.applicationId === applicationId);
+	const negotiationUpdates = negotiation
+		? MOCK_NEGOTIATION_UPDATES.filter((update) => update.negotiationId === negotiation.id)
+		: [];
 	const contract = MOCK_CONTRACTS.find((c) => c.applicationId === applicationId);
 	const payments = contract ? MOCK_PAYMENTS.filter((p) => p.contractId === contract.id) : [];
-
-	const tabs = useApplicationTabs({ negotiation, contract, payments });
+	const tabs = useApplicationTabs({ negotiation, negotiationUpdates, contract, payments });
 
 	if (!application) return null;
 

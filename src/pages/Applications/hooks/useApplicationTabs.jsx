@@ -8,18 +8,16 @@ import ContractDetailsSection from "../components/contract/ContractDetailsSectio
 import NegotiationSection from "../components/negotiation/NegotiationSection";
 import PaymentsSection from "../components/payment/PaymentsSection";
 
-export function useApplicationTabs({ negotiation, contract, payments, role = "client" }) {
-	const negotiationAccepted = true; // negotiation?.status === "accepted" || (!negotiation && !!contract);
-	const contractCompleted = true;
-	//contract?.status === "completed";
-	const paymentCompleted = true;
-	//payments?.status == "paid";
+export function useApplicationTabs({ negotiation, negotiationUpdates = [], contract, payments = [], role = "client" }) {
+	const negotiationAccepted = negotiation?.status === "ACCEPTED" || (!negotiation && !!contract);
+	const contractCompleted = contract?.status === "COMPLETED";
+	const paymentCompleted = payments.some((payment) => payment.status === "PAID");
 	return [
 		{
 			label: "Negotiation",
 			icon: <HandshakeRoundedIcon fontSize="small" />,
 			locked: false,
-			content: <NegotiationSection negotiation={negotiation} role={role} />,
+			content: <NegotiationSection negotiation={negotiation} updates={negotiationUpdates} role={role} />,
 		},
 		{
 			label: "Contract",

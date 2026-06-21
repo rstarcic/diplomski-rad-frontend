@@ -1,83 +1,88 @@
-import { Avatar, Card, CardActions, CardContent, Divider, Stack, Typography } from "@mui/material";
+import ButtonBase from "@mui/material/ButtonBase";
+import { Avatar, Box, Card, CardActions, CardContent, Divider, Stack, Typography } from "@mui/material";
 import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { useNavigate } from "react-router-dom";
 
 import PrimaryButton from "../../../components/ui/PrimaryButton";
 import StatusChip from "../../../components/ui/StatusChip";
 import { APPLICATION_STATUSES } from "../../../constants/statuses";
-import { jobCardBaseSx } from "../../../theme/layout";
 import { findStatusKey } from "../../../utils/jobs";
-
-const cardSx = {
-	...jobCardBaseSx,
-	borderRadius: 4,
-	boxShadow: "0 14px 35px rgba(15, 23, 42, 0.07)",
-	height: "100%",
-	display: "flex",
-	flexDirection: "column",
-};
-
-const coverLetterSx = {
-	display: "-webkit-box",
-	WebkitLineClamp: 4,
-	WebkitBoxOrient: "vertical",
-	overflow: "hidden",
-};
-
-const avatarSx = {
-	width: 40,
-	height: 40,
-	borderRadius: "50%",
-	flexShrink: 0,
-};
-
-const contractorRowSx = {
-	alignItems: "center",
-	minWidth: 0,
-};
-
-const headerRowSx = {
-	justifyContent: "space-between",
-	alignItems: "flex-start",
-};
+import {
+	avatarSx,
+	cardSx,
+	contractorButtonSx,
+	coverLetterSx,
+	footerSx,
+	headerRowSx,
+	metaRowSx,
+} from "./ApplicationsCard.styles";
+import SecondaryButton from "../../../components/ui/SecondaryButton";
 
 export default function ApplicationsCard({ application, contractor }) {
 	const navigate = useNavigate();
 	const statusKey = findStatusKey(application.status, APPLICATION_STATUSES);
-	const { firstName, lastName, city, country, profileImageUrl } = contractor ?? {};
+
+	const { id, firstName, lastName, city, country, profileImageUrl } = contractor ?? {};
 	const fullName = firstName && lastName ? `${firstName} ${lastName}` : "Unknown contractor";
+
+	const openContractorProfile = () => {
+		if (id) navigate(`/client/contractors/${id}`);
+	};
+
+	const openApplicationDetails = () => {
+		navigate(`/client/jobs/${application.jobId}/applications/${application.id}`);
+	};
 
 	return (
 		<Card sx={cardSx}>
-			<CardContent sx={{ p: 3, flexGrow: 1 }}>
+			<CardContent sx={{ p: 2.5, flexGrow: 1 }}>
 				<Stack spacing={2}>
 					<Stack direction="row" sx={headerRowSx}>
-						<Stack direction="row" spacing={1.5} sx={contractorRowSx}>
+						<ButtonBase onClick={openContractorProfile} sx={contractorButtonSx}>
 							<Avatar alt={fullName} src={profileImageUrl} sx={avatarSx}>
 								<PersonOutlineRoundedIcon />
 							</Avatar>
-							<Stack>
-								<Typography variant="body1" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+
+							<Box sx={{ minWidth: 0 }}>
+								<Typography variant="subtitle1" sx={{ fontWeight: 850, lineHeight: 1.2 }} noWrap>
 									{fullName}
 								</Typography>
-								<Typography variant="caption" color="text.secondary">
-									{city}, {country}
-								</Typography>
-							</Stack>
-						</Stack>
+
+								<Stack direction="row" spacing={0.5} sx={metaRowSx}>
+									<LocationOnOutlinedIcon sx={{ fontSize: 16 }} />
+									<Typography variant="caption" color="text.secondary" noWrap>
+										{city}, {country}
+									</Typography>
+								</Stack>
+							</Box>
+						</ButtonBase>
+
 						{statusKey && <StatusChip status={statusKey} config={APPLICATION_STATUSES} />}
 					</Stack>
 
 					<Divider />
-					<Typography variant="body2" color="text.secondary" sx={coverLetterSx}>
-						{application.coverLetter}
-					</Typography>
+
+					<Box>
+						<Typography variant="overline" color="text.secondary" sx={{ fontWeight: 800 }}>
+							Cover letter
+						</Typography>
+
+						<Typography variant="body2" color="text.secondary" sx={coverLetterSx}>
+							{application.coverLetter}
+						</Typography>
+					</Box>
 				</Stack>
 			</CardContent>
-			<CardActions sx={{ justifyContent: "flex-end", p: 1.5 }}>
-				<PrimaryButton onClick={() => navigate(`/client/jobs/${application.jobId}/applications/${application.id}`)}>
-					View details
-				</PrimaryButton>
+
+			<CardActions sx={footerSx}>
+				<Stack direction="row" spacing={1}>
+					<PrimaryButton variant="outlined" onClick={openContractorProfile}>
+						View profile
+					</PrimaryButton>
+
+					<PrimaryButton onClick={openApplicationDetails}>Review application</PrimaryButton>
+				</Stack>
 			</CardActions>
 		</Card>
 	);

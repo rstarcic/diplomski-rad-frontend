@@ -9,14 +9,17 @@ import { NEGOTIATION_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
 
-export default function NegotiationSection({ negotiation, role }) {
+export default function NegotiationSection({ negotiation, updates = [], role }) {
+	const sortedUpdates = [...updates].sort((a, b) => a.roundNumber - b.roundNumber);
+	const currentOffer = sortedUpdates.at(-1) ?? null;
+
 	const [currentNegotiation, setCurrentNegotiation] = useState(negotiation);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editValues, setEditValues] = useState({
-		budgetAmount: negotiation?.budgetAmount ?? "",
-		hoursPerWeek: negotiation?.hoursPerWeek ?? "",
-		duration: negotiation?.duration ?? "",
-		deliverables: negotiation?.deliverables ?? "",
+		budgetAmount: currentOffer?.budgetAmount ?? "",
+		hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
+		duration: currentOffer?.duration ?? "",
+		deliverables: currentOffer?.deliverables ?? "",
 	});
 
 	const statusKey = currentNegotiation ? findStatusKey(currentNegotiation.status, NEGOTIATION_STATUSES) : null;
@@ -29,10 +32,10 @@ export default function NegotiationSection({ negotiation, role }) {
 
 	const handleCancelEdit = () => {
 		setEditValues({
-			budgetAmount: negotiation.budgetAmount,
-			hoursPerWeek: negotiation.hoursPerWeek,
-			duration: negotiation.duration,
-			deliverables: negotiation.deliverables,
+			budgetAmount: currentOffer?.budgetAmount ?? "",
+			hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
+			duration: currentOffer?.duration ?? "",
+			deliverables: currentOffer?.deliverables ?? "",
 		});
 		setIsEditing(false);
 	};
@@ -85,7 +88,7 @@ export default function NegotiationSection({ negotiation, role }) {
 					<Grid size={{ xs: 12, md: 8 }}>
 						<Stack spacing={2}>
 							<CurrentOfferCard
-								negotiation={currentNegotiation}
+								offer={currentOffer}
 								isEditing={isEditing}
 								editValues={editValues}
 								onEditChange={handleEditChange}
@@ -104,7 +107,7 @@ export default function NegotiationSection({ negotiation, role }) {
 					</Grid>
 
 					<Grid size={{ xs: 12, md: 4 }}>
-						<NegotiationTimeline rounds={currentNegotiation.rounds} />
+						<NegotiationTimeline updates={sortedUpdates} />
 					</Grid>
 				</Grid>
 			</Stack>
