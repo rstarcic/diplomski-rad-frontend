@@ -10,51 +10,7 @@ import StatusChip from "../../../../components/ui/StatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import { findStatusKey } from "../../../../utils/jobs";
 import { JOB_STATUSES } from "../../../../constants/statuses";
-import { jobCardBaseSx } from "../../../../theme/layout";
-
-const cardSx = {
-	...jobCardBaseSx,
-	borderRadius: 4,
-	boxShadow: "0 14px 35px rgba(15, 23, 42, 0.07)",
-	overflow: "hidden",
-};
-
-const actionRowSx = {
-	p: 1.5,
-	borderRadius: 2.5,
-	border: "1px solid",
-	borderColor: "divider",
-	bgcolor: "rgba(99, 102, 241, 0.03)",
-	alignItems: "center",
-	justifyContent: "space-between",
-};
-
-const iconBoxBase = {
-	width: 34,
-	height: 34,
-	borderRadius: 2,
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-};
-
-const applicationsIconSx = (theme) => ({
-	...iconBoxBase,
-	bgcolor: theme.custom.iconPalette.applications.bg,
-	color: theme.custom.iconPalette.applications.color,
-});
-
-const contractIconSx = (theme) => ({
-	...iconBoxBase,
-	bgcolor: theme.custom.iconPalette.contract.bg,
-	color: theme.custom.iconPalette.contract.color,
-});
-
-const paymentIconSx = (theme) => ({
-	...iconBoxBase,
-	bgcolor: theme.custom.iconPalette.payment.bg,
-	color: theme.custom.iconPalette.payment.color,
-});
+import { cardSx, actionRowSx, applicationsIconSx, contractIconSx, paymentIconSx } from "./MyJobCard.styles";
 
 export default function MyJobCard({ job }) {
 	const navigate = useNavigate();

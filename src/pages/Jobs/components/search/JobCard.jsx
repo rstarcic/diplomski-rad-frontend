@@ -1,39 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
-import { Avatar, Box, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
+import { Avatar, Box, ButtonBase, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
 import StatusChip from "../../../../components/ui/StatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import { findStatusKey, formatBudget, formatDeadline } from "../../../../utils/jobs";
 import { JOB_STATUSES } from "../../../../constants/statuses";
-import { jobCardBaseSx } from "../../../../theme/layout";
-
-const cardSx = {
-	...jobCardBaseSx,
-	borderRadius: 3,
-	boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
-};
-
-const detailsButtonSx = {
-	borderRadius: 2,
-	px: 2.5,
-	whiteSpace: "nowrap",
-	flexShrink: 0,
-};
-
-const cardContentSx = {
-	p: 3,
-	height: "100%",
-	display: "flex",
-	flexDirection: "column",
-};
-
-const avatarSx = {
-	width: 36,
-	height: 36,
-	bgcolor: "primary.light",
-	flexShrink: 0,
-};
+import { cardSx, detailsButtonSx, cardContentSx, avatarSx, clientLinkSx } from "./JobCard.styles";
 
 export default function JobCard({ job }) {
 	const navigate = useNavigate();
@@ -85,7 +58,11 @@ export default function JobCard({ job }) {
 				<Box sx={{ mt: "auto", pt: 2 }}>
 					<Divider sx={{ mb: 2 }} />
 					<Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
-						<Stack direction="row" spacing={1.25} sx={{ minWidth: 0, alignItems: "center" }}>
+						<ButtonBase
+							component={RouterLink}
+							to={`/contractor/clients/${job.client?.id}`}
+							sx={clientLinkSx}
+						>
 							<Avatar
 								src={job.client?.profileImageUrl}
 								alt={`${job.client?.firstName} ${job.client?.lastName}`}
@@ -96,7 +73,7 @@ export default function JobCard({ job }) {
 							<Typography variant="body2" fontWeight={700}>
 								{job.client?.firstName} {job.client?.lastName}
 							</Typography>
-						</Stack>
+						</ButtonBase>
 						<PrimaryButton size="small" sx={detailsButtonSx} onClick={handleViewDetails}>
 							View details
 						</PrimaryButton>

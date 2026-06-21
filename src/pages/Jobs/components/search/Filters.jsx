@@ -19,63 +19,8 @@ import {
 } from "@mui/material";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../../theme/layout";
 import { BUDGET_TYPES, INITIAL_JOB_FILTERS, LOCATION_TYPES, WORK_MODES } from "../../../../constants/jobFilters";
-
-const filterCardSx = {
-	...surfaceSectionSx,
-	p: { xs: 2, md: 2.5 },
-};
-
-const resetButtonSx = {
-	display: "flex",
-	alignItems: "center",
-	gap: 0.5,
-	background: "none",
-	border: "none",
-	cursor: "pointer",
-	color: "text.secondary",
-	fontSize: "0.8125rem",
-	fontWeight: 600,
-	p: 0,
-	transition: "color 0.15s",
-	"&:hover": { color: "primary.main" },
-};
-
-const filterGridSx = {
-	display: "grid",
-	gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
-	gap: 2,
-	alignItems: "center",
-};
-
-const budgetSectionSx = (theme) => ({
-	mt: 2,
-	p: { xs: 1.5, md: 2 },
-	border: "1px solid",
-	borderColor: "divider",
-	borderRadius: 2,
-	bgcolor: theme.custom.tint.primarySubtle,
-});
-
-const budgetLabelSx = {
-	display: "block",
-	mb: 1.5,
-	textTransform: "uppercase",
-	letterSpacing: 0.8,
-	fontSize: "0.7rem",
-};
-
-const budgetToggleGroupSx = {
-	height: 40,
-	flexShrink: 0,
-	"& .MuiToggleButton-root": {
-		px: 2.5,
-		fontSize: "0.8125rem",
-		"&:first-of-type": { borderRadius: "20px 0 0 20px" },
-		"&:last-of-type": { borderRadius: "0 20px 20px 0" },
-	},
-};
+import { filterCardSx, resetButtonSx, filterGridSx, budgetSectionSx, budgetLabelSx, budgetToggleGroupSx } from "./Filters.styles";
 
 export default function Filters({
 	filters = INITIAL_JOB_FILTERS,
