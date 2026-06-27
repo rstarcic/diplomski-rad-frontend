@@ -1,31 +1,94 @@
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
-import { Button, Divider, Stack } from "@mui/material";
+import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import { Button, Divider, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import FormTextField from "../../../components/ui/FormTextField";
 import PasswordTextField from "../../../components/ui/PasswordTextField";
+import AppAlert from "../../../components/ui/Alert";
 import { useFormErrors } from "../../../hooks/useFormErrors";
+import { useAuth } from "../../../hooks/useAuth";
 import FORM_ERRORS from "../../../constants/formError";
+import { ROLES } from "../../../constants/roles";
+import { startGoogleRegister } from "../../../api/auth";
 
-export default function SignupForm() {
+const toggleGroupSx = {
+	width: "100%",
+	mb: 0.5,
+	gap: 1,
+};
+
+const toggleButtonSx = {
+	flex: 1,
+	py: 1.4,
+	gap: 1,
+	fontWeight: 800,
+	fontSize: "0.875rem",
+	textTransform: "none",
+	borderRadius: "10px !important",
+	border: "1.5px solid",
+	borderColor: "divider",
+	"&.Mui-selected": {
+		bgcolor: "primary.main",
+		color: "primary.contrastText",
+		borderColor: "primary.main",
+		"&:hover": {
+			bgcolor: "primary.dark",
+		},
+	},
+};
+
+export default function SignupForm({ initialRole = null }) {
 	const [formData, setFormData] = useState({
+		role: initialRole,
+		firstName: "",
+		lastName: "",
 		email: "",
 		password: "",
 		confirmPassword: "",
 	});
+	const [loading, setLoading] = useState(false);
+	const [apiError, setApiError] = useState(null);
 	const { errors, setErrors, clearErrors } = useFormErrors();
+	const { register } = useAuth();
+	const navigate = useNavigate();
 
 	const updateField = (field) => (event) => {
-		setFormData((prev) => ({
-			...prev,
-			[field]: event.target.value,
-		}));
+		setFormData((prev) => ({ ...prev, [field]: event.target.value }));
 	};
 
-	const handleSubmit = (event) => {
+	const handleRoleChange = (_, value) => {
+		if (value !== null) {
+			setFormData((prev) => ({ ...prev, role: value }));
+		}
+	};
+
+	const handleGoogleSignup = () => {
+		if (!formData.role) {
+			setErrors({ role: FORM_ERRORS.ROLE_REQUIRED });
+			return;
+		}
+		startGoogleRegister(formData.role);
+	};
+
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 		clearErrors();
 
 		const nextErrors = {};
+
+		if (!formData.role) {
+			nextErrors.role = FORM_ERRORS.ROLE_REQUIRED;
+		}
+
+		if (!formData.firstName) {
+			nextErrors.firstName = FORM_ERRORS.REQUIRED_FIELD;
+		}
+
+		if (!formData.lastName) {
+			nextErrors.lastName = FORM_ERRORS.REQUIRED_FIELD;
+		}
 
 		if (!formData.email) {
 			nextErrors.email = FORM_ERRORS.EMAIL_REQUIRED;
@@ -47,10 +110,68 @@ export default function SignupForm() {
 			setErrors(nextErrors);
 			return;
 		}
+
+		setLoading(true);
+		setApiError(null);
+		try {
+			await register(formData.role, {
+				first_name: formData.firstName,
+				last_name: formData.lastName,
+				email: formData.email,
+				password: formData.password,
+			});
+			navigate("/login");
+		} catch (err) {
+			setApiError(err.response?.data?.message ?? "Registration failed. Please try again.");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
-		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit} noValidate>
+		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
+			<Stack spacing={0.75} sx={{ mb: 2.5 }}>
+				<Typography variant="body2" fontWeight={700} color="text.secondary">
+					I am a…
+				</Typography>
+				<ToggleButtonGroup value={formData.role} exclusive onChange={handleRoleChange} sx={toggleGroupSx}>
+					<ToggleButton value={ROLES.CLIENT} sx={toggleButtonSx}>
+						<PersonRoundedIcon fontSize="small" />
+						Client
+					</ToggleButton>
+					<ToggleButton value={ROLES.CONTRACTOR} sx={toggleButtonSx}>
+						<EngineeringRoundedIcon fontSize="small" />
+						Contractor
+					</ToggleButton>
+				</ToggleButtonGroup>
+				{errors.role && (
+					<Typography variant="caption" color="error">
+						{errors.role}
+					</Typography>
+				)}
+			</Stack>
+
+			<Stack direction="row" spacing={1.5}>
+				<FormTextField
+					name="firstName"
+					label="First name"
+					value={formData.firstName}
+					onChange={updateField("firstName")}
+					errors={errors}
+					autoComplete="given-name"
+					required
+				/>
+				<FormTextField
+					name="lastName"
+					label="Last name"
+					value={formData.lastName}
+					onChange={updateField("lastName")}
+					errors={errors}
+					autoComplete="family-name"
+					required
+				/>
+			</Stack>
+
 			<FormTextField
 				name="email"
 				label="Email"
@@ -80,14 +201,16 @@ export default function SignupForm() {
 				required
 			/>
 
+			{apiError && <AppAlert severity="error">{apiError}</AppAlert>}
+
 			<Stack spacing={{ xs: 0.75, sm: 1 }} sx={{ pt: { xs: 1, sm: 2 } }}>
-				<Button type="submit" variant="contained" size="large">
+				<Button type="submit" variant="contained" size="large" loading={loading}>
 					Create Account
 				</Button>
 
 				<Divider>or</Divider>
 
-				<Button type="button" variant="outlined" size="large" startIcon={<GoogleIcon />}>
+				<Button type="button" variant="outlined" size="large" startIcon={<GoogleIcon />} onClick={handleGoogleSignup}>
 					Continue with Google
 				</Button>
 			</Stack>

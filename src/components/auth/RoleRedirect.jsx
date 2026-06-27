@@ -3,7 +3,9 @@ import { useAuth } from "../../hooks/useAuth";
 import { getHomePath } from "../../constants/roles";
 
 export default function RoleRedirect() {
-	const { isAuthenticated, role } = useAuth();
+	const { isAuthenticated, loading, role } = useAuth();
+
+	if (loading) return null;
 
 	if (!isAuthenticated) {
 		return <Navigate to="/login" replace />;

@@ -14,7 +14,6 @@ import PortfolioCard from "./components/shared/PortfolioCard";
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
 import { contractorProfileReviewData } from "../../mock/ProfileReviews";
 
-import pageSx from "../../theme/layout";
 import SkillsCard from "./components/shared/SkillsCard";
 
 const initialProfileData = {
@@ -107,7 +106,7 @@ export default function ContractorProfilePage() {
 	};
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<PageHeader
 				label="Settings"
 				title="Contractor Profile"

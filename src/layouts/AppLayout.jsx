@@ -2,46 +2,8 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Box, Drawer } from "@mui/material";
 import Header from "./components/Header";
-import Sidebar, { sidebarWidth } from "./components/Sidebar";
-
-const layoutSx = {
-	width: "100%",
-	height: "100vh",
-	display: "flex",
-	bgcolor: "background.default",
-	overflow: "hidden",
-};
-
-const desktopSidebarSx = {
-	width: sidebarWidth,
-	flexShrink: 0,
-	height: "100vh",
-	display: { xs: "none", md: "block" },
-};
-
-const mobileDrawerSx = {
-	display: { xs: "block", md: "none" },
-};
-
-const mobileDrawerPaperSx = {
-	width: sidebarWidth,
-	maxWidth: "85vw",
-};
-
-const contentSx = {
-	flex: 1,
-	minWidth: 0,
-	width: "100%",
-	height: "100vh",
-	overflow: "auto",
-};
-
-const pageContentSx = {
-	width: "100%",
-	maxWidth: "lg",
-	mx: "auto",
-	p: { xs: 2, sm: 3, lg: 4 },
-};
+import Sidebar from "./components/Sidebar";
+import { layoutSx, desktopSidebarSx, mobileDrawerSx, mobileDrawerPaperSx, contentSx, pageContentSx } from "./AppLayout.styles";
 
 export default function AppLayout() {
 	const [mobileOpen, setMobileOpen] = useState(false);

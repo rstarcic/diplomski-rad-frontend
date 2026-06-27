@@ -11,6 +11,7 @@ import RequireRole from "./components/auth/RequireRole";
 import RoleRedirect from "./components/auth/RoleRedirect";
 import { ROLES } from "./constants/roles";
 
+const HomePage = lazy(() => import("./pages/Home/HomePage"));
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/Auth/SignupPage"));
 const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
@@ -21,13 +22,19 @@ const ContractorDashboard = lazy(() => import("./pages/Dashboards/ContractorDash
 const MyJobsPage = lazy(() => import("./pages/Jobs/MyJobsPage"));
 const CreateJobPage = lazy(() => import("./pages/Jobs/CreateJobPage"));
 const EditJobPage = lazy(() => import("./pages/Jobs/EditJobPage"));
-const JobApplicationsPage = lazy(() => import("./pages/Applications/JobApplicationsPage"));
-const ApplicationDetailsPage = lazy(() => import("./pages/Applications/ApplicationDetailsPage"));
 const SearchJobsPage = lazy(() => import("./pages/Jobs/SearchJobsPage"));
 const JobDetailsPage = lazy(() => import("./pages/Jobs/JobDetailsPage"));
 
+const JobApplicationsPage = lazy(() => import("./pages/Applications/JobApplicationsPage"));
+const ApplicationDetailsPage = lazy(() => import("./pages/Applications/ApplicationDetailsPage"));
+const ContractorApplicationsPage = lazy(() => import("./pages/Applications/ContractorApplicationsPage"));
+const ContractorApplicationDetailsPage = lazy(() => import("./pages/Applications/ContractorApplicationDetailsPage"));
+
 const ClientProfilePage = lazy(() => import("./pages/Profiles/ClientProfilePage"));
 const ContractorProfilePage = lazy(() => import("./pages/Profiles/ContractorProfilePage"));
+const ClientPublicProfilePage = lazy(() => import("./pages/Profiles/ClientPublicProfilePage"));
+const ContractorPublicProfilePage = lazy(() => import("./pages/Profiles/ContractorPublicProfilePage"));
+
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -39,6 +46,7 @@ function App() {
 				}
 			>
 				<Routes>
+					<Route path="/" element={<HomePage />} />
 					<Route element={<AuthLayout />}>
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/signup" element={<SignupPage />} />
@@ -55,13 +63,17 @@ function App() {
 							<Route path="jobs/:jobId/applications" element={<JobApplicationsPage />} />
 							<Route path="jobs/:jobId/applications/:applicationId" element={<ApplicationDetailsPage />} />
 							<Route path="profile" element={<ClientProfilePage />} />
+							<Route path="contractors/:contractorId" element={<ContractorPublicProfilePage />} />
 						</Route>
 						<Route path="/contractor" element={<RequireRole role={ROLES.CONTRACTOR} />}>
 							<Route index element={<Navigate to="dashboard" replace />} />
 							<Route path="dashboard" element={<ContractorDashboard />} />
 							<Route path="jobs/search" element={<SearchJobsPage />} />
 							<Route path="jobs/:jobId" element={<JobDetailsPage />} />
+							<Route path="applications" element={<ContractorApplicationsPage />} />
+							<Route path="applications/:applicationId" element={<ContractorApplicationDetailsPage />} />
 							<Route path="profile" element={<ContractorProfilePage />} />
+							<Route path="clients/:clientId" element={<ClientPublicProfilePage />} />
 						</Route>
 					</Route>
 

@@ -2,12 +2,11 @@ import { useState } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { Box, Drawer } from "@mui/material";
 import SecondaryButton from "../../components/ui/SecondaryButton";
-import pageSx from "../../theme/layout";
 import Filters from "./components/search/Filters";
 import SearchJobsHeader from "./components/search/SearchJobsHeader";
 import JobsResultsSection from "./components/search/JobsResultsSection";
 import { INITIAL_JOB_FILTERS } from "../../constants/jobFilters";
-import { MOCK_JOBS } from "../../mock/Jobs";
+import { MOCK_CLIENTS, MOCK_JOBS } from "../../mock/MockData";
 
 const mobileFilterButtonSx = {
 	display: { xs: "flex", md: "none" },
@@ -39,7 +38,7 @@ export default function SearchJobsPage() {
 	const handleSearch = () => {};
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<SearchJobsHeader filters={filters} onChange={setFilters} onSearch={handleSearch} />
 
 			<Box sx={mobileFilterButtonSx}>
@@ -65,7 +64,9 @@ export default function SearchJobsPage() {
 			>
 				<Filters filters={filters} onChange={setFilters} onReset={resetFilters} showSearchField={false} />
 			</Drawer>
-			<JobsResultsSection jobs={MOCK_JOBS} />
+			<JobsResultsSection
+				jobs={MOCK_JOBS.map((job) => ({ ...job, client: MOCK_CLIENTS.find((c) => c.id === job.clientId) }))}
+			/>
 		</Box>
 	);
 }

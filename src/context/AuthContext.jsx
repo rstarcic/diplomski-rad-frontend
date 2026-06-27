@@ -1,17 +1,35 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { loginApi, logoutApi, meApi, registerApi } from "../api/auth.js";
 import { AuthContext } from "./authContext";
 
 export function AuthProvider({ children }) {
 	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
 
-	// login/logout API pozivi (JWT + Google OAuth) idu ovdje;
-	// backend vraća korisnika s ulogom, frontend ga drži samo u memoriji
-	const login = useCallback((nextUser) => {
-		setUser(nextUser);
+	useEffect(() => {
+		meApi()
+			.then(setUser)
+			.catch(() => {})
+			.finally(() => setLoading(false));
 	}, []);
 
-	const logout = useCallback(() => {
-		setUser(null);
+	const login = useCallback(async (email, password) => {
+		await loginApi(email, password);
+		const authUser = await meApi();
+		setUser(authUser);
+		return authUser;
+	}, []);
+
+	const register = useCallback(async (role, userData) => {
+		await registerApi(role, userData);
+	}, []);
+
+	const logout = useCallback(async () => {
+		try {
+			await logoutApi();
+		} finally {
+			setUser(null);
+		}
 	}, []);
 
 	const value = useMemo(
@@ -19,10 +37,12 @@ export function AuthProvider({ children }) {
 			user,
 			role: user?.role ?? null,
 			isAuthenticated: Boolean(user),
+			loading,
 			login,
+			register,
 			logout,
 		}),
-		[user, login, logout]
+		[user, loading, login, register, logout],
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,18 +1,18 @@
 export const reviewCriteria = {
     client: [
-        { key: "requirementsClarityRating", label: "Requirements clarity" },
-        { key: "communicationRating", label: "Communication" },
         { key: "overallRating", label: "Overall experience" },
+        { key: "communicationRating", label: "Communication" },
+        { key: "clarityRating", label: "Clarity" },
+        { key: "reliabilityRating", label: "Reliability" },
+        { key: "collaborationRating", label: "Collaboration" },
     ],
     contractor: [
-        { key: "workQualityRating", label: "Work quality" },
-        { key: "communicationRating", label: "Communication" },
         { key: "overallRating", label: "Overall experience" },
-    ],
-    job: [
-        { key: "descriptionClarityRating", label: "Job description clarity" },
-        { key: "scopeAccuracyRating", label: "Scope accuracy" },
-        { key: "budgetFairnessRating", label: "Budget fairness" },
-        { key: "overallRating", label: "Overall job quality" },
+        { key: "communicationRating", label: "Communication" },
+        { key: "clarityRating", label: "Clarity" },
+        { key: "reliabilityRating", label: "Reliability" },
+        { key: "collaborationRating", label: "Collaboration" },
     ],
 };
+
+export const OVERALL_RATING_KEY = "overallRating";

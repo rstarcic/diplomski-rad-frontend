@@ -1,6 +1,5 @@
 import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import logo from "../../assets/logo.png";
 
 export default function Header({ onMenuClick }) {
 	return (
@@ -20,17 +19,6 @@ export default function Header({ onMenuClick }) {
 			<IconButton onClick={onMenuClick} aria-label="Open sidebar" color="inherit">
 				<MenuIcon />
 			</IconButton>
-
-			<Box
-				component="img"
-				src={logo}
-				alt="WorkLink"
-				sx={{
-					height: 45,
-					width: "auto",
-					display: "block",
-				}}
-			/>
 		</Box>
 	);
 }

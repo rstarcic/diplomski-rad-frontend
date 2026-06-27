@@ -7,7 +7,6 @@ import PageHeader from "../../components/ui/PageHeader";
 import StatusFilter from "../../components/ui/StatusFilter";
 import { APPLICATION_STATUSES } from "../../constants/statuses";
 import { MOCK_APPLICATIONS, MOCK_CONTRACTORS, MOCK_JOBS } from "../../mock/MockData";
-import { pageSx } from "../../theme/layout";
 import { findStatusKey } from "../../utils/jobs";
 
 import ApplicationsCard from "./components/ApplicationsCard";
@@ -26,7 +25,7 @@ export default function JobApplicationsPage() {
 	});
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<BackButton backTo="/client/jobs" sx={{ mb: 2 }} />
 			<PageHeader
 				label="Applications"

@@ -17,13 +17,22 @@ const tabSx = {
 	fontSize: { xs: "0.75rem", sm: "0.875rem" },
 };
 
-function TabLabel({ label, locked }) {
+function TabLabel({ label, locked, lockReason }) {
 	if (!locked) return label;
-	return (
+
+	const content = (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
 			{label}
 			<LockRoundedIcon sx={{ fontSize: 13 }} />
 		</Box>
+	);
+
+	return lockReason ? (
+		<Tooltip title={lockReason} placement="top" arrow>
+			<span>{content}</span>
+		</Tooltip>
+	) : (
+		content
 	);
 }
 
@@ -44,32 +53,19 @@ export default function StepTabs({ tabs, initialTab = 0 }) {
 				scrollButtons="auto"
 				allowScrollButtonsMobile
 			>
-				{tabs.map((tab) => {
-					const tabEl = (
-						<Tab
-							key={tab.label}
-							icon={tab.icon}
-							iconPosition="start"
-							label={<TabLabel label={tab.label} locked={tab.locked} />}
-							disabled={tab.locked}
-							sx={{
-								...tabSx,
-								opacity: tab.locked ? 0.4 : 1,
-								pointerEvents: tab.locked ? "none" : "auto",
-							}}
-						/>
-					);
-
-					if (tab.locked && tab.lockReason) {
-						return (
-							<Tooltip key={tab.label} title={tab.lockReason} placement="top" arrow>
-								<span style={{ display: "inline-flex" }}>{tabEl}</span>
-							</Tooltip>
-						);
-					}
-
-					return tabEl;
-				})}
+				{tabs.map((tab) => (
+					<Tab
+						key={tab.label}
+						icon={tab.icon}
+						iconPosition="start"
+						label={<TabLabel label={tab.label} locked={tab.locked} lockReason={tab.lockReason} />}
+						aria-disabled={tab.locked}
+						sx={{
+							...tabSx,
+							opacity: tab.locked ? 0.4 : 1,
+						}}
+					/>
+				))}
 			</Tabs>
 
 			{tabs.map((tab, index) =>

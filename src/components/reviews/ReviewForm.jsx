@@ -45,7 +45,7 @@ export default function ReviewForm({
 	}
 
 	return (
-		<Card sx={surfaceSectionSx}>
+		<Card sx={{ ...surfaceSectionSx }}>
 			<Box component="form" noValidate onSubmit={handleSubmit}>
 				<Stack spacing={2}>
 					<Box>

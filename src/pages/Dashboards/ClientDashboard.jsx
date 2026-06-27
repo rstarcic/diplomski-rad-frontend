@@ -9,7 +9,6 @@ import DashboardStatsSection from "./components/DashboardStatsSection";
 
 import { dashboardStatCardConfig } from "./dashboardStats";
 import { clientDashboardData } from "../../mock/Dashboard";
-import pageSx from "../../theme/layout";
 
 const contentGridSx = {
 	mt: { xs: 2, md: 3.5 },
@@ -22,7 +21,7 @@ export default function ClientDashboardPage() {
 	const dashboardData = clientDashboardData;
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<PageHeader
 				label="Client Dashboard"
 				title="Welcome back"

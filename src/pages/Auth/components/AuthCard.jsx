@@ -1,7 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import SecondaryButton from "../../../components/ui/SecondaryButton";
-import { sectionTitleSx } from "../../../theme/layout";
+import Logo from "../../../components/ui/Logo";
 
 const defaultSide = {
 	title: "Welcome back to WorkLink.",
@@ -51,9 +51,7 @@ export default function AuthCard({ visualContent = defaultSide, formContent = fo
 						background: theme.custom.auth.side.background,
 					})}
 				>
-					<Typography variant="h6" sx={sectionTitleSx}>
-						WorkLink
-					</Typography>
+					<Logo />
 
 					<Box sx={{ my: 4 }}>
 						<Typography

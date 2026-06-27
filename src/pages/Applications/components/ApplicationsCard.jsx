@@ -8,16 +8,7 @@ import PrimaryButton from "../../../components/ui/PrimaryButton";
 import StatusChip from "../../../components/ui/StatusChip";
 import { APPLICATION_STATUSES } from "../../../constants/statuses";
 import { findStatusKey } from "../../../utils/jobs";
-import {
-	avatarSx,
-	cardSx,
-	contractorButtonSx,
-	coverLetterSx,
-	footerSx,
-	headerRowSx,
-	metaRowSx,
-} from "./ApplicationsCard.styles";
-import SecondaryButton from "../../../components/ui/SecondaryButton";
+import { avatarSx, cardSx, contractorButtonSx, coverLetterSx, footerSx, metaRowSx } from "./ApplicationsCard.styles";
 
 export default function ApplicationsCard({ application, contractor }) {
 	const navigate = useNavigate();
@@ -35,10 +26,17 @@ export default function ApplicationsCard({ application, contractor }) {
 	};
 
 	return (
-		<Card sx={cardSx}>
+		<Card elevation={0} sx={cardSx}>
 			<CardContent sx={{ p: 2.5, flexGrow: 1 }}>
 				<Stack spacing={2}>
-					<Stack direction="row" sx={headerRowSx}>
+					<Stack
+						direction="row"
+						spacing={2}
+						sx={{
+							alignItems: "flex-start",
+							justifyContent: "space-between",
+						}}
+					>
 						<ButtonBase onClick={openContractorProfile} sx={contractorButtonSx}>
 							<Avatar alt={fullName} src={profileImageUrl} sx={avatarSx}>
 								<PersonOutlineRoundedIcon />

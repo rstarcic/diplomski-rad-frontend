@@ -12,7 +12,6 @@ import {
 	MOCK_PAYMENTS,
 } from "../../mock/MockData";
 import { contractorProfileReviewData } from "../../mock/ProfileReviews";
-import { pageSx } from "../../theme/layout";
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import StepTabs from "./components/StepTabs";
@@ -43,7 +42,7 @@ export default function ApplicationDetailsPage() {
 	if (!application) return null;
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<BackButton backTo={`/client/jobs/${application.jobId}/applications`} sx={{ mb: 2 }} />
 			<PageHeader
 				label="Application details"

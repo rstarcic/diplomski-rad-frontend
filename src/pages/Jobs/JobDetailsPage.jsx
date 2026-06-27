@@ -1,4 +1,4 @@
-//import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Box, Grid, Stack } from "@mui/material";
 import PageHeader from "../../components/ui/PageHeader";
 import JobDetailsSection from "./components/details/JobDetailsSection";
@@ -6,17 +6,18 @@ import ApplyCard from "./components/details/ApplyCard";
 import ClientProfileSection from "./components/details/ClientProfileSection";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
-import pageSx from "../../theme/layout";
-
-import { MOCK_JOB_DETAILS } from "../../mock/JobDetailsPage";
-
+import { MOCK_JOBS, MOCK_CLIENTS } from "../../mock/MockData";
+import { clientProfileReviewData } from "../../mock/ProfileReviews";
 export default function JobDetailsPage() {
-	//const { jobId } = useParams();
+	const { jobId } = useParams();
 
-	const job = MOCK_JOB_DETAILS;
+	const job = MOCK_JOBS.find((j) => j.id === jobId);
+	const client = MOCK_CLIENTS.find((c) => c.id === job?.clientId);
+
+	if (!job || !client) return null;
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<PageHeader
 				label="Job details"
 				title={job.title}
@@ -27,17 +28,17 @@ export default function JobDetailsPage() {
 				<Grid size={{ xs: 12, md: 8 }}>
 					<Stack spacing={3}>
 						<JobDetailsSection job={job} />
-						<ApplyCard job={job} alreadyApplied={job.hasApplied} onApply={() => {}} />
+						<ApplyCard job={job} alreadyApplied={false} onApply={() => {}} />
 					</Stack>
 				</Grid>
 
 				<Grid size={{ xs: 12, md: 4 }}>
 					<Stack spacing={3} sx={{ position: { md: "sticky" }, top: 24 }}>
-						<ClientProfileSection client={job.client} />
+						<ClientProfileSection client={client} />
 						<ReviewSummaryCard
 							title="Client reviews"
-							reviews={job.client.reviews}
-							summary={job.client.reviewSummary}
+							reviews={clientProfileReviewData.reviews}
+							summary={clientProfileReviewData.summary}
 							criteria={reviewCriteria.client}
 						/>
 					</Stack>

@@ -9,7 +9,6 @@ import PrimaryButton from "../../components/ui/PrimaryButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
 import { getMissingFields } from "../../utils/jobs";
 import { getAccountSetupMock } from "../../mock/AccountSetup";
-import pageSx from "../../theme/layout";
 
 const initialJobData = {
 	title: "",
@@ -46,7 +45,7 @@ export default function CreateJobPage() {
 	};
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<PageHeader
 				label="Job creation"
 				title="Create New Job"

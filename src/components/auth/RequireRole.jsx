@@ -3,8 +3,10 @@ import { useAuth } from "../../hooks/useAuth";
 import { getHomePath } from "../../constants/roles";
 
 export default function RequireRole({ role }) {
-	const { isAuthenticated, role: currentRole } = useAuth();
+	const { isAuthenticated, loading, role: currentRole } = useAuth();
 	const location = useLocation();
+
+	if (loading) return null;
 
 	if (!isAuthenticated) {
 		return <Navigate to="/login" replace state={{ from: location }} />;

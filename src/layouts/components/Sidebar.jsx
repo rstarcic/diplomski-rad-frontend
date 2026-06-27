@@ -3,67 +3,16 @@ import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Typogr
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import Logo from "../../components/ui/Logo";
 import { sidebarItems } from "./SidebarConfig";
 import { useAuth } from "../../hooks/useAuth";
 import { ROLES } from "../../constants/roles";
-
-export const sidebarWidth = 270;
-
-const sidebarSx = (theme) => ({
-	width: sidebarWidth,
-	height: "100%",
-	p: 2,
-	display: "flex",
-	flexDirection: "column",
-	bgcolor: theme.palette.primary.main,
-	color: theme.palette.primary.contrastText,
-});
-
-const childItemSx = {
-	ml: 3,
-	my: 0.25,
-	py: 0.85,
-	pl: 3,
-	borderRadius: 1,
-	color: "primary.contrastText",
-	opacity: 0.86,
-	"&.is-active": {
-		opacity: 1,
-		bgcolor: "rgba(255, 255, 255, 0.16)",
-	},
-};
-
-const itemIconSx = {
-	minWidth: 38,
-	color: "primary.contrastText",
-};
-
-const itemButtonSx = {
-	borderRadius: 1,
-	color: "primary.contrastText",
-	"&.is-active": {
-		bgcolor: "rgba(255, 255, 255, 0.12)",
-	},
-};
-
-const chevronSx = {
-	transition: "transform 160ms ease",
-	"&.is-open": {
-		transform: "rotate(180deg)",
-	},
-};
-
-const secondaryTextSx = (theme) => ({
-	color: theme.palette.primary.contrastText,
-	opacity: 0.72,
-});
+import { sidebarSx, sidebarHeaderSx, childItemSx, itemIconSx, itemButtonSx, chevronSx, secondaryTextSx, signOutAreaSx, signOutButtonSx } from "./Sidebar.styles";
 
 function SidebarHeader({ isClientWorkspace }) {
 	return (
-		<Box sx={{ px: 1.5, mb: 3 }}>
-			<Typography variant="h6" sx={{ mb: 2, fontWeight: 800 }}>
-				WorkLink
-			</Typography>
+		<Box sx={sidebarHeaderSx}>
+			<Logo showMotto={false} />
 
 			<Typography variant="body2" sx={secondaryTextSx}>
 				{isClientWorkspace ? "Client workspace" : "Contractor workspace"}
@@ -167,8 +116,8 @@ export default function Sidebar({ onNavigate }) {
 				))}
 			</List>
 
-			<Box sx={{ mt: "auto", pt: 3 }}>
-				<ListItemButton onClick={handleSignOut}>
+			<Box sx={signOutAreaSx}>
+				<ListItemButton onClick={handleSignOut} sx={signOutButtonSx}>
 					<ListItemIcon sx={itemIconSx}>
 						<LogoutRoundedIcon />
 					</ListItemIcon>

@@ -9,14 +9,13 @@ import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
 import { profileStatCardConfig } from "./profileStats";
 import { clientProfileReviewData } from "../../mock/ProfileReviews";
 import { MOCK_CLIENTS } from "../../mock/MockData";
-import pageSx from "../../theme/layout";
 
 export default function ClientPublicProfilePage() {
 	const { clientId } = useParams();
 	const client = MOCK_CLIENTS.find((c) => c.id == clientId);
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
 				<Grid size={{ xs: 12, lg: 8 }}>
 					<Stack spacing={3}>

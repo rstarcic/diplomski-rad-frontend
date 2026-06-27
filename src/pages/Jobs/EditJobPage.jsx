@@ -12,8 +12,7 @@ import { BackButton } from "../../components/ui/BackButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
 import { getMissingFields } from "../../utils/jobs";
 import { getAccountSetupMock } from "../../mock/AccountSetup";
-import { MOCK_USER_JOBS } from "../../mock/UserJobs";
-import { pageSx } from "../../theme/layout";
+import { MOCK_JOBS } from "../../mock/MockData";
 
 const workModeMap = { Remote: "remote", Hybrid: "hybrid", "On-site": "onsite" };
 const budgetTypeMap = { Fixed: "fixed", Hourly: "hourly" };
@@ -63,7 +62,7 @@ const emptyJobData = {
 
 export default function EditJobPage() {
 	const { jobId } = useParams();
-	const existing = MOCK_USER_JOBS.find((j) => String(j.id) === String(jobId));
+	const existing = MOCK_JOBS.find((j) => j.id === jobId);
 	const [jobData, setJobData] = useState(existing ? toFormData(existing) : emptyJobData);
 	const accountSetup = getAccountSetupMock("client");
 	const accountIsComplete = accountSetup.profileCompleted && accountSetup.paymentCompleted;
@@ -77,7 +76,7 @@ export default function EditJobPage() {
 	};
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<BackButton backTo="/client/jobs" sx={{ mb: 2 }} />
 			<PageHeader
 				label="Job editing"

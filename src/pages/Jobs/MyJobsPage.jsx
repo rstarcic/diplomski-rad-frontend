@@ -4,18 +4,18 @@ import PageHeader from "../../components/ui/PageHeader";
 import StatusFilter from "../../components/ui/StatusFilter";
 import MyJobCard from "./components/my-jobs/MyJobCard";
 import { JOB_STATUSES } from "../../constants/statuses";
-import { pageSx } from "../../theme/layout";
 import { findStatusKey } from "../../utils/jobs";
-import { MOCK_USER_JOBS } from "../../mock/UserJobs";
+import { MOCK_JOBS } from "../../mock/MockData";
 
 export default function MyJobsPage() {
 	const [selectedStatus, setSelectedStatus] = useState("all");
-	const jobs = MOCK_USER_JOBS.filter((job) => {
+	const jobs = MOCK_JOBS.filter((job) => {
+		if (job.clientId !== "client_1") return false;
 		if (selectedStatus === "all") return true;
 		return findStatusKey(job.status, JOB_STATUSES) === selectedStatus;
 	});
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<PageHeader
 				label="My jobs"
 				title="Posted Jobs"

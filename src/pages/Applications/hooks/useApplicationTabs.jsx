@@ -9,9 +9,14 @@ import NegotiationSection from "../components/negotiation/NegotiationSection";
 import PaymentsSection from "../components/payment/PaymentsSection";
 
 export function useApplicationTabs({ negotiation, negotiationUpdates = [], contract, payments = [], role = "client" }) {
-	const negotiationAccepted = negotiation?.status === "ACCEPTED" || (!negotiation && !!contract);
+	const negotiationAccepted = negotiation?.status === "ACCEPTED" || (!negotiation && Boolean(contract));
+
 	const contractCompleted = contract?.status === "COMPLETED";
+
 	const paymentCompleted = payments.some((payment) => payment.status === "PAID");
+
+	const reviewTarget = role === "client" ? "contractor" : "client";
+
 	return [
 		{
 			label: "Negotiation",
@@ -23,26 +28,26 @@ export function useApplicationTabs({ negotiation, negotiationUpdates = [], contr
 			label: "Contract",
 			icon: <GavelRoundedIcon fontSize="small" />,
 			locked: !negotiationAccepted,
-			lockReason: "Negotiation must be accepted before viewing the contract",
+			lockReason: "Negotiation must be accepted before viewing the contract.",
 			content: <ContractDetailsSection contract={contract} role={role} />,
 		},
 		{
 			label: "Payment",
 			icon: <PaymentsOutlinedIcon fontSize="small" />,
 			locked: !contractCompleted,
-			lockReason: "Contract must be completed before viewing payments",
+			lockReason: "Contract must be completed before viewing payments.",
 			content: <PaymentsSection payments={payments} />,
 		},
 		{
 			label: "Review",
 			icon: <RateReviewOutlinedIcon fontSize="small" />,
 			locked: !paymentCompleted,
-			lockReason: "Payment must be completed before leaving a review",
+			lockReason: "Payment must be completed before leaving a review.",
 			content: (
 				<ReviewForm
-					type="contractor"
+					type={reviewTarget}
 					title="Leave a review"
-					subtitle="Share your experience working with this contractor."
+					subtitle={`Share your experience working with this ${reviewTarget}.`}
 				/>
 			),
 		},

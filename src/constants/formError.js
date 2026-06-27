@@ -6,6 +6,7 @@ const FORM_ERRORS = {
     EMAIL_REQUIRED: "Email is required.",
     PASSWORD_REQUIRED: "Password is required.",
     CONFIRM_PASSWORD_REQUIRED: "Please confirm your password.",
+    ROLE_REQUIRED: "Please select a role to continue.",
 };
 
 export default FORM_ERRORS;

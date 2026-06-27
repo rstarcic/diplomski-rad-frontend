@@ -9,7 +9,6 @@ import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
 import { clientProfileReviewData } from "../../mock/ProfileReviews";
-import pageSx from "../../theme/layout";
 
 const initialProfileData = {
 	firstName: "",
@@ -54,7 +53,7 @@ export default function ClientProfilePage() {
 	};
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<PageHeader
 				label="Settings"
 				title="Client Profile"

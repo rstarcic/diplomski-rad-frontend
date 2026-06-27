@@ -11,7 +11,6 @@ import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
 import { MOCK_CONTRACTORS } from "../../mock/MockData";
 import { contractorProfileReviewData } from "../../mock/ProfileReviews";
 
-import pageSx from "../../theme/layout";
 import PortfolioCard from "./components/shared/PortfolioCard";
 
 export default function ContractorPublicProfilePage() {
@@ -19,7 +18,7 @@ export default function ContractorPublicProfilePage() {
 	const contractor = MOCK_CONTRACTORS.find((c) => c.id == contractorId);
 
 	return (
-		<Box sx={pageSx}>
+		<Box>
 			<Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
 				<Grid size={{ xs: 12, lg: 8 }}>
 					<Stack spacing={3}>

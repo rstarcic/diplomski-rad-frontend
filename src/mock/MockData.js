@@ -1,4 +1,4 @@
-// ─── USERS ────────────────────────────────────────────────────────────────────
+// ─── CLIENTS ──────────────────────────────────────────────────────────────────
 
 export const MOCK_CLIENTS = [
     {
@@ -12,6 +12,13 @@ export const MOCK_CLIENTS = [
         about: "I run a growing SaaS startup and have hired multiple contractors for various projects. I value clear communication, realistic project scopes, and timely payments.",
         profileImageUrl: "https://i.pravatar.cc/120?img=12",
         createdAt: "2020-01-15",
+        stats: [
+            { id: "jobsPosted", value: 18, subtitle: "Total jobs published" },
+            { id: "jobsCompleted", value: 12, subtitle: "Successfully completed" },
+            { id: "activeJobs", value: 3, subtitle: "Currently open" },
+            { id: "averageResponseTime", value: "1 day", subtitle: "Typical reply time" },
+        ],
+        preferredCategories: ["Web Development", "Backend Development"],
     },
     {
         id: "client_2",
@@ -24,6 +31,13 @@ export const MOCK_CLIENTS = [
         about: "Product manager at a digital agency. I hire contractors for design and development projects.",
         profileImageUrl: "https://i.pravatar.cc/120?img=25",
         createdAt: "2021-03-10",
+        stats: [
+            { id: "jobsPosted", value: 18, subtitle: "Total jobs published" },
+            { id: "jobsCompleted", value: 12, subtitle: "Successfully completed" },
+            { id: "activeJobs", value: 3, subtitle: "Currently open" },
+            { id: "averageResponseTime", value: "1 day", subtitle: "Typical reply time" },
+        ],
+        preferredCategories: ["Web Development", "Backend Development"],
     },
 ];
 
@@ -32,6 +46,7 @@ export const MOCK_CONTRACTORS = [
         id: "contractor_1",
         firstName: "Marko",
         lastName: "Kovač",
+        title: "Senior Full-Stack Developer",
         email: "marko.kovac@example.com",
         phone: "+385 95 111 2222",
         country: "Croatia",
@@ -39,11 +54,43 @@ export const MOCK_CONTRACTORS = [
         about: "Senior full-stack developer with 7 years of experience. Specialised in React, FastAPI, and PostgreSQL.",
         profileImageUrl: "https://i.pravatar.cc/120?img=15",
         createdAt: "2019-06-20",
+        skills: ["React", "FastAPI", "PostgreSQL", "JavaScript", "Node.js", "Docker", "REST API"],
+        stats: [
+            { id: "completedJobs", value: 37, subtitle: "Successfully delivered" },
+            { id: "activeContracts", value: 4, subtitle: "Currently in progress" },
+            { id: "totalEarnings", value: "€18,450", subtitle: "Through platform" },
+
+            { id: "averageResponseTime", value: "2h", subtitle: "Average response" },
+        ],
+        portfolio: [
+            {
+                id: "portfolio_1",
+                title: "SaaS Dashboard UI",
+                description: "Responsive React and MUI dashboard with reusable cards, filters, and data tables.",
+                url: "https://github.com/example/saas-dashboard",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_2",
+                title: "API Management Platform",
+                description: "Full-stack project with React frontend, FastAPI backend, authentication, and REST endpoints.",
+                url: "https://github.com/example/api-platform",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_3",
+                title: "API Management Platform",
+                description: "Full-stack project with React frontend, FastAPI backend, authentication, and REST endpoints.",
+                url: "https://github.com/example/api-platform",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=360&fit=crop",
+            },
+        ],
     },
     {
         id: "contractor_2",
         firstName: "Luka",
         lastName: "Perić",
+        title: "Frontend Developer",
         email: "luka.peric@example.com",
         phone: "+385 91 333 4444",
         country: "Croatia",
@@ -51,11 +98,35 @@ export const MOCK_CONTRACTORS = [
         about: "Frontend developer with 3 years of experience. React, TypeScript, and MUI.",
         profileImageUrl: "https://i.pravatar.cc/120?img=20",
         createdAt: "2022-01-05",
+        skills: ["React", "TypeScript", "Material UI", "CSS", "Jest", "Git"],
+        stats: [
+            { id: "completedJobs", value: 14, subtitle: "Successfully delivered" },
+            { id: "activeContracts", value: 2, subtitle: "Currently in progress" },
+            { id: "totalEarnings", value: "€6,900", subtitle: "Through platform" },
+            { id: "averageResponseTime", value: "3h", subtitle: "Average response" },
+        ],
+        portfolio: [
+            {
+                id: "portfolio_1",
+                title: "SaaS Dashboard UI",
+                description: "Responsive React and MUI dashboard with reusable cards, filters, and data tables.",
+                url: "https://github.com/example/saas-dashboard",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_2",
+                title: "API Management Platform",
+                description: "Full-stack project with React frontend, FastAPI backend, authentication, and REST endpoints.",
+                url: "https://github.com/example/api-platform",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=360&fit=crop",
+            },
+        ],
     },
     {
         id: "contractor_3",
         firstName: "Sara",
         lastName: "Babić",
+        title: "UI/UX Designer & Frontend Developer",
         email: "sara.babic@example.com",
         phone: "+385 98 555 6666",
         country: "Croatia",
@@ -63,33 +134,119 @@ export const MOCK_CONTRACTORS = [
         about: "UI/UX designer and frontend developer. Figma, React, and accessible design.",
         profileImageUrl: "https://i.pravatar.cc/120?img=30",
         createdAt: "2021-09-15",
+        skills: ["Figma", "React", "CSS", "UX Design", "Accessibility", "HTML"],
+        stats: [
+            { id: "completedJobs", value: 22, subtitle: "Successfully delivered" },
+            { id: "activeContracts", value: 3, subtitle: "Currently in progress" },
+            { id: "totalEarnings", value: "€11,300", subtitle: "Through platform" },
+            { id: "averageResponseTime", value: "1h", subtitle: "Average response" },
+        ],
+        portfolio: [
+            {
+                id: "portfolio_1",
+                title: "SaaS Dashboard UI",
+                description: "Responsive React and MUI dashboard with reusable cards, filters, and data tables.",
+                url: "https://github.com/example/saas-dashboard",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_2",
+                title: "API Management Platform",
+                description: "Full-stack project with React frontend, FastAPI backend, authentication, and REST endpoints.",
+                url: "https://github.com/example/api-platform",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=360&fit=crop",
+            },
+        ],
     },
     {
         id: "contractor_4",
         firstName: "Ivan",
         lastName: "Marić",
+        title: "DevOps Engineer & Cloud Architect",
         email: "ivan.maric@example.com",
         phone: "+385 95 777 8888",
         country: "Croatia",
         city: "Zagreb",
-        about: "DevOps engineer and cloud architect. AWS, Docker, Kubernetes, and CI/CD pipelines.",
+        about: "DevOps engineer and cloud architect with expertise in AWS, Docker, Kubernetes, and CI/CD pipelines.",
         profileImageUrl: "https://i.pravatar.cc/120?img=35",
         createdAt: "2020-11-30",
+        skills: ["AWS", "Docker", "Kubernetes", "Terraform", "Python", "CI/CD", "Linux"],
+        stats: [
+            { id: "completedJobs", value: 29, subtitle: "Successfully delivered" },
+            { id: "activeContracts", value: 1, subtitle: "Currently in progress" },
+            { id: "totalEarnings", value: "€21,800", subtitle: "Through platform" },
+            { id: "averageResponseTime", value: "5h", subtitle: "Average response" },
+        ],
+        portfolio: [
+            {
+                id: "portfolio_2",
+                title: "API Management Platform",
+                description:
+                    "Full-stack platform built with React and FastAPI for API monitoring, authentication, and access control.",
+                url: "https://github.com/example/api-platform",
+                image:
+                    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_3",
+                title: "Cloud Infrastructure Dashboard",
+                description:
+                    "AWS and Kubernetes monitoring dashboard with real-time metrics, deployment tracking, and alert management.",
+                url: "https://github.com/example/cloud-dashboard",
+                image:
+                    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_4",
+                title: "CI/CD Automation System",
+                description:
+                    "Automated deployment pipelines using GitHub Actions, Docker, Terraform, and Kubernetes.",
+                url: "https://github.com/example/cicd-system",
+                image:
+                    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=360&fit=crop",
+            },
+            {
+                id: "portfolio_5",
+                title: "E-Commerce Microservices",
+                description:
+                    "Scalable microservice architecture with FastAPI, PostgreSQL, Redis, Docker, and NGINX.",
+                url: "https://github.com/example/ecommerce-microservices",
+                image:
+                    "https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=600&h=360&fit=crop",
+            },
+        ],
     },
 ];
 
 // ─── JOBS ─────────────────────────────────────────────────────────────────────
-// Covers:  OPEN | IN_PROGRESS | COMPLETED | CANCELLED
+// Status: OPEN | IN_PROGRESS | COMPLETED | CANCELLED
 
 export const MOCK_JOBS = [
-
-    // ── OPEN: Ana published this job, applications coming in
+    {
+        id: "job_1",
+        clientId: "client_2",
+        title: "Mobile App UI Designer",
+        category: "UI/UX Design",
+        description: "Design screens for a cross-platform mobile app (iOS and Android). Deliver Figma files with a complete component library and user flows.",
+        workMode: "Remote",
+        location: "Remote",
+        budgetType: "Fixed",
+        budgetAmount: 3000,
+        status: "OPEN",
+        deadline: "2026-09-01",
+        durationDays: 30,
+        hoursPerWeek: 20,
+        requirements: ["Figma expertise", "Mobile UI/UX experience", "Accessible design knowledge"],
+        deliverables: "Figma file with all screens, component library, and annotated design specs.",
+        createdAt: "2026-06-10",
+        updatedAt: "2026-06-10",
+    },
     {
         id: "job_2",
         clientId: "client_1",
         title: "Senior Frontend Developer",
         category: "Web Development",
-        description: "We are building a SaaS dashboard used by thousands of clients and contractors. You will own the frontend — reusable components, data tables, charts, complex forms, and responsive layouts. React + MUI codebase.",
+        description: "Build a SaaS dashboard with reusable components, data tables, charts, and responsive layouts. React + MUI codebase.",
         workMode: "Remote",
         location: "Remote",
         budgetType: "Hourly",
@@ -104,18 +261,19 @@ export const MOCK_JOBS = [
             "Experience integrating REST APIs",
             "Comfortable with responsive, mobile-first layouts",
         ],
-        deliverables: "Fully functional dashboard UI with at least 8 reusable components, responsive across mobile and desktop. Documented component library and unit tests.",
+        deliverables: "Fully functional dashboard UI with at least 8 reusable components, responsive across mobile and desktop.",
         createdAt: "2026-06-01",
         updatedAt: "2026-06-01",
+        applications: { total: 5, new: 2 },
+        contracts: { status: null },
+        payments: { status: null },
     },
-
-    // ── IN_PROGRESS: Ana has an active contract with Marko on this job
     {
         id: "job_3",
         clientId: "client_1",
         title: "Backend API Developer",
         category: "Backend Development",
-        description: "Build a FastAPI microservice backend for our platform. Includes auth, job management, applications, contracts, and payment integration with Stripe.",
+        description: "Build a FastAPI microservice backend. Includes auth, job management, applications, contracts, and payment integration with Stripe.",
         workMode: "On-site",
         location: "Split",
         budgetType: "Hourly",
@@ -133,15 +291,16 @@ export const MOCK_JOBS = [
         deliverables: "Complete API with OpenAPI docs, integration tests, and a deployed Docker environment.",
         createdAt: "2026-05-01",
         updatedAt: "2026-05-15",
+        applications: { total: 12, new: 0 },
+        contracts: { status: "PENDING_CLIENT" },
+        payments: { status: "PENDING" },
     },
-
-    // ── COMPLETED: Job is done, contract closed, payment made, reviews left
     {
         id: "job_4",
         clientId: "client_1",
         title: "Data Dashboard Analyst",
         category: "Data Analysis",
-        description: "Analyse user engagement data and build three interactive dashboards with filtering and CSV export. Data lives in PostgreSQL.",
+        description: "Analyse user engagement data and build three interactive dashboards with filtering and CSV export.",
         workMode: "Hybrid",
         location: "Rijeka",
         budgetType: "Hourly",
@@ -154,9 +313,10 @@ export const MOCK_JOBS = [
         deliverables: "Three interactive dashboards with CSV export and an automated weekly report.",
         createdAt: "2026-03-01",
         updatedAt: "2026-05-02",
+        applications: { total: 8, new: 0 },
+        contracts: { status: "COMPLETED" },
+        payments: { status: "PAID" },
     },
-
-    // ── CANCELLED: Ana cancelled the job before the contractor could sign
     {
         id: "job_5",
         clientId: "client_1",
@@ -175,447 +335,314 @@ export const MOCK_JOBS = [
         deliverables: "Complete CI/CD setup with runbook documentation.",
         createdAt: "2026-04-01",
         updatedAt: "2026-04-20",
+        applications: { total: 3, new: 0 },
+        contracts: { status: null },
+        payments: { status: null },
     },
 ];
 
 // ─── APPLICATIONS ─────────────────────────────────────────────────────────────
-// Covers: PENDING | NEGOTIATING | ACCEPTED | REJECTED | WITHDRAWN
-// All on job_2 (OPEN) except accepted/withdrawn which link to in-progress/cancelled jobs
+// Status: PENDING | NEGOTIATING | ACCEPTED | REJECTED | WITHDRAWN
 
 export const MOCK_APPLICATIONS = [
-    // ── PENDING: Ivan just applied, Ana hasn't responded yet
     {
         id: "app_1",
         jobId: "job_2",
+        contractorId: "contractor_4",
         status: "PENDING",
-        coverLetter: "I have 5 years of React experience and have built complex data-heavy dashboards for fintech clients. I am comfortable with MUI and REST integrations. Looking forward to contributing to your project. I have 5 years of React experience and have built complex data- heavy dashboards for fintech clients.I am comfortable with MUI and REST integrations.Looking forward to contributing to your project.",
-        contractor: {
-            id: "contractor_4",
-            firstName: "Ivan",
-            lastName: "Marić",
-            city: "Zagreb",
-            country: "Croatia",
-            profileImageUrl: "https://i.pravatar.cc/120?img=35",
-        },
+        coverLetter: "I have 5 years of React experience and have built complex data-heavy dashboards for fintech clients. I am comfortable with MUI and REST integrations. Looking forward to contributing to your project.",
         createdAt: "2026-06-08",
         updatedAt: "2026-06-08",
     },
-
-    // ── NEGOTIATING: Sara applied, Ana opened a negotiation, currently waiting for Ana (client) to respond
     {
         id: "app_2",
         jobId: "job_2",
+        contractorId: "contractor_3",
         status: "NEGOTIATING",
         coverLetter: "I specialise in MUI-based applications and REST API integrations. I have shipped three dashboard products in the last two years. Excited about this project.",
-        contractor: {
-            id: "contractor_3",
-            firstName: "Sara",
-            lastName: "Babić",
-            city: "Zadar",
-            country: "Croatia",
-            profileImageUrl: "https://i.pravatar.cc/120?img=30",
-        },
         createdAt: "2026-06-03",
         updatedAt: "2026-06-06",
     },
-
-    // ── ACCEPTED: Marko applied to job_3, negotiation ended, contract created
     {
         id: "app_3",
         jobId: "job_3",
-        status: "ACCEPTED",
+        contractorId: "contractor_1",
+        status: "PENDING",
         coverLetter: "I have built multiple FastAPI backends and am very comfortable with microservices, Stripe, and PostgreSQL. Happy to start immediately.",
-        contractor: {
-            id: "contractor_1",
-            firstName: "Marko",
-            lastName: "Kovač",
-            city: "Rijeka",
-            country: "Croatia",
-            profileImageUrl: "https://i.pravatar.cc/120?img=15",
-        },
         createdAt: "2026-05-05",
         updatedAt: "2026-05-10",
     },
-
-    // ── REJECTED: Luka applied to job_2, Ana reviewed and rejected
     {
         id: "app_4",
         jobId: "job_2",
+        contractorId: "contractor_2",
         status: "REJECTED",
         coverLetter: "I have experience with React and would love to join your project. I am a fast learner and deliver on time.",
-        contractor: {
-            id: "contractor_2",
-            firstName: "Luka",
-            lastName: "Perić",
-            city: "Osijek",
-            country: "Croatia",
-            profileImageUrl: "https://i.pravatar.cc/120?img=20",
-        },
         createdAt: "2026-06-02",
         updatedAt: "2026-06-04",
     },
-
-    // ── WITHDRAWN: Marko applied to job_5 (DevOps), then withdrew before it was reviewed
     {
         id: "app_5",
         jobId: "job_5",
+        contractorId: "contractor_4",
         status: "WITHDRAWN",
         coverLetter: "I have extensive AWS and Kubernetes experience and have set up similar pipelines before.",
-        contractor: {
-            id: "contractor_1",
-            firstName: "Marko",
-            lastName: "Kovač",
-            city: "Rijeka",
-            country: "Croatia",
-            profileImageUrl: "https://i.pravatar.cc/120?img=15",
-        },
         createdAt: "2026-04-05",
         updatedAt: "2026-04-08",
     },
-
-    // ── ACCEPTED (completed job): Marko's application on job_4, now fully done
     {
         id: "app_6",
         jobId: "job_4",
+        contractorId: "contractor_1",
         status: "ACCEPTED",
         coverLetter: "Data analysis and dashboard work is my core strength. I have built reporting pipelines with Pandas and Tableau for multiple clients.",
-        contractor: {
-            id: "contractor_1",
-            firstName: "Marko",
-            lastName: "Kovač",
-            city: "Rijeka",
-            country: "Croatia",
-            profileImageUrl: "https://i.pravatar.cc/120?img=15",
-        },
         createdAt: "2026-03-05",
         updatedAt: "2026-03-10",
+    },
+    {
+        id: "app_7",
+        jobId: "job_2",
+        contractorId: "contractor_3",
+        status: "ACCEPTED",
+        coverLetter: "I specialise in MUI-based applications and REST API integrations. I have shipped three dashboard products in the last two years.",
+        createdAt: "2026-06-07",
+        updatedAt: "2026-06-11",
     },
 ];
 
 // ─── NEGOTIATIONS ─────────────────────────────────────────────────────────────
-// Covers: PENDING_CLIENT | PENDING_CONTRACTOR | ACCEPTED | REJECTED | WITHDRAWN
-
+// Status: PENDING_CLIENT | PENDING_CONTRACTOR | ACCEPTED | REJECTED | WITHDRAWN
+//
 export const MOCK_NEGOTIATIONS = [
-    // ── PENDING_CLIENT: Sara countered, now Ana must respond
     {
         id: "neg_1",
         applicationId: "app_2",
         clientId: "client_1",
         contractorId: "contractor_3",
         status: "PENDING_CLIENT",
-        price: 1200,
-        priceEditedBy: "contractor",
-        deadline: "2026-08-30",
-        deadlineEditedBy: "contractor",
-        scopeOfWork: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
-        scopeEditedBy: "client",
-        revisions: 3,
-        revisionsEditedBy: "contractor",
-        createdAt: "2026-06-04",
-        updatedAt: "2026-06-06",
+        createdAt: "2026-06-04T09:00:00Z",
+        updatedAt: "2026-06-06T14:30:00Z",
     },
-
-    // ── PENDING_CONTRACTOR: Ana countered Ivan's proposal, waiting for Ivan
     {
         id: "neg_2",
-        applicationId: "app_1",
-        clientId: "client_1",
-        contractorId: "contractor_4",
-        status: "PENDING_CONTRACTOR",
-        price: 950,
-        priceEditedBy: "client",
-        deadline: "2026-08-15",
-        deadlineEditedBy: "client",
-        scopeOfWork: "Dashboard UI with the 5 core components only — no Storybook required.",
-        scopeEditedBy: "client",
-        revisions: 2,
-        revisionsEditedBy: "client",
-        createdAt: "2026-06-09",
-        updatedAt: "2026-06-10",
-    },
-
-    // ── ACCEPTED: Marko and Ana agreed on terms for job_3
-    {
-        id: "neg_3",
         applicationId: "app_3",
         clientId: "client_1",
         contractorId: "contractor_1",
         status: "ACCEPTED",
-        price: 60,
-        priceEditedBy: "client",
-        deadline: "2026-07-30",
-        deadlineEditedBy: "contractor",
-        scopeOfWork: "Complete FastAPI backend with auth, job, application, contract, and payment services. Integration tests and OpenAPI docs included.",
-        scopeEditedBy: "contractor",
-        revisions: 3,
-        revisionsEditedBy: "contractor",
-        createdAt: "2026-05-06",
-        updatedAt: "2026-05-10",
+        createdAt: "2026-05-06T10:00:00Z",
+        updatedAt: "2026-05-10T16:00:00Z",
     },
-
-    // ── REJECTED: Luka's negotiation — he asked for too much, Ana rejected
     {
-        id: "neg_4",
-        applicationId: "app_4",
-        clientId: "client_1",
-        contractorId: "contractor_2",
-        status: "REJECTED",
-        price: 2500,
-        priceEditedBy: "contractor",
-        deadline: "2026-10-01",
-        deadlineEditedBy: "contractor",
-        scopeOfWork: "Full dashboard with all components, Storybook, and e2e tests.",
-        scopeEditedBy: "contractor",
-        revisions: 5,
-        revisionsEditedBy: "contractor",
-        createdAt: "2026-06-02",
-        updatedAt: "2026-06-03",
-    },
-
-    // ── WITHDRAWN: Marko withdrew from negotiation on job_5 (DevOps)
-    {
-        id: "neg_5",
-        applicationId: "app_5",
-        clientId: "client_1",
-        contractorId: "contractor_1",
-        status: "WITHDRAWN",
-        price: 8000,
-        priceEditedBy: "client",
-        deadline: "2026-06-01",
-        deadlineEditedBy: "client",
-        scopeOfWork: "CI/CD pipeline setup with GitHub Actions and AWS ECS.",
-        scopeEditedBy: "client",
-        revisions: 1,
-        revisionsEditedBy: "client",
-        createdAt: "2026-04-06",
-        updatedAt: "2026-04-08",
-    },
-
-    // ── ACCEPTED: Marko and Ana agreed for job_4 (completed)
-    {
-        id: "neg_6",
+        id: "neg_3",
         applicationId: "app_6",
         clientId: "client_1",
         contractorId: "contractor_1",
         status: "ACCEPTED",
-        price: 40,
-        priceEditedBy: "client",
-        deadline: "2026-05-01",
-        deadlineEditedBy: "client",
-        scopeOfWork: "Three dashboards with CSV export and automated weekly report via email.",
-        scopeEditedBy: "contractor",
-        revisions: 2,
-        revisionsEditedBy: "client",
-        createdAt: "2026-03-06",
-        updatedAt: "2026-03-10",
+        createdAt: "2026-03-06T09:00:00Z",
+        updatedAt: "2026-03-10T14:00:00Z",
+    },
+    {
+        id: "neg_4",
+        applicationId: "app_7",
+        clientId: "client_1",
+        contractorId: "contractor_3",
+        status: "ACCEPTED",
+        createdAt: "2026-06-07T10:00:00Z",
+        updatedAt: "2026-06-10T15:00:00Z",
     },
 ];
 
 // ─── CONTRACTS ────────────────────────────────────────────────────────────────
-// Covers: ACTIVE | COMPLETED | CANCELLED
-// Each contract is a self-contained snapshot — no joins needed to display it
+// NEGOTIATION UPDATES
+// Every update is a full offer snapshot linked to one negotiation.
+export const MOCK_NEGOTIATION_UPDATES = [
+    {
+        id: "neg_update_1",
+        negotiationId: "neg_1",
+        roundNumber: 1,
+        submittedBy: "contractor",
+        budgetAmount: 1500,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 120,
+        deliverables: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
+        message: "Initial proposal based on the requested dashboard scope.",
+        submittedAt: "2026-06-04T09:00:00Z",
+    },
+    {
+        id: "neg_update_2",
+        negotiationId: "neg_1",
+        roundNumber: 2,
+        submittedBy: "client",
+        budgetAmount: 1000,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 120,
+        deliverables: "Reduced dashboard scope with the core reusable components.",
+        message: "Budget is a bit high. Can we reduce the scope slightly?",
+        submittedAt: "2026-06-05T11:15:00Z",
+    },
+    {
+        id: "neg_update_3",
+        negotiationId: "neg_1",
+        roundNumber: 3,
+        submittedBy: "contractor",
+        budgetAmount: 1200,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 120,
+        deliverables: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
+        message: "Updated proposal with adjusted price and delivery timeline.",
+        submittedAt: "2026-06-06T14:30:00Z",
+    },
+    {
+        id: "neg_update_4",
+        negotiationId: "neg_2",
+        roundNumber: 1,
+        submittedBy: "contractor",
+        budgetAmount: 3600,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 60,
+        deliverables: "Complete FastAPI backend with auth, job, application, contract, and payment services.",
+        message: "I can deliver the full backend within 60 days at my standard rate.",
+        submittedAt: "2026-05-06T10:00:00Z",
+    },
+    {
+        id: "neg_update_5",
+        negotiationId: "neg_2",
+        roundNumber: 2,
+        submittedBy: "client",
+        budgetAmount: 3600,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 60,
+        deliverables: "Complete FastAPI backend with auth, job, application, contract, and payment services. Integration tests and OpenAPI docs included.",
+        message: "Looks good. Can you also include integration tests and OpenAPI docs?",
+        submittedAt: "2026-05-08T09:00:00Z",
+    },
+    {
+        id: "neg_update_6",
+        negotiationId: "neg_3",
+        roundNumber: 1,
+        submittedBy: "contractor",
+        budgetAmount: 3200,
+        currency: "EUR",
+        hoursPerWeek: 20,
+        duration: 30,
+        deliverables: "Three interactive dashboards with CSV export and an automated weekly report.",
+        message: "Happy to take this on. This is well within my expertise.",
+        submittedAt: "2026-03-06T09:00:00Z",
+    },
+    {
+        id: "neg_update_7",
+        negotiationId: "neg_4",
+        roundNumber: 1,
+        submittedBy: "contractor",
+        budgetAmount: 1500,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 120,
+        deliverables: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
+        message: "Revised proposal after our previous discussion.",
+        submittedAt: "2026-06-07T10:00:00Z",
+    },
+    {
+        id: "neg_update_8",
+        negotiationId: "neg_4",
+        roundNumber: 2,
+        submittedBy: "client",
+        budgetAmount: 1200,
+        currency: "EUR",
+        hoursPerWeek: 40,
+        duration: 120,
+        deliverables: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
+        message: "Works for me. Let's go with 1200.",
+        submittedAt: "2026-06-09T09:30:00Z",
+    },
+];
 
+// CONTRACTS
+// Status: PENDING_CLIENT | PENDING_CONTRACTOR | COMPLETED | CANCELLED
+// Negotiated contracts use the latest accepted update; direct contracts use the job terms.
 export const MOCK_CONTRACTS = [
-    // ── ACTIVE: Marko is currently working on job_3 for Ana
     {
         id: "contract_1",
-        jobId: "job_3",
         applicationId: "app_3",
-        negotiationId: "neg_3",
-        // job snapshot
-        jobTitle: "Backend API Developer",
-        jobCategory: "Backend Development",
-        jobDescription: "Build a FastAPI microservice backend for our platform. Includes auth, job management, applications, contracts, and payment integration with Stripe.",
-        jobDeliverables: "Complete API with OpenAPI docs, integration tests, and a deployed Docker environment.",
-        jobRequirements: ["Python and FastAPI experience", "PostgreSQL and SQLAlchemy", "Docker and Docker Compose", "Stripe API knowledge is a plus"],
-        jobWorkMode: "On-site",
-        jobLocation: "Split",
-        // agreed terms from negotiation
-        agreedPrice: 60,
-        agreedDeadline: "2026-07-30",
-        agreedScopeOfWork: "Complete FastAPI backend with auth, job, application, contract, and payment services. Integration tests and OpenAPI docs included.",
-        agreedRevisions: 3,
-        // client snapshot
+        negotiationId: "neg_2",
+        jobId: "job_3",
         clientId: "client_1",
-        clientFirstName: "Ana",
-        clientLastName: "Horvat",
-        clientEmail: "ana.horvat@example.com",
-        // contractor snapshot
         contractorId: "contractor_1",
-        contractorFirstName: "Marko",
-        contractorLastName: "Kovač",
-        contractorEmail: "marko.kovac@example.com",
-        // lifecycle
-        status: "ACTIVE",
-        startDate: "2026-05-15",
-        endDate: null,
-        clientSignedAt: "2026-05-13",
-        contractorSignedAt: "2026-05-14",
+        agreedBudget: 3600,
+        agreedDeadline: "2026-07-30",
+        agreedHoursPerWeek: 40,
+        agreedDuration: 60,
+        agreedDeliverables: "Complete FastAPI backend with auth, job, application, contract, and payment services. Integration tests and OpenAPI docs included.",
+        status: "PENDING_CLIENT",
+        clientSignedAt: null,
+        contractorSignedAt: "2026-05-14T10:00:00Z",
         createdAt: "2026-05-12",
         updatedAt: "2026-05-15",
     },
-
-    // ── COMPLETED: Marko finished the data dashboard job for Ana
     {
         id: "contract_2",
-        jobId: "job_4",
         applicationId: "app_6",
-        negotiationId: "neg_6",
-        jobTitle: "Data Dashboard Analyst",
-        jobCategory: "Data Analysis",
-        jobDescription: "Analyse user engagement data and build three interactive dashboards with filtering and CSV export. Data lives in PostgreSQL.",
-        jobDeliverables: "Three interactive dashboards with CSV export and an automated weekly report.",
-        jobRequirements: ["Python and Pandas", "Tableau or Power BI", "SQL"],
-        jobWorkMode: "Hybrid",
-        jobLocation: "Rijeka",
-        agreedPrice: 40,
-        agreedDeadline: "2026-05-01",
-        agreedScopeOfWork: "Three dashboards with CSV export and automated weekly report via email.",
-        agreedRevisions: 2,
+        negotiationId: "neg_3",
+        jobId: "job_4",
         clientId: "client_1",
-        clientFirstName: "Ana",
-        clientLastName: "Horvat",
-        clientEmail: "ana.horvat@example.com",
         contractorId: "contractor_1",
-        contractorFirstName: "Marko",
-        contractorLastName: "Kovač",
-        contractorEmail: "marko.kovac@example.com",
+        agreedBudget: 3200,
+        agreedDeadline: "2026-05-01",
+        agreedHoursPerWeek: 20,
+        agreedDuration: 30,
+        agreedDeliverables: "Three interactive dashboards with CSV export and an automated weekly report.",
+        agreedRevisions: 2,
         status: "COMPLETED",
         startDate: "2026-03-15",
         endDate: "2026-05-02",
-        clientSignedAt: "2026-03-13",
-        contractorSignedAt: "2026-03-14",
+        clientSignedAt: "2026-03-13T09:00:00Z",
+        contractorSignedAt: "2026-03-14T14:00:00Z",
         createdAt: "2026-03-12",
         updatedAt: "2026-05-02",
     },
-
-    // ── CANCELLED: Marko signed but Ana cancelled before contractor countersigned
     {
         id: "contract_3",
-        jobId: "job_5",
-        applicationId: "app_5",
-        negotiationId: "neg_5",
-        jobTitle: "DevOps Setup Consultant",
-        jobCategory: "DevOps",
-        jobDescription: "Set up a full CI/CD pipeline using GitHub Actions, deploy to AWS ECS, and configure monitoring with CloudWatch.",
-        jobDeliverables: "Complete CI/CD setup with runbook documentation.",
-        jobRequirements: ["AWS or GCP experience", "Docker and Kubernetes", "GitHub Actions"],
-        jobWorkMode: "Remote",
-        jobLocation: "Remote",
-        agreedPrice: 8000,
-        agreedDeadline: "2026-06-01",
-        agreedScopeOfWork: "CI/CD pipeline setup with GitHub Actions and AWS ECS.",
-        agreedRevisions: 1,
+        applicationId: "app_7",
+        negotiationId: "neg_4",
+        jobId: "job_2",
         clientId: "client_1",
-        clientFirstName: "Ana",
-        clientLastName: "Horvat",
-        clientEmail: "ana.horvat@example.com",
-        contractorId: "contractor_1",
-        contractorFirstName: "Marko",
-        contractorLastName: "Kovač",
-        contractorEmail: "marko.kovac@example.com",
-        status: "CANCELLED",
+        contractorId: "contractor_3",
+        agreedBudget: 1200,
+        agreedDeadline: "2026-09-01",
+        agreedHoursPerWeek: 40,
+        agreedDuration: 120,
+        agreedDeliverables: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
+        agreedRevisions: 2,
+        status: "PENDING_CONTRACTOR",
         startDate: null,
         endDate: null,
-        clientSignedAt: "2026-04-12",
+        clientSignedAt: "2026-06-11T11:00:00Z",
         contractorSignedAt: null,
-        createdAt: "2026-04-11",
-        updatedAt: "2026-04-20",
+        createdAt: "2026-06-10",
+        updatedAt: "2026-06-11",
     },
 ];
 
 // ─── PAYMENTS ─────────────────────────────────────────────────────────────────
-// Covers: PENDING | PROCESSING | PAID | FAILED
-// Multiple payments per contract are normal (milestone payments or hourly billing)
+// Status: PENDING | PROCESSING | PAID | FAILED
 
 export const MOCK_PAYMENTS = [
-    // ── PENDING: First milestone on the active backend contract, Ana hasn't paid yet
-    {
-        id: "payment_1",
-        contractId: "contract_1",
-        clientId: "client_1",
-        contractorId: "contractor_1",
-        amount: 1200,
-        status: "PENDING",
-        paidAt: null,
-        createdAt: "2026-05-15",
-    },
 
-    // ── PROCESSING: Second milestone submitted, Stripe is processing the charge
-    {
-        id: "payment_2",
-        contractId: "contract_1",
-        clientId: "client_1",
-        contractorId: "contractor_1",
-        amount: 600,
-        status: "PROCESSING",
-        paidAt: null,
-        createdAt: "2026-06-01",
-    },
-
-    // ── PAID: Full payment for the completed data dashboard contract
-    {
-        id: "payment_3",
-        contractId: "contract_2",
-        clientId: "client_1",
-        contractorId: "contractor_1",
-        amount: 3200,
-        status: "PAID",
-        paidAt: "2026-05-05",
-        createdAt: "2026-05-03",
-    },
-
-    // ── FAILED: A charge attempt on the active contract that Stripe declined
-    {
-        id: "payment_4",
-        contractId: "contract_1",
-        clientId: "client_1",
-        contractorId: "contractor_1",
-        amount: 600,
-        status: "FAILED",
-        paidAt: null,
-        createdAt: "2026-05-28",
-    },
 ];
 
 // ─── REVIEWS ──────────────────────────────────────────────────────────────────
-// Only possible after a COMPLETED contract
-// Client reviews contractor: workQualityRating present, requirementsClarityRating null
-// Contractor reviews client: requirementsClarityRating present, workQualityRating null
 
 export const MOCK_REVIEWS = [
-    // ── Client (Ana) reviews Contractor (Marko) after contract_2
-    {
-        id: "review_1",
-        contractId: "contract_2",
-        reviewerId: "client_1",
-        revieweeId: "contractor_1",
-        reviewerRole: "client",
-        overallRating: 4.8,
-        communicationRating: 5,
-        workQualityRating: 4.5,
-        requirementsClarityRating: null,
-        comment: "Marko delivered excellent dashboards, well ahead of schedule. Communication was clear and professional throughout the project.",
-        createdAt: "2026-05-10",
-    },
 
-    // ── Contractor (Marko) reviews Client (Ana) after contract_2
-    {
-        id: "review_2",
-        contractId: "contract_2",
-        reviewerId: "contractor_1",
-        revieweeId: "client_1",
-        reviewerRole: "contractor",
-        overallRating: 5,
-        communicationRating: 5,
-        workQualityRating: null,
-        requirementsClarityRating: 5,
-        comment: "Ana had very clear requirements from day one and was always responsive. Payment was on time. Would love to work together again.",
-        createdAt: "2026-05-11",
-    },
 ];
 
-// ─── HELPER: current logged-in user (switch to test different perspectives) ───
 
-export const CURRENT_CLIENT = MOCK_CLIENTS[0];       // Ana
-export const CURRENT_CONTRACTOR = MOCK_CONTRACTORS[0]; // Marko
+
+// ─── CURRENT USER ─────────────────────────────────────────────────────────────
+export const CURRENT_CLIENT = MOCK_CLIENTS[0];      // Ana
+export const CURRENT_CONTRACTOR = MOCK_CONTRACTORS[0];  // Marko

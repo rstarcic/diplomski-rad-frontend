@@ -24,12 +24,6 @@ export const detailGridSx = {
     gap: 1.25,
 };
 
-export const rowDetailSx = {
-    display: "grid",
-    gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
-    gap: 1.25,
-};
-
 export const hoverLiftSx = {
     transition: "transform 0.2s ease, box-shadow 0.2s ease",
     "&:hover": {
@@ -57,12 +51,34 @@ export const jobCardBaseSx = {
     bgcolor: "background.paper",
 };
 
-export const pageSx = {
+export const appPageContentSx = {
     width: "100%",
     maxWidth: "1440px",
     mx: "auto",
-    px: { xs: 0, md: 1 },
-    pb: { xs: 3, md: 5 },
+    p: { xs: 2, sm: 3, lg: 4 },
+    minHeight: "100vh",
 };
 
-export default pageSx;
+export const authPageSx = {
+    width: "100%",
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    bgcolor: "background.default",
+    px: { xs: 2, sm: 3, md: 4 },
+    py: { xs: 4, md: 6 },
+};
+
+export const homePageSx = {
+    width: "100%",
+    minHeight: "100vh",
+    mx: "auto",
+    px: { xs: 0, md: 1 },
+    pb: { xs: 3, md: 5 },
+
+    color: "#111733",
+    background:
+        "radial-gradient(circle at 0% 0%, rgba(110, 68, 232, 0.08), transparent 26%), radial-gradient(circle at 100% 100%, rgba(23, 160, 91, 0.1), transparent 28%), #ffffff",
+    overflow: "hidden",
+};

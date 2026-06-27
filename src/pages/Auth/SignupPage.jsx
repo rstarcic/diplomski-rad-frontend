@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import AuthCard from "./components/AuthCard";
 import SignupForm from "./components/SignupForm";
 
@@ -14,9 +15,11 @@ const formSide = {
 };
 
 function SignupPage() {
+	const { state } = useLocation();
+
 	return (
 		<AuthCard visualContent={defaultSide} formContent={formSide}>
-			<SignupForm />
+			<SignupForm initialRole={state?.role ?? null} />
 		</AuthCard>
 	);
 }

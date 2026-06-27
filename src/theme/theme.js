@@ -4,7 +4,6 @@ const colors = {
 	primary: "#5b3fd6",
 	primaryDark: "#46309f",
 	primaryLight: "#7c63f0",
-	secondary: "#ff6e6c",
 	text: "#253052",
 	textSecondary: "#6b7280",
 	textMuted: "#9ca3af",
@@ -12,8 +11,6 @@ const colors = {
 	page: "#f4f7ff",
 	paper: "#ffffff",
 	border: "#e5eaf6",
-	inputBorder: "#e5e7eb",
-	inputHover: "#c7d2fe",
 	success: "#22c55e",
 	info: "#2563eb",
 	warning: "#f59e0b",
@@ -24,7 +21,6 @@ const colors = {
 
 const tint = {
 	primarySubtle: "rgba(91, 63, 214, 0.03)",
-	primarySoft: "rgba(91, 63, 214, 0.07)",
 	primaryBorder: "rgba(91, 63, 214, 0.3)",
 };
 
@@ -62,14 +58,6 @@ const pageHeader = {
 	minHeight: { xs: "auto", md: 180 },
 };
 
-const statCard = {
-	background: colors.primary,
-	color: colors.white,
-	iconColor: "rgba(255, 255, 255, 0.9)",
-	mutedColor: "rgba(255, 255, 255, 0.72)",
-	border: "1px solid rgba(255, 255, 255, 0.16)",
-};
-
 const dashboardList = {
 	cardBackground: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75))",
 	cardBorder: "1px solid rgba(255,255,255,0.2)",
@@ -77,6 +65,147 @@ const dashboardList = {
 	accent: colors.primaryLight,
 	chipBackground: "rgba(124, 99, 240, 0.14)",
 	chipColor: colors.primaryDark,
+};
+
+const home = {
+	header: {
+		root: {
+			minHeight: { xs: "auto", sm: 82 },
+			display: "flex",
+			flexDirection: { xs: "column", sm: "row" },
+			alignItems: { xs: "stretch", sm: "center" },
+			justifyContent: "space-between",
+			gap: { xs: 2, sm: 3 },
+			mb: { xs: 2.5, md: 0 },
+		},
+		actions: {
+			sx: {
+				width: { xs: "100%", sm: "auto" },
+				justifyContent: { xs: "stretch", sm: "flex-end" },
+				gap: { xs: 1, sm: 1.4 },
+			},
+		},
+		button: {
+			flex: { xs: 1, sm: "0 0 auto" },
+			minWidth: { xs: 0, sm: 108 },
+			minHeight: { xs: 46, sm: 50 },
+			borderRadius: 99,
+			fontWeight: 900,
+			whiteSpace: "nowrap",
+			fontSize: { xs: "0.82rem", sm: "0.875rem" },
+			gap: 0.5,
+		},
+		secondaryButton: {
+			border: "1.5px solid #d0d5e8",
+			color: "#111733",
+			bgcolor: "transparent",
+			"&:hover": {
+				borderColor: colors.primary,
+				color: colors.primary,
+				bgcolor: "rgba(91, 63, 214, 0.04)",
+			},
+		},
+		primaryButton: {
+			minWidth: { xs: 0, sm: 118 },
+			background: "linear-gradient(135deg, #6a3ef0 0%, #4d28c8 100%)",
+			boxShadow: "0 8px 24px rgba(88, 48, 214, 0.28)",
+			"&:hover": {
+				background: "linear-gradient(135deg, #5d35df 0%, #4220b8 100%)",
+				boxShadow: "0 12px 32px rgba(88, 48, 214, 0.38)",
+			},
+		},
+	},
+	rolePanel: {
+		root: {
+			position: "relative",
+			minHeight: { xs: "auto", xl: 820 },
+			p: { xs: 3, md: 5.5, xl: 6.5 },
+			display: "flex",
+			flexDirection: "column",
+			gap: { xs: 3, md: 4 },
+			borderRadius: { xs: 4, md: 5 },
+			overflow: "hidden",
+			boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.72)",
+		},
+		content: {
+			sx: {
+				position: "relative",
+				zIndex: 2,
+			},
+		},
+		body: {
+			display: "grid",
+			gridTemplateColumns: { xs: "1fr", md: "0.7fr 1.3fr" },
+			gap: { xs: 3, md: 2, lg: 1 },
+			alignItems: "center",
+			flex: 1,
+		},
+		eyebrow: {
+			width: "fit-content",
+			display: "inline-flex",
+			alignSelf: "flex-start",
+			px: 1.45,
+			py: 0.75,
+			borderRadius: 999,
+			fontSize: "0.76rem",
+			fontWeight: 950,
+		},
+		title: {
+			mt: { xs: 3, md: 4 },
+			color: "#111733",
+			fontSize: { xs: "2.45rem", sm: "3.15rem", xl: "3.65rem" },
+			fontWeight: 950,
+			lineHeight: 1.12,
+			letterSpacing: 0,
+		},
+		subtitle: {
+			maxWidth: 430,
+			color: "#293252",
+			fontSize: "0.99rem",
+			lineHeight: 1.75,
+		},
+		steps: {
+			spacing: 2.4,
+		},
+		illustrationWrap: {
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			minWidth: 0,
+			order: { xs: -1, md: 0 },
+
+		},
+		illustration: {
+			width: { xs: "100%", lg: "112%" },
+			maxWidth: { xs: 360, sm: 460, lg: 680 },
+			aspectRatio: "1 / 1",
+			objectFit: "contain",
+			borderRadius: 4,
+		},
+		button: {
+			width: { xs: "100%", sm: 280 },
+			minHeight: 64,
+			borderRadius: 3,
+			fontWeight: 950,
+			fontSize: "1rem",
+		},
+		tones: {
+			client: {
+				accent: "#6038e6",
+				accentDark: "#532dd2",
+				soft: "#efe7ff",
+				background: "linear-gradient(145deg, #fbf8ff 0%, #f0e8ff 100%)",
+				buttonShadow: "0 16px 30px rgba(96, 56, 230, 0.25)",
+			},
+			contractor: {
+				accent: "#128b4d",
+				accentDark: "#087844",
+				soft: "#dff7eb",
+				background: "linear-gradient(145deg, #f8fffb 0%, #e9f7ef 100%)",
+				buttonShadow: "0 16px 30px rgba(18, 139, 77, 0.25)",
+			},
+		},
+	},
 };
 
 const theme = createTheme({
@@ -166,11 +295,10 @@ const theme = createTheme({
 	},
 	custom: {
 		pageHeader,
-		colors,
 		tint,
 		alerts,
-		statCard,
 		dashboardList,
+		home,
 		iconPalette: {
 			applications: {
 				bg: "rgba(91, 63, 214, 0.12)",
