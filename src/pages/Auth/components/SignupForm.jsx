@@ -9,8 +9,11 @@ import PasswordTextField from "../../../components/ui/PasswordTextField";
 import AppAlert from "../../../components/ui/Alert";
 import { useFormErrors } from "../../../hooks/useFormErrors";
 import { useAuth } from "../../../hooks/useAuth";
+import { useTimedAlert } from "../../../hooks/useTimedAlert";
 import FORM_ERRORS from "../../../constants/formError";
 import { ROLES } from "../../../constants/roles";
+import { AUTH_ERRORS } from "../../../constants/apiErrors";
+import { applyApiError } from "../../../utils/parseApiError";
 import { startGoogleRegister } from "../../../api/auth";
 
 const toggleGroupSx = {
@@ -49,7 +52,7 @@ export default function SignupForm({ initialRole = null }) {
 		confirmPassword: "",
 	});
 	const [loading, setLoading] = useState(false);
-	const [apiError, setApiError] = useState(null);
+	const [apiError, setApiError] = useTimedAlert(null, 7000);
 	const { errors, setErrors, clearErrors } = useFormErrors();
 	const { register } = useAuth();
 	const navigate = useNavigate();
@@ -112,7 +115,6 @@ export default function SignupForm({ initialRole = null }) {
 		}
 
 		setLoading(true);
-		setApiError(null);
 		try {
 			await register(formData.role, {
 				first_name: formData.firstName,
@@ -120,9 +122,9 @@ export default function SignupForm({ initialRole = null }) {
 				email: formData.email,
 				password: formData.password,
 			});
-			navigate("/login");
+			navigate("/login", { state: { successMessage: "Account created! Please check your email to verify your account before signing in." } });
 		} catch (err) {
-			setApiError(err.response?.data?.message ?? "Registration failed. Please try again.");
+			applyApiError(err, { setApiError, setErrors, errorMap: AUTH_ERRORS });
 		} finally {
 			setLoading(false);
 		}
@@ -130,6 +132,8 @@ export default function SignupForm({ initialRole = null }) {
 
 	return (
 		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
+			{apiError && <AppAlert severity="error" sx={{ mb: 2 }}>{apiError}</AppAlert>}
+
 			<Stack spacing={0.75} sx={{ mb: 2.5 }}>
 				<Typography variant="body2" fontWeight={700} color="text.secondary">
 					I am a…
@@ -200,8 +204,6 @@ export default function SignupForm({ initialRole = null }) {
 				errors={errors}
 				required
 			/>
-
-			{apiError && <AppAlert severity="error">{apiError}</AppAlert>}
 
 			<Stack spacing={{ xs: 0.75, sm: 1 }} sx={{ pt: { xs: 1, sm: 2 } }}>
 				<Button type="submit" variant="contained" size="large" loading={loading}>

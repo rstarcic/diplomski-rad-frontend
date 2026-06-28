@@ -8,7 +8,6 @@ import PreviewSection from "./components/create/PreviewSection";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
 import { getMissingFields } from "../../utils/jobs";
-import { getAccountSetupMock } from "../../mock/AccountSetup";
 
 const initialJobData = {
 	title: "",
@@ -28,7 +27,7 @@ const initialJobData = {
 
 export default function CreateJobPage() {
 	const [jobData, setJobData] = useState(initialJobData);
-	const accountSetup = getAccountSetupMock("client");
+	const accountSetup = { role: "client", profileCompleted: true, paymentCompleted: true };
 	const accountIsComplete = accountSetup.profileCompleted && accountSetup.paymentCompleted;
 
 	const missingFields = getMissingFields(jobData);

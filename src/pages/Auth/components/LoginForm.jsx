@@ -7,14 +7,18 @@ import PasswordTextField from "../../../components/ui/PasswordTextField";
 import AppAlert from "../../../components/ui/Alert";
 import { useFormErrors } from "../../../hooks/useFormErrors";
 import { useAuth } from "../../../hooks/useAuth";
+import { useTimedAlert } from "../../../hooks/useTimedAlert";
 import { getHomePath } from "../../../constants/roles";
 import FORM_ERRORS from "../../../constants/formError";
+import { AUTH_ERRORS } from "../../../constants/apiErrors";
+import { applyApiError } from "../../../utils/parseApiError";
 import { startGoogleLogin } from "../../../api/auth";
 
-export default function LoginForm() {
+export default function LoginForm({ initialError = null, successMessage = null }) {
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const [loading, setLoading] = useState(false);
-	const [apiError, setApiError] = useState(null);
+	const [apiError, setApiError] = useTimedAlert(initialError, 7000);
+	const [success, setSuccess] = useTimedAlert(successMessage, 5000);
 	const { errors, setErrors, clearErrors } = useFormErrors();
 	const { login } = useAuth();
 	const navigate = useNavigate();
@@ -42,7 +46,7 @@ export default function LoginForm() {
 			const user = await login(formData.email, formData.password);
 			navigate(getHomePath(user.role), { replace: true });
 		} catch (err) {
-			setApiError(err.response?.data?.message ?? "Invalid email or password.");
+			applyApiError(err, { setApiError, setErrors, errorMap: AUTH_ERRORS });
 		} finally {
 			setLoading(false);
 		}
@@ -50,6 +54,9 @@ export default function LoginForm() {
 
 	return (
 		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
+			{success && <AppAlert severity="success" sx={{ mb: 2 }}>{success}</AppAlert>}
+			{apiError && <AppAlert severity="error" sx={{ mb: 2 }}>{apiError}</AppAlert>}
+
 			<FormTextField
 				name="email"
 				label="Email"
@@ -69,8 +76,6 @@ export default function LoginForm() {
 				errors={errors}
 				required
 			/>
-
-			{apiError && <AppAlert severity="error">{apiError}</AppAlert>}
 
 			<Link component={RouterLink} to="/forgot-password" variant="body2">
 				Forgot password?

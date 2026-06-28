@@ -11,7 +11,6 @@ import PrimaryButton from "../../components/ui/PrimaryButton";
 import { BackButton } from "../../components/ui/BackButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
 import { getMissingFields } from "../../utils/jobs";
-import { getAccountSetupMock } from "../../mock/AccountSetup";
 import { MOCK_JOBS } from "../../mock/MockData";
 
 const workModeMap = { Remote: "remote", Hybrid: "hybrid", "On-site": "onsite" };
@@ -64,7 +63,7 @@ export default function EditJobPage() {
 	const { jobId } = useParams();
 	const existing = MOCK_JOBS.find((j) => j.id === jobId);
 	const [jobData, setJobData] = useState(existing ? toFormData(existing) : emptyJobData);
-	const accountSetup = getAccountSetupMock("client");
+	const accountSetup = { role: "client", profileCompleted: true, paymentCompleted: true };
 	const accountIsComplete = accountSetup.profileCompleted && accountSetup.paymentCompleted;
 
 	const formIsComplete = getMissingFields(jobData).length === 0;

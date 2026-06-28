@@ -1,3 +1,4 @@
+import { useLocation, useSearchParams } from "react-router-dom";
 import AuthCard from "./components/AuthCard";
 import LoginForm from "./components/LoginForm";
 
@@ -14,9 +15,20 @@ const formSide = {
 };
 
 function LoginPage() {
+	const { state } = useLocation();
+	const [searchParams] = useSearchParams();
+
+	const successMessage =
+		searchParams.get("verified") === "true"
+			? "Email verified! You can now sign in."
+			: (state?.successMessage ?? null);
+
 	return (
 		<AuthCard visualContent={defaultSide} formContent={formSide}>
-			<LoginForm />
+			<LoginForm
+				initialError={state?.authError ?? null}
+				successMessage={successMessage}
+			/>
 		</AuthCard>
 	);
 }

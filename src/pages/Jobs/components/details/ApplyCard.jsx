@@ -4,7 +4,6 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import AccountSetupAlert from "../../../../components/account/AccountAlert";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { getAccountSetupMock } from "../../../../mock/AccountSetup";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 
 const COVER_LETTER_MAX = 1500;
@@ -16,7 +15,7 @@ export default function ApplyCard({ job, onApply }) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
 
-	const accountSetup = getAccountSetupMock("contractor");
+	const accountSetup = { role: "contractor", profileCompleted: true, payoutCompleted: true };
 	const accountIsComplete = accountSetup.profileCompleted && accountSetup.payoutCompleted;
 	const trimmedLength = coverLetter.trim().length;
 	const canApply = accountIsComplete && trimmedLength >= COVER_LETTER_MIN && !isSubmitting;

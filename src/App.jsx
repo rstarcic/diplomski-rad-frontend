@@ -15,6 +15,8 @@ const HomePage = lazy(() => import("./pages/Home/HomePage"));
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/Auth/SignupPage"));
 const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
+const ResetPassword = lazy(() => import("./pages/Auth/ResetPasswordPage"));
+const ErrorPage = lazy(() => import("./pages/Auth/ErrorPage"));
 
 const ClientDashboard = lazy(() => import("./pages/Dashboards/ClientDashboard"));
 const ContractorDashboard = lazy(() => import("./pages/Dashboards/ContractorDashboard"));
@@ -51,6 +53,8 @@ function App() {
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/signup" element={<SignupPage />} />
 						<Route path="/forgot-password" element={<ForgotPassword />} />
+						<Route path="/reset-password" element={<ResetPassword />} />
+					<Route path="/error" element={<ErrorPage />} />
 					</Route>
 
 					<Route element={<AppLayout />}>
