@@ -5,9 +5,22 @@ const DEFAULT_FALLBACK = "An unexpected error occurred. Please try again.";
  * Pass a domain-specific error map from apiErrors.js to override backend messages.
  */
 export function parseApiError(err, errorMap = {}, fallback = DEFAULT_FALLBACK) {
-    const detail = err.response?.data?.detail;
+    const responseData = err.response?.data;
+    const detail = responseData?.detail;
+
+    if (typeof detail === "string") {
+        return { code: null, message: detail, field: null };
+    }
 
     if (!detail || typeof detail !== "object") {
+        return {
+            code: responseData?.code ?? null,
+            message: errorMap[responseData?.code] ?? responseData?.message ?? fallback,
+            field: responseData?.field ?? null,
+        };
+    }
+
+    if (Array.isArray(detail)) {
         return { code: null, message: fallback, field: null };
     }
 

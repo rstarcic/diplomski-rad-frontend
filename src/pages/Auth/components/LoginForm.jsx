@@ -12,7 +12,7 @@ import { getHomePath } from "../../../constants/roles";
 import FORM_ERRORS from "../../../constants/formError";
 import { AUTH_ERRORS } from "../../../constants/apiErrors";
 import { applyApiError } from "../../../utils/parseApiError";
-import { startGoogleLogin } from "../../../api/auth";
+import { startGoogleLogin } from "../../../api/authAPI";
 
 export default function LoginForm({ initialError = null, successMessage = null }) {
 	const [formData, setFormData] = useState({ email: "", password: "" });
@@ -54,8 +54,16 @@ export default function LoginForm({ initialError = null, successMessage = null }
 
 	return (
 		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
-			{success && <AppAlert severity="success" sx={{ mb: 2 }}>{success}</AppAlert>}
-			{apiError && <AppAlert severity="error" sx={{ mb: 2 }}>{apiError}</AppAlert>}
+			{success && (
+				<AppAlert severity="success" sx={{ mb: 2 }}>
+					{success}
+				</AppAlert>
+			)}
+			{apiError && (
+				<AppAlert severity="error" sx={{ mb: 2 }}>
+					{apiError}
+				</AppAlert>
+			)}
 
 			<FormTextField
 				name="email"

@@ -11,12 +11,15 @@ import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
+	DialogActions,
 } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 
 import { sectionTitleSx } from "../../../../theme/layout";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
@@ -33,6 +36,11 @@ import {
 	toggleButtonSx,
 	addFormStackSx,
 	formActionsRowSx,
+	viewAllButtonSx,
+	dialogTitleSx,
+	dialogTitleTextSx,
+	portfolioItemSx,
+	itemActionsSx,
 } from "./PortfolioCard.styles";
 
 const PREVIEW_LIMIT = 2;
@@ -40,26 +48,13 @@ const PREVIEW_LIMIT = 2;
 const emptyForm = {
 	title: "",
 	description: "",
-	url: "",
-	image: "",
+	projectUrl: "",
+	imageUrl: "",
 };
 
-const viewAllButtonSx = {
-	mt: 2,
-	fontWeight: 800,
-	textTransform: "none",
-};
-
-const dialogTitleSx = {
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "space-between",
-	pr: 1,
-};
-
-function PortfolioItem({ item }) {
+function PortfolioItem({ item, editable, onEdit, onDelete }) {
 	return (
-		<Box sx={{ minWidth: 0 }}>
+		<Box sx={portfolioItemSx}>
 			<Box component="img" src={item.image} alt={item.title || "Portfolio item"} sx={portfolioImageSx} />
 
 			<Stack direction="row" spacing={1} sx={portfolioItemHeaderSx}>
@@ -67,18 +62,32 @@ function PortfolioItem({ item }) {
 					{item.title || "Untitled project"}
 				</Typography>
 
-				{item.url && (
-					<IconButton
-						size="small"
-						component="a"
-						href={item.url}
-						target="_blank"
-						rel="noopener noreferrer"
-						sx={portfolioLinkButtonSx}
-					>
-						<OpenInNewRoundedIcon sx={{ fontSize: 16 }} />
-					</IconButton>
-				)}
+				<Box sx={itemActionsSx}>
+					{item.url && (
+						<IconButton
+							size="small"
+							component="a"
+							href={item.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							sx={portfolioLinkButtonSx}
+						>
+							<OpenInNewRoundedIcon sx={{ fontSize: 16 }} />
+						</IconButton>
+					)}
+
+					{editable && (
+						<>
+							<IconButton size="small" onClick={() => onEdit?.(item)}>
+								<EditRoundedIcon sx={{ fontSize: 16 }} />
+							</IconButton>
+
+							<IconButton size="small" color="error" onClick={() => onDelete?.(item)}>
+								<DeleteOutlineRoundedIcon sx={{ fontSize: 16 }} />
+							</IconButton>
+						</>
+					)}
+				</Box>
 			</Stack>
 
 			<Typography variant="body2" color="text.secondary" sx={portfolioItemDescSx}>
@@ -87,35 +96,68 @@ function PortfolioItem({ item }) {
 		</Box>
 	);
 }
-
 export default function PortfolioCard({
 	items = [],
 	editable = false,
 	onAddItem,
+	onUpdateItem,
+	onRemoveItem,
 	title = "Portfolio",
 	disablePaper = false,
 }) {
 	const [form, setForm] = useState(emptyForm);
+	const [editingId, setEditingId] = useState(null);
+	const [deleteItem, setDeleteItem] = useState(null);
 	const [open, setOpen] = useState(false);
 	const [openProjects, setOpenProjects] = useState(false);
 
 	const previewItems = editable ? items : items.slice(0, PREVIEW_LIMIT);
 	const hasMoreProjects = !editable && items.length > PREVIEW_LIMIT;
+	const isEditing = Boolean(editingId);
 
 	const handleChange = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
-	const handleAdd = () => {
+	const resetForm = () => {
+		setForm(emptyForm);
+		setEditingId(null);
+		setOpen(false);
+	};
+
+	const handleEdit = (item) => {
+		setEditingId(item.id);
+		setForm({
+			title: item.title ?? "",
+			description: item.description ?? "",
+			projectUrl: item.url ?? "",
+			imageUrl: item.image ?? "",
+		});
+		setOpen(true);
+	};
+
+	const handleSubmitItem = () => {
 		if (!form.title.trim()) return;
 
-		onAddItem?.({
+		const payload = {
 			title: form.title.trim(),
 			description: form.description.trim(),
-			url: form.url.trim(),
-			image: form.image.trim(),
-		});
+			url: form.projectUrl.trim(),
+			image: form.imageUrl.trim(),
+		};
 
-		setForm(emptyForm);
-		setOpen(false);
+		if (isEditing) {
+			onUpdateItem?.({ id: editingId, ...payload });
+		} else {
+			onAddItem?.(payload);
+		}
+
+		resetForm();
+	};
+
+	const handleConfirmDelete = () => {
+		if (!deleteItem) return;
+
+		onRemoveItem?.(deleteItem);
+		setDeleteItem(null);
 	};
 
 	const content = (
@@ -138,7 +180,13 @@ export default function PortfolioCard({
 				<>
 					<Box sx={portfolioGridSx}>
 						{previewItems.map((item, index) => (
-							<PortfolioItem key={item.id ?? index} item={item} />
+							<PortfolioItem
+								key={item.id ?? index}
+								item={item}
+								editable={editable}
+								onEdit={handleEdit}
+								onDelete={setDeleteItem}
+							/>
 						))}
 					</Box>
 
@@ -164,7 +212,13 @@ export default function PortfolioCard({
 					<PrimaryButton
 						variant="outlined"
 						startIcon={open ? <ExpandLessRoundedIcon /> : <AddRoundedIcon />}
-						onClick={() => setOpen((value) => !value)}
+						onClick={() => {
+							if (open) {
+								resetForm();
+							} else {
+								setOpen(true);
+							}
+						}}
 						sx={toggleButtonSx}
 					>
 						{open ? "Hide form" : "Add portfolio item"}
@@ -192,25 +246,29 @@ export default function PortfolioCard({
 							minRows={2}
 						/>
 
-						<TextField label="Project URL" size="small" value={form.url} onChange={handleChange("url")} type="url" />
+						<TextField
+							label="Project URL"
+							size="small"
+							value={form.projectUrl}
+							onChange={handleChange("projectUrl")}
+							type="url"
+						/>
 
-						<TextField label="Image URL" size="small" value={form.image} onChange={handleChange("image")} type="url" />
+						<TextField
+							label="Image URL"
+							size="small"
+							value={form.imageUrl}
+							onChange={handleChange("imageUrl")}
+							type="url"
+						/>
 
 						<Box sx={formActionsRowSx}>
-							<PrimaryButton
-								size="small"
-								color="inherit"
-								onClick={() => {
-									setForm(emptyForm);
-									setOpen(false);
-								}}
-								sx={{ textTransform: "none" }}
-							>
+							<PrimaryButton size="small" color="inherit" onClick={resetForm} sx={{ textTransform: "none" }}>
 								Cancel
 							</PrimaryButton>
 
-							<PrimaryButton size="small" variant="contained" onClick={handleAdd} sx={{ textTransform: "none" }}>
-								Add
+							<PrimaryButton size="small" variant="contained" onClick={handleSubmitItem} sx={{ textTransform: "none" }}>
+								{isEditing ? "Save changes" : "Add"}
 							</PrimaryButton>
 						</Box>
 					</Stack>
@@ -220,7 +278,7 @@ export default function PortfolioCard({
 			<Dialog open={openProjects} onClose={() => setOpenProjects(false)} maxWidth="md" fullWidth>
 				<DialogTitle sx={dialogTitleSx}>
 					<Box>
-						<Typography variant="h6" sx={{ fontWeight: 900 }}>
+						<Typography variant="h6" sx={dialogTitleTextSx}>
 							{title}
 						</Typography>
 
@@ -237,10 +295,35 @@ export default function PortfolioCard({
 				<DialogContent dividers>
 					<Box sx={portfolioGridSx}>
 						{items.map((item, index) => (
-							<PortfolioItem key={item.id ?? index} item={item} />
+							<PortfolioItem
+								key={item.id ?? index}
+								item={item}
+								editable={editable}
+								onEdit={handleEdit}
+								onDelete={setDeleteItem}
+							/>
 						))}
 					</Box>
 				</DialogContent>
+			</Dialog>
+
+			<Dialog open={Boolean(deleteItem)} onClose={() => setDeleteItem(null)} maxWidth="xs" fullWidth>
+				<DialogTitle>Delete portfolio item?</DialogTitle>
+
+				<DialogContent>
+					<Typography variant="body2" color="text.secondary">
+						This will remove {deleteItem?.title || "this portfolio item"} from your profile.
+					</Typography>
+				</DialogContent>
+
+				<DialogActions>
+					<PrimaryButton color="inherit" onClick={() => setDeleteItem(null)}>
+						Cancel
+					</PrimaryButton>
+					<PrimaryButton color="error" onClick={handleConfirmDelete}>
+						Delete
+					</PrimaryButton>
+				</DialogActions>
 			</Dialog>
 		</>
 	);

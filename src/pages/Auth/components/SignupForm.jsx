@@ -14,7 +14,7 @@ import FORM_ERRORS from "../../../constants/formError";
 import { ROLES } from "../../../constants/roles";
 import { AUTH_ERRORS } from "../../../constants/apiErrors";
 import { applyApiError } from "../../../utils/parseApiError";
-import { startGoogleRegister } from "../../../api/auth";
+import { startGoogleRegister } from "../../../api/authAPI.js";
 
 const toggleGroupSx = {
 	width: "100%",
@@ -122,7 +122,9 @@ export default function SignupForm({ initialRole = null }) {
 				email: formData.email,
 				password: formData.password,
 			});
-			navigate("/login", { state: { successMessage: "Account created! Please check your email to verify your account before signing in." } });
+			navigate("/login", {
+				state: { successMessage: "Account created! Please check your email to verify your account before signing in." },
+			});
 		} catch (err) {
 			applyApiError(err, { setApiError, setErrors, errorMap: AUTH_ERRORS });
 		} finally {
@@ -132,7 +134,11 @@ export default function SignupForm({ initialRole = null }) {
 
 	return (
 		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
-			{apiError && <AppAlert severity="error" sx={{ mb: 2 }}>{apiError}</AppAlert>}
+			{apiError && (
+				<AppAlert severity="error" sx={{ mb: 2 }}>
+					{apiError}
+				</AppAlert>
+			)}
 
 			<Stack spacing={0.75} sx={{ mb: 2.5 }}>
 				<Typography variant="body2" fontWeight={700} color="text.secondary">

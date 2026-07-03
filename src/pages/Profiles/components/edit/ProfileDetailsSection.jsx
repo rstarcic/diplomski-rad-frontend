@@ -8,6 +8,7 @@ import { surfaceSectionSx } from "../../../../theme/layout";
 export default function ProfileDetailsSection({
 	profileData,
 	updateField,
+	saving = false,
 	aboutPlaceholder = "Write a short introduction for your profile.",
 }) {
 	return (
@@ -77,7 +78,7 @@ export default function ProfileDetailsSection({
 				</Grid>
 
 				<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-					<PrimaryButton type="submit" size="large" sx={{ width: { xs: "100%", sm: "50%" } }}>
+					<PrimaryButton type="submit" size="large" loading={saving} sx={{ width: { xs: "100%", sm: "50%" } }}>
 						Save profile
 					</PrimaryButton>
 				</Box>

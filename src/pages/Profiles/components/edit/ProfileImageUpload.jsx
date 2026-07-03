@@ -1,27 +1,23 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
-
-import { Avatar, Box, Typography } from "@mui/material";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import { Avatar, Box, Dialog, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
-
-const avatarSx = {
-	width: 98,
-	height: 98,
-	mx: "auto",
-	mb: 2,
-	bgcolor: "primary.light",
-	color: "primary.contrastText",
-};
-
-const centeredSectionSx = {
-	...surfaceSectionSx,
-	textAlign: "center",
-};
+import { sectionTitleSx } from "../../../../theme/layout";
+import {
+	avatarSx,
+	centeredSectionSx,
+	dialogActionsSx,
+	dialogContentSx,
+	dialogPaperSx,
+	enlargedImageSx,
+	imagePreviewSx,
+} from "./ProfileImageUpload.styles";
 
 const VisuallyHiddenInput = styled("input")({
 	clip: "rect(0 0 0 0)",
@@ -36,19 +32,25 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 export default function ProfileImageUpload({ image, onImageChange }) {
-	const previewUrl = useMemo(() => {
-		if (!image) return "";
+	const [previewOpen, setPreviewOpen] = useState(false);
 
-		return URL.createObjectURL(image);
+	const imagePreview = useMemo(() => {
+		if (image instanceof File || image instanceof Blob) {
+			return URL.createObjectURL(image);
+		}
+
+		if (typeof image === "string") {
+			return image.trim() || null;
+		}
+
+		return null;
 	}, [image]);
 
 	useEffect(() => {
-		return () => {
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl);
-			}
-		};
-	}, [previewUrl]);
+		if (!imagePreview?.startsWith("blob:")) return undefined;
+
+		return () => URL.revokeObjectURL(imagePreview);
+	}, [imagePreview]);
 
 	const handleImageChange = (event) => {
 		const file = event.target.files?.[0];
@@ -56,13 +58,25 @@ export default function ProfileImageUpload({ image, onImageChange }) {
 		if (!file) return;
 
 		onImageChange?.(file);
+		event.target.value = "";
 	};
 
 	return (
 		<Box sx={centeredSectionSx}>
-			<Avatar src={previewUrl} sx={avatarSx}>
-				<PersonRoundedIcon sx={{ fontSize: 48 }} />
-			</Avatar>
+			{imagePreview ? (
+				<Box
+					component="img"
+					src={imagePreview}
+					alt="Profile preview"
+					referrerPolicy="no-referrer"
+					sx={imagePreviewSx}
+					onClick={() => setPreviewOpen(true)}
+				/>
+			) : (
+				<Avatar sx={avatarSx}>
+					<PersonRoundedIcon sx={{ fontSize: 48 }} />
+				</Avatar>
+			)}
 
 			<Typography variant="h6" sx={sectionTitleSx}>
 				Profile photo
@@ -76,6 +90,27 @@ export default function ProfileImageUpload({ image, onImageChange }) {
 				Upload image
 				<VisuallyHiddenInput type="file" accept="image/*" onChange={handleImageChange} />
 			</PrimaryButton>
+			<Dialog
+				open={previewOpen}
+				onClose={() => setPreviewOpen(false)}
+				fullWidth
+				maxWidth="md"
+				PaperProps={{ sx: dialogPaperSx }}
+			>
+				<DialogContent sx={dialogContentSx}>
+					<Box
+						component="img"
+						src={imagePreview}
+						alt="Profile preview enlarged"
+						referrerPolicy="no-referrer"
+						sx={enlargedImageSx}
+					/>
+				</DialogContent>
+
+				<DialogActions sx={dialogActionsSx}>
+					<PrimaryButton onClick={() => setPreviewOpen(false)}>Close</PrimaryButton>
+				</DialogActions>
+			</Dialog>
 		</Box>
 	);
 }

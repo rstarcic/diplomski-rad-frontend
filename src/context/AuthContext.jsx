@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { loginApi, logoutApi, meApi, registerApi } from "../api/auth.js";
+import { loginApi, logoutApi, meApi, registerApi } from "../api/authAPI.js";
 import { AuthContext } from "./authContext";
 
 export function AuthProvider({ children }) {

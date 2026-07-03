@@ -84,3 +84,31 @@ export const formActionsRowSx = {
 	justifyContent: "flex-end",
 	gap: 1,
 };
+
+export const viewAllButtonSx = {
+	mt: 2,
+	fontWeight: 800,
+	textTransform: "none",
+};
+
+export const dialogTitleSx = {
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "space-between",
+	pr: 1,
+};
+
+export const dialogTitleTextSx = {
+	fontWeight: 900,
+};
+
+export const portfolioItemSx = {
+	minWidth: 0,
+};
+
+export const itemActionsSx = {
+	display: "flex",
+	alignItems: "center",
+	gap: 0.5,
+	flexShrink: 0,
+};

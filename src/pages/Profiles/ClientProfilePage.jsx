@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
 
 import PageHeader from "../../components/ui/PageHeader";
+import AppAlert from "../../components/ui/Alert";
 import ProfileDetailsSection from "./components/edit/ProfileDetailsSection";
 import ProfileImageUpload from "./components/edit/ProfileImageUpload";
 import ProfileProgressCard from "./components/edit/ProfileProgressCard";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
-import { clientProfileReviewData } from "../../mock/ProfileReviews";
+import { getMyProfile, updateMyProfile } from "../../api/coreAPI";
 
-const initialProfileData = {
+const emptyProfileData = {
 	firstName: "",
 	lastName: "",
 	email: "",
@@ -21,8 +22,43 @@ const initialProfileData = {
 	image: null,
 };
 
+const emptyReviewData = {
+	summary: {},
+	reviews: [],
+};
+
 export default function ClientProfilePage() {
-	const [profileData, setProfileData] = useState(initialProfileData);
+	const [profileData, setProfileData] = useState(emptyProfileData);
+	const [reviewData, setReviewData] = useState(emptyReviewData);
+	const [loadError, setLoadError] = useState("");
+	const [saveError, setSaveError] = useState("");
+	const [success, setSuccess] = useState("");
+	const [saving, setSaving] = useState(false);
+
+	useEffect(() => {
+		async function loadProfile() {
+			try {
+				const { profile, reviews } = await getMyProfile();
+
+				setProfileData({
+					...emptyProfileData,
+					...profile,
+				});
+
+				setReviewData({
+					...emptyReviewData,
+					...reviews,
+				});
+			} catch (err) {
+				console.error("Failed to load client profile:", err);
+				setLoadError(
+					err.data?.message || "We couldn't load your profile data. Please refresh the page or try again later.",
+				);
+			}
+		}
+
+		loadProfile();
+	}, []);
 
 	const updateField = (field) => (event) => {
 		setProfileData((prev) => ({
@@ -38,18 +74,23 @@ export default function ClientProfilePage() {
 		}));
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		const formData = new FormData();
+		setSaveError("");
+		setSuccess("");
+		setSaving(true);
 
-		Object.entries(profileData).forEach(([key, value]) => {
-			if (value !== null && value !== undefined) {
-				formData.append(key, value);
-			}
-		});
+		try {
+			await updateMyProfile(profileData);
 
-		// await api.post("/profile", formData)
+			setSuccess("Profile saved successfully.");
+		} catch (err) {
+			console.error("Failed to update profile:", err);
+			setSaveError(err.response?.data?.message || "We couldn't save your profile. Please try again later.");
+		} finally {
+			setSaving(false);
+		}
 	};
 
 	return (
@@ -62,6 +103,23 @@ export default function ClientProfilePage() {
 				<ProfileProgressCard profileData={profileData} />
 			</PageHeader>
 
+			{loadError && (
+				<AppAlert severity="error" title="Profile could not be loaded" sx={{ mt: 3 }}>
+					{loadError}
+				</AppAlert>
+			)}
+
+			{saveError && (
+				<AppAlert severity="error" title="Profile could not be saved" sx={{ mt: 3 }}>
+					{saveError}
+				</AppAlert>
+			)}
+
+			{success && (
+				<AppAlert severity="success" title="Profile saved" sx={{ mt: 3 }}>
+					{success}
+				</AppAlert>
+			)}
 			<Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
 				<Grid container spacing={3}>
 					<Grid size={{ xs: 12, md: 7 }}>
@@ -78,9 +136,9 @@ export default function ClientProfilePage() {
 
 							<ReviewSummaryCard
 								title="Reviews from contractors"
-								summary={clientProfileReviewData.summary}
+								summary={reviewData.summary}
 								criteria={reviewCriteria.client}
-								reviews={clientProfileReviewData.reviews}
+								reviews={reviewData.reviews}
 							/>
 						</Stack>
 					</Grid>
