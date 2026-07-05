@@ -1,3 +1,11 @@
+import dayjs from "dayjs";
+
+const hasPositiveNumber = (value) => {
+    if (value === null || value === undefined || value === "") return false;
+
+    return Number(value) > 0;
+};
+
 export const getMissingFields = (jobData) => {
     const missingFields = [];
 
@@ -10,11 +18,39 @@ export const getMissingFields = (jobData) => {
         missingFields.push("location");
     }
 
-    if (!jobData.deadline) missingFields.push("application deadline");
+    if (!jobData.deadline) {
+        missingFields.push("application deadline");
+    } else if (!dayjs(jobData.deadline).isAfter(dayjs(), "day")) {
+        missingFields.push("Application deadline must be in the future");
+    }
+
     if (!jobData.budgetType) missingFields.push("budget type");
-    if (!jobData.rate) missingFields.push("budget/rate");
-    if (!jobData.durationDays) missingFields.push("duration");
+    if (!jobData.budgetAmount) {
+        missingFields.push("budget/rate");
+    } else if (!hasPositiveNumber(jobData.budgetAmount)) {
+        missingFields.push("Budget must be greater than 0");
+    }
+
+    if (!jobData.durationDays) {
+        missingFields.push("duration");
+    } else if (!hasPositiveNumber(jobData.durationDays)) {
+        missingFields.push("Duration must begreater than 0");
+    }
+
+    if (!jobData.hoursPerWeek) {
+        missingFields.push("hours per week");
+    } else if (!hasPositiveNumber(jobData.hoursPerWeek)) {
+        missingFields.push("Hours per week greater than 0");
+    }
+
     if (!jobData.deliverables.trim()) missingFields.push("deliverables");
+    if (!jobData.requirements?.some((requirement) => requirement.trim())) missingFields.push("requirements");
 
     return missingFields;
+};
+
+export const getMissingFieldsMessage = (missingFields) => {
+    if (!missingFields.length) return "";
+
+    return `${missingFields.join(", ")}.`;
 };

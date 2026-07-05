@@ -48,10 +48,10 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 					<Grid size={{ xs: 12, sm: 8 }}>
 						<PrimaryTextField
 							label={rateLabel}
-							name="rate"
+							name="budgetAmount"
 							type="number"
-							value={jobData.rate}
-							onChange={updateField("rate")}
+							value={jobData.budgetAmount}
+							onChange={updateField("budgetAmount")}
 							placeholder="Enter amount"
 							required
 							slotProps={positiveNumberInputProps}

@@ -7,6 +7,7 @@ import {
 	mapSkillsFromAPI,
 	mapPortfolioItemFromAPI,
 } from "./mapper/profileMapper.js";
+import { mapJobToAPI, mapJobFromAPI, mapJobSummaryFromAPI, mapJobListItemFromAPI } from "./mapper/jobMapper.js";
 
 export async function getMyProfile() {
 	const { data } = await api.get("/profiles/me");
@@ -49,4 +50,36 @@ export async function updateMyProfile(profileData) {
 		skills: mapSkillsFromAPI(skills),
 		portfolio: portfolio.map(mapPortfolioItemFromAPI),
 	};
+}
+
+export async function createJob(jobData) {
+	const payload = mapJobToAPI(jobData);
+	const { data } = await api.post("/jobs", payload);
+	return data;
+}
+
+export async function getAllJobs() {
+	const { data } = await api.get("/jobs");
+	return data.map(mapJobListItemFromAPI);
+}
+
+export async function getJobById(jobId) {
+	const { data } = await api.get(`/jobs/${jobId}`);
+	return mapJobFromAPI(data);
+}
+
+export async function updateJob(jobId, jobData) {
+	const payload = mapJobToAPI(jobData);
+	const { data } = await api.put(`/jobs/${jobId}`, payload);
+	return mapJobFromAPI(data);
+}
+
+export async function getMyJobs() {
+	const { data } = await api.get("/jobs/me");
+	return data.map(mapJobSummaryFromAPI);
+}
+
+export async function getJobFilterOptions() {
+	const { data } = await api.get("/jobs/filter-options");
+	return data;
 }

@@ -20,7 +20,7 @@ const metaRowSx = {
 export default function PreviewSection({ jobData }) {
 	const hasRequirements = jobData.requirements?.some(Boolean);
 	const budgetLabel = jobData.budgetType === "hourly" ? "Hourly rate" : "Fixed budget";
-	const budgetValue = jobData.rate ? `${jobData.rate} ${jobData.currency}` : "Not set";
+	const budgetValue = jobData.budgetAmount ? `${jobData.budgetAmount} ${jobData.currency}` : "Not set";
 	const locationType = formatOption(jobData.locationType, "Location type");
 	const budgetType = formatOption(jobData.budgetType, "Budget type");
 	const estimatedCost = getEstimatedCost(jobData);
