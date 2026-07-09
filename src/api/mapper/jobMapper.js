@@ -20,6 +20,24 @@ const BUDGET_TYPE_LABELS = {
     hourly: "Hourly",
 };
 
+function mapStatusFromAPI(status = "") {
+    const normalizedStatus = String(status).trim();
+
+    if (!normalizedStatus) return "";
+    if (!normalizedStatus.includes("_") && normalizedStatus !== normalizedStatus.toUpperCase()) return normalizedStatus;
+
+    return normalizedStatus.toLowerCase().replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+}
+
+function mapStatusGroupFromAPI(statusGroup = null) {
+    if (!statusGroup) return statusGroup;
+
+    return {
+        ...statusGroup,
+        status: mapStatusFromAPI(statusGroup.status),
+    };
+}
+
 export function mapJobToAPI(job = {}) {
     return {
         title: job.title,
@@ -55,7 +73,7 @@ export function mapJobFromAPI(job = {}) {
         currency: job.currency,
         durationDays: job.duration ?? "",
         hoursPerWeek: job.hours_per_week,
-        status: job.status,
+        status: mapStatusFromAPI(job.status),
         updatedAt: job.updated_at,
     }
 }
@@ -73,10 +91,10 @@ export function mapJobSummaryFromAPI(job = {}) {
             total: job.applications?.total ?? job.applicants_count ?? 0,
             new: job.applications?.new ?? job.new_applicants_count ?? 0,
         },
-        contracts: job.contracts ?? job.contract ?? null,
-        payments: job.payments ?? job.payment ?? null,
+        contracts: mapStatusGroupFromAPI(job.contracts ?? job.contract ?? null),
+        payments: mapStatusGroupFromAPI(job.payments ?? job.payment ?? null),
         hoursPerWeek: job.hours_per_week,
-        status: job.status,
+        status: mapStatusFromAPI(job.status),
         updatedAt: job.updated_at,
     }
 }
@@ -100,7 +118,7 @@ export function mapJobListItemFromAPI(item = {}) {
         budgetAmount: job.budget_amount ?? "",
         currency: job.currency ?? "EUR",
         deadline: job.deadline ? dayjs(job.deadline) : null,
-        status: job.status,
+        status: mapStatusFromAPI(job.status),
         createdAt: job.created_at,
         updatedAt: job.updated_at,
 

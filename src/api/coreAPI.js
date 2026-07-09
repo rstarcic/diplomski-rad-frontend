@@ -6,8 +6,11 @@ import {
 	mapReviewDataFromAPI,
 	mapSkillsFromAPI,
 	mapPortfolioItemFromAPI,
+	mapProfileStatsFromAPI,
 } from "./mapper/profileMapper.js";
+import { mapJobApplicationFromAPI, mapJobApplicationDetailsFromAPI } from "./mapper/applicationMapper.js";
 import { mapJobToAPI, mapJobFromAPI, mapJobSummaryFromAPI, mapJobListItemFromAPI } from "./mapper/jobMapper.js";
+// _______________PROFILES _______________
 
 export async function getMyProfile() {
 	const { data } = await api.get("/profiles/me");
@@ -25,6 +28,27 @@ export async function getMyProfile() {
 		reviews: mapReviewDataFromAPI(reviews),
 		skills: mapSkillsFromAPI(skills),
 		portfolio: portfolio.map(mapPortfolioItemFromAPI),
+	};
+}
+
+export async function getContractorPublicProfile(contractorId) {
+	const { data } = await api.get(`/profiles/contractors/${contractorId}`);
+
+	const {
+		profile,
+		reviews,
+		skills = [],
+		stats = [],
+	} = data;
+
+	const portfolio = data.portfolio ?? data.portfolio_items ?? [];
+
+	return {
+		profile: mapProfileFromAPI(profile),
+		portfolio: portfolio.map(mapPortfolioItemFromAPI),
+		skills: mapSkillsFromAPI(skills),
+		stats: mapProfileStatsFromAPI(stats),
+		reviews: mapReviewDataFromAPI(reviews),
 	};
 }
 
@@ -52,6 +76,9 @@ export async function updateMyProfile(profileData) {
 	};
 }
 
+
+// _______________JOBS _______________
+
 export async function createJob(jobData) {
 	const payload = mapJobToAPI(jobData);
 	const { data } = await api.post("/jobs", payload);
@@ -77,6 +104,16 @@ export async function updateJob(jobId, jobData) {
 export async function getMyJobs() {
 	const { data } = await api.get("/jobs/me");
 	return data.map(mapJobSummaryFromAPI);
+}
+
+export async function getJobApplications(jobId) {
+	const { data } = await api.get(`/jobs/${jobId}/applications`);
+	return Array.isArray(data) ? data.map(mapJobApplicationFromAPI) : [];
+}
+
+export async function getJobApplicationDetails(jobId, applicationId) {
+	const { data } = await api.get(`/jobs/${jobId}/applications/${applicationId}`);
+	return mapJobApplicationDetailsFromAPI(data);
 }
 
 export async function getJobFilterOptions() {

@@ -7,7 +7,7 @@ import { useFormErrors } from "../../hooks/useFormErrors";
 import FORM_ERRORS from "../../constants/formError";
 import { AUTH_ERRORS } from "../../constants/apiErrors";
 import { applyApiError } from "../../utils/parseApiError";
-import { resetPasswordApi } from "../../api/auth";
+import { resetPasswordApi } from "../../api/authAPI.js";
 
 const visualContent = {
 	title: "Choose a new password.",

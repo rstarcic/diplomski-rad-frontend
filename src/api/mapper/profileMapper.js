@@ -71,18 +71,18 @@ export function mapProfileToFormData(formData = {}) {
 
 export function mapRatingsFromAPI(ratings = {}) {
     return {
-        communicationRating: ratings.communication_rating ?? 0,
-        clarityRating: ratings.clarity_rating ?? 0,
-        reliabilityRating: ratings.reliability_rating ?? 0,
-        collaborationRating: ratings.collaboration_rating ?? 0,
+        communicationRating: ratings.communicationRating ?? ratings.communication_rating ?? 0,
+        clarityRating: ratings.clarityRating ?? ratings.clarity_rating ?? 0,
+        reliabilityRating: ratings.reliabilityRating ?? ratings.reliability_rating ?? 0,
+        collaborationRating: ratings.collaborationRating ?? ratings.collaboration_rating ?? 0,
     };
 }
 
 export function mapReviewerFromAPI(reviewer = {}) {
-    const { firstName, lastName } = splitFullName(reviewer.full_name);
+    const { firstName, lastName } = splitFullName(reviewer.fullName ?? reviewer.full_name);
 
     return {
-        id: reviewer.id,
+        id: reviewer.userId ?? reviewer.user_id ?? reviewer.id,
         firstName,
         lastName,
         imageUrl: reviewer.profile_picture ?? "",
@@ -93,19 +93,19 @@ export function mapReviewFromAPI(review = {}) {
     return {
         id: review.id,
         comment: review.comment ?? "",
-        createdAt: review.created_at ?? "",
+        createdAt: review.createdAt ?? review.created_at ?? "",
         reviewer: mapReviewerFromAPI(review.reviewer ?? {}),
-        rawOverallRating: review.raw_overall_rating,
-        overallRating: review.overall_rating ?? 0,
+        rawOverallRating: review.rawOverallRating ?? review.raw_overall_rating,
+        overallRating: review.overallRating ?? review.overall_rating ?? 0,
         ratings: mapRatingsFromAPI(review.ratings ?? {}),
     };
 }
 
 export function mapReviewSummaryFromAPI(summary = {}) {
     return {
-        totalReviews: summary.total_reviews ?? 0,
-        overallRating: summary.overall_rating ?? 0,
-        rawOverallRating: summary.raw_overall_rating,
+        totalReviews: summary.totalReviews ?? summary.total_reviews ?? 0,
+        overallRating: summary.overallRating ?? summary.overall_rating ?? 0,
+        rawOverallRating: summary.rawOverallRating ?? summary.raw_overall_rating,
         ratings: mapRatingsFromAPI(summary.ratings ?? {}),
     };
 }
@@ -131,6 +131,14 @@ export function mapSkillsFromAPI(skills = []) {
     return skills.map((skill) => ({
         id: skill.id,
         name: skill.name,
+    }));
+}
+
+export function mapProfileStatsFromAPI(stats = []) {
+    return stats.map((stat) => ({
+        id: stat.id,
+        value: stat.value,
+        subtitle: stat.subtitle ?? "",
     }));
 }
 

@@ -21,8 +21,6 @@ export const formatOption = (value, fallback = "Not set") => {
 
 export const formatDeadline = (deadline) => formatDate(deadline, "No deadline");
 
-// Converts backend status strings ("OPEN", "IN_PROGRESS") to JOB_STATUSES / CONTRACT_STATUSES keys ("open", "inProgress")
 export const findStatusKey = (rawStatus, statusConfig) => {
-    const normalized = rawStatus.toLowerCase().replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-    return Object.keys(statusConfig).find((key) => key === normalized) ?? null;
+    return statusConfig[rawStatus] ? rawStatus : null;
 };
