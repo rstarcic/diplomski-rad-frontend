@@ -26,6 +26,33 @@ export const AUTH_ERRORS = {
     account_not_verified: "Please verify your email before signing in. Check your inbox.",
 };
 
-export const JOB_ERRORS = {};
+export const JOB_ERRORS = {
+    forbidden: "You do not have permission to perform this job action.",
+    job_not_found: "We couldn't find the job you're looking for.",
+    job_failed_to_create: "Failed to create the job. Please try again later.",
+    job_cannot_be_updated: "Only open jobs can be updated.",
+    only_clients_can_update_jobs: "Only clients can update jobs.",
+    not_authenticated: "You must be logged in to access this resource.",
+    token_expired: "Your session has expired. Please log in again.",
+    invalid_or_expired_token: "Your session is no longer valid. Please log in again.",
+    invalid_token: "Your session is no longer valid. Please log in again.",
+    profile_not_found: "We couldn't find your profile.",
+};
+export const APPLICATION_ERRORS = {
+    forbidden: "You do not have permission to view these applications.",
+    job_not_found: "We couldn't find the job you're looking for.",
+    not_authenticated: "You must be logged in to access this resource.",
+    token_expired: "Your session has expired. Please log in again.",
+    invalid_or_expired_token: "Your session is no longer valid. Please log in again.",
+    invalid_token: "Your session is no longer valid. Please log in again.",
+    profile_not_found: "We couldn't find your profile.",
+};
 
-export const APPLICATION_ERRORS = {};
+export const PROFILE_ERRORS = {
+    profile_not_found: "We couldn't find this profile.",
+    forbidden: "You do not have permission to view this profile.",
+    not_authenticated: "You must be logged in to access this resource.",
+    token_expired: "Your session has expired. Please log in again.",
+    invalid_or_expired_token: "Your session is no longer valid. Please log in again.",
+    invalid_token: "Your session is no longer valid. Please log in again.",
+};

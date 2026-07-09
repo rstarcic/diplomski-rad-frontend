@@ -44,7 +44,7 @@ export default function ApplicationSection({ application }) {
 							Applied
 						</Typography>
 						<Typography variant="body2" fontWeight={700}>
-							{formatDate(application.createdAt)}
+							{formatDate(application.appliedAt)}
 						</Typography>
 					</Stack>
 				</Stack>

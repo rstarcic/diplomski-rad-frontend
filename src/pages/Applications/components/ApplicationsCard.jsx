@@ -14,8 +14,8 @@ export default function ApplicationsCard({ application, contractor }) {
 	const navigate = useNavigate();
 	const statusKey = findStatusKey(application.status, APPLICATION_STATUSES);
 
-	const { id, firstName, lastName, city, country, profileImageUrl } = contractor ?? {};
-	const fullName = firstName && lastName ? `${firstName} ${lastName}` : "Unknown contractor";
+	const { id, firstName, lastName, fullName: contractorFullName, city, country, profileImageUrl } = contractor ?? {};
+	const fullName = contractorFullName || (firstName && lastName ? `${firstName} ${lastName}` : "Unknown contractor");
 
 	const openContractorProfile = () => {
 		if (id) navigate(`/client/contractors/${id}`);
