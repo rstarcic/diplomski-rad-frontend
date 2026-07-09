@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Tab, Tabs, Tooltip } from "@mui/material";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 
@@ -38,6 +38,10 @@ function TabLabel({ label, locked, lockReason }) {
 
 export default function StepTabs({ tabs, initialTab = 0 }) {
 	const [active, setActive] = useState(initialTab);
+
+	useEffect(() => {
+		if (!tabs[initialTab]?.locked) setActive(initialTab);
+	}, [initialTab, tabs]);
 
 	const handleChange = (_, newValue) => {
 		if (!tabs[newValue]?.locked) setActive(newValue);

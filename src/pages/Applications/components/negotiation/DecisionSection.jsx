@@ -1,12 +1,20 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, TextField, Typography } from "@mui/material";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-import { actionCardSx, waitingCardSx, acceptBtnSx, rejectBtnSx, counterBtnSx, cancelBtnSx } from "./DecisionSection.styles";
+import {
+	actionCardSx,
+	waitingCardSx,
+	acceptBtnSx,
+	rejectBtnSx,
+	counterBtnSx,
+	cancelBtnSx,
+	messageFieldSx,
+} from "./DecisionSection.styles";
 
-function EditingCard({ onSubmit, onCancel }) {
+function EditingCard({ message, onMessageChange, onSubmit, onCancel }) {
 	return (
 		<Box sx={actionCardSx}>
 			<Stack spacing={1.5}>
@@ -16,6 +24,17 @@ function EditingCard({ onSubmit, onCancel }) {
 				<Typography variant="body2" color="text.secondary">
 					Review the updated terms above and submit when ready.
 				</Typography>
+				<TextField
+					label="Message"
+					value={message}
+					onChange={(event) => onMessageChange(event.target.value)}
+					placeholder="Add a short note about your counter-offer"
+					multiline
+					minRows={3}
+					fullWidth
+					size="small"
+					sx={messageFieldSx}
+				/>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
 					<PrimaryButton
 						fullWidth
@@ -92,6 +111,25 @@ function WaitingCard({ waitingFor }) {
 	);
 }
 
+function FinalCard({ status }) {
+	const isAccepted = status === "accepted";
+
+	return (
+		<Box sx={waitingCardSx}>
+			<Stack spacing={0.5} sx={{ alignItems: "center" }}>
+				{isAccepted ? (
+					<CheckRoundedIcon fontSize="small" color="success" />
+				) : (
+					<CloseRoundedIcon fontSize="small" color="error" />
+				)}
+				<Typography variant="body2" color="text.secondary" fontWeight={700}>
+					{isAccepted ? "Negotiation accepted" : "Negotiation rejected"}
+				</Typography>
+			</Stack>
+		</Box>
+	);
+}
+
 export default function DecisionSection({
 	status,
 	role,
@@ -101,9 +139,22 @@ export default function DecisionSection({
 	onCounterOffer,
 	onSubmitCounter,
 	onCancelEdit,
+	message,
+	onMessageChange,
 }) {
 	if (isEditing) {
-		return <EditingCard onSubmit={onSubmitCounter} onCancel={onCancelEdit} />;
+		return (
+			<EditingCard
+				message={message}
+				onMessageChange={onMessageChange}
+				onSubmit={onSubmitCounter}
+				onCancel={onCancelEdit}
+			/>
+		);
+	}
+
+	if (["accepted", "rejected", "expired"].includes(status)) {
+		return <FinalCard status={status} />;
 	}
 
 	const isActiveParty =
@@ -113,6 +164,5 @@ export default function DecisionSection({
 		return <ActionCard role={role} onAccept={onAccept} onReject={onReject} onCounterOffer={onCounterOffer} />;
 	}
 
-	const waitingFor = status === "pendingClient" ? "client" : "contractor";
-	return <WaitingCard waitingFor={waitingFor} />;
+	return <WaitingCard waitingFor={status === "pendingClient" ? "client" : "contractor"} />;
 }

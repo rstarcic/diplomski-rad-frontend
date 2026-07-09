@@ -50,3 +50,9 @@ export const cancelBtnSx = {
 	textTransform: "none",
 	borderRadius: 2,
 };
+
+export const messageFieldSx = {
+	"& .MuiInputBase-root": {
+		bgcolor: "background.paper",
+	},
+};

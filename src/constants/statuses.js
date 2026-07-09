@@ -22,6 +22,8 @@ export const APPLICATION_STATUSES = {
     accepted: { label: "Accepted", paletteKey: "success", icon: CheckCircleRoundedIcon },
     rejected: { label: "Rejected", paletteKey: "error", icon: CancelRoundedIcon },
     withdrawn: { label: "Withdrawn", paletteKey: "warning", icon: BlockRoundedIcon },
+    incomplete: { label: "Incomplete", paletteKey: "warning", icon: HourglassEmptyRoundedIcon },
+    cancelled: { label: "Cancelled", paletteKey: "error", icon: CancelRoundedIcon },
 };
 
 export const NEGOTIATION_STATUSES = {
@@ -29,9 +31,11 @@ export const NEGOTIATION_STATUSES = {
     pendingClient: { label: "Awaiting client", paletteKey: "warning", icon: HourglassEmptyRoundedIcon },
     accepted: { label: "Accepted", paletteKey: "success", icon: CheckCircleRoundedIcon },
     rejected: { label: "Rejected", paletteKey: "error", icon: CancelRoundedIcon },
+    expired: { label: "Rejected", paletteKey: "error", icon: CancelRoundedIcon },
 };
 
 export const CONTRACT_STATUSES = {
+    created: { label: "Created", paletteKey: "info", icon: DrawRoundedIcon },
     pendingClient: { label: "Pending client", paletteKey: "warning", icon: DrawRoundedIcon },
     pendingContractor: { label: "Pending contractor", paletteKey: "warning", icon: DrawRoundedIcon },
     signedByBoth: { label: "Signed by both", paletteKey: "success", icon: CheckCircleRoundedIcon },

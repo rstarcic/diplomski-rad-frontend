@@ -10,7 +10,7 @@ import StepTabs from "./components/StepTabs";
 import JobDetailsSection from "../Jobs/components/details/JobDetailsSection";
 import ClientProfileSection from "../Jobs/components/details/ClientProfileSection";
 
-import { useApplicationTabs } from "./hooks/useApplicationTabs";
+import { getApplicationWorkflowState, useApplicationTabs } from "./hooks/useApplicationTabs";
 import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
 import { clientProfileReviewData } from "../../mock/ProfileReviews";
 
@@ -24,13 +24,12 @@ import {
 	MOCK_PAYMENTS,
 } from "../../mock/MockData";
 
-function getInitialTab({ negotiation, contract, payments }) {
-	const hasPaidPayment = payments.some((payment) => payment.status === "PAID");
+function getInitialTab({ application, negotiation, contract, payments }) {
+	const workflow = getApplicationWorkflowState({ application, negotiation, contract, payments });
 
-	if (hasPaidPayment) return 3;
-	if (contract?.status === "COMPLETED") return 2;
-	if (contract) return 1;
-	if (negotiation?.status === "ACCEPTED") return 1;
+	if (workflow.paymentCompleted) return 3;
+	if (workflow.contractSigned) return 2;
+	if (workflow.contractCreated && !workflow.applicationRejected) return 1;
 
 	return 0;
 }
@@ -49,6 +48,7 @@ export default function ContractorApplicationDetailsPage() {
 	const payments = contract ? MOCK_PAYMENTS.filter((payment) => payment.contractId === contract.id) : [];
 
 	const tabs = useApplicationTabs({
+		application,
 		negotiation,
 		negotiationUpdates,
 		contract,
@@ -78,6 +78,7 @@ export default function ContractorApplicationDetailsPage() {
 						<StepTabs
 							tabs={tabs}
 							initialTab={getInitialTab({
+								application,
 								negotiation,
 								contract,
 								payments,

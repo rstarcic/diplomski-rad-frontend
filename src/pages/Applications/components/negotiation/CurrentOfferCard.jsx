@@ -90,6 +90,14 @@ export default function CurrentOfferCard({ offer, isEditing, editValues, onEditC
 					onChange={(val) => onEditChange("deliverables", val)}
 				/>
 			</Box>
+			<Box sx={termBoxSx}>
+				<TermCell
+					label="Message"
+					value={offer.message || "No message provided."}
+					isEditing={false}
+					multiline
+				/>
+			</Box>
 		</Stack>
 	);
 }

@@ -9,20 +9,20 @@ import { NEGOTIATION_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
 
-export default function NegotiationSection({ negotiation, updates = [], role }) {
+export default function NegotiationSection({ negotiation, status, updates = [], role, onAcceptNegotiation }) {
 	const sortedUpdates = [...updates].sort((a, b) => a.roundNumber - b.roundNumber);
 	const currentOffer = sortedUpdates.at(-1) ?? null;
 
-	const [currentNegotiation, setCurrentNegotiation] = useState(negotiation);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editValues, setEditValues] = useState({
 		budgetAmount: currentOffer?.budgetAmount ?? "",
 		hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
 		duration: currentOffer?.duration ?? "",
 		deliverables: currentOffer?.deliverables ?? "",
+		message: "",
 	});
 
-	const statusKey = currentNegotiation ? findStatusKey(currentNegotiation.status, NEGOTIATION_STATUSES) : null;
+	const statusKey = status ? findStatusKey(status, NEGOTIATION_STATUSES) : null;
 
 	const handleEditChange = (field, value) => {
 		setEditValues((prev) => ({ ...prev, [field]: value }));
@@ -36,6 +36,7 @@ export default function NegotiationSection({ negotiation, updates = [], role }) 
 			hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
 			duration: currentOffer?.duration ?? "",
 			deliverables: currentOffer?.deliverables ?? "",
+			message: "",
 		});
 		setIsEditing(false);
 	};
@@ -47,17 +48,14 @@ export default function NegotiationSection({ negotiation, updates = [], role }) 
 
 	const handleAccept = () => {
 		// TODO: API call
-		setCurrentNegotiation((prev) => ({
-			...prev,
-			status: "ACCEPTED",
-		}));
+		onAcceptNegotiation?.();
 	};
 
 	const handleReject = () => {
 		// TODO: API call
 	};
 
-	if (!currentNegotiation) {
+	if (!negotiation) {
 		return (
 			<Card elevation={0} sx={surfaceSectionSx}>
 				<Stack spacing={1}>
@@ -102,6 +100,8 @@ export default function NegotiationSection({ negotiation, updates = [], role }) 
 								onCounterOffer={handleCounterOffer}
 								onSubmitCounter={handleSubmitCounter}
 								onCancelEdit={handleCancelEdit}
+								message={editValues.message}
+								onMessageChange={(value) => handleEditChange("message", value)}
 							/>
 						</Stack>
 					</Grid>

@@ -219,11 +219,11 @@ export const MOCK_CONTRACTORS = [
 ];
 
 // ─── JOBS ─────────────────────────────────────────────────────────────────────
-// Status: OPEN | IN_PROGRESS | COMPLETED | CANCELLED
+// Status: open | inProgress | completed | cancelled
 
 export const MOCK_JOBS = [
     {
-        id: "job_1",
+        id: "7",
         clientId: "client_2",
         title: "Mobile App UI Designer",
         category: "UI/UX Design",
@@ -232,7 +232,7 @@ export const MOCK_JOBS = [
         location: "Remote",
         budgetType: "Fixed",
         budgetAmount: 3000,
-        status: "OPEN",
+        status: "open",
         deadline: "2026-09-01",
         durationDays: 30,
         hoursPerWeek: 20,
@@ -242,7 +242,7 @@ export const MOCK_JOBS = [
         updatedAt: "2026-06-10",
     },
     {
-        id: "job_2",
+        id: "7",
         clientId: "client_1",
         title: "Senior Frontend Developer",
         category: "Web Development",
@@ -251,7 +251,7 @@ export const MOCK_JOBS = [
         location: "Remote",
         budgetType: "Hourly",
         budgetAmount: 50,
-        status: "OPEN",
+        status: "open",
         deadline: "2026-08-15",
         durationDays: 45,
         hoursPerWeek: 20,
@@ -269,7 +269,7 @@ export const MOCK_JOBS = [
         payments: { status: null },
     },
     {
-        id: "job_3",
+        id: "8",
         clientId: "client_1",
         title: "Backend API Developer",
         category: "Backend Development",
@@ -278,7 +278,7 @@ export const MOCK_JOBS = [
         location: "Split",
         budgetType: "Hourly",
         budgetAmount: 60,
-        status: "IN_PROGRESS",
+        status: "inProgress",
         deadline: "2026-07-30",
         durationDays: 60,
         hoursPerWeek: 40,
@@ -292,11 +292,11 @@ export const MOCK_JOBS = [
         createdAt: "2026-05-01",
         updatedAt: "2026-05-15",
         applications: { total: 12, new: 0 },
-        contracts: { status: "PENDING_CLIENT" },
-        payments: { status: "PENDING" },
+        contracts: { status: "pendingClient" },
+        payments: { status: "pending" },
     },
     {
-        id: "job_4",
+        id: "9",
         clientId: "client_1",
         title: "Data Dashboard Analyst",
         category: "Data Analysis",
@@ -305,7 +305,7 @@ export const MOCK_JOBS = [
         location: "Rijeka",
         budgetType: "Hourly",
         budgetAmount: 40,
-        status: "COMPLETED",
+        status: "completed",
         deadline: "2026-05-01",
         durationDays: 30,
         hoursPerWeek: 20,
@@ -314,8 +314,8 @@ export const MOCK_JOBS = [
         createdAt: "2026-03-01",
         updatedAt: "2026-05-02",
         applications: { total: 8, new: 0 },
-        contracts: { status: "COMPLETED" },
-        payments: { status: "PAID" },
+        contracts: { status: "completed" },
+        payments: { status: "paid" },
     },
     {
         id: "job_5",
@@ -327,7 +327,7 @@ export const MOCK_JOBS = [
         location: "Remote",
         budgetType: "Fixed",
         budgetAmount: 8000,
-        status: "CANCELLED",
+        status: "cancelled",
         deadline: "2026-06-01",
         durationDays: 20,
         hoursPerWeek: 40,
@@ -342,68 +342,68 @@ export const MOCK_JOBS = [
 ];
 
 // ─── APPLICATIONS ─────────────────────────────────────────────────────────────
-// Status: PENDING | NEGOTIATING | ACCEPTED | REJECTED | WITHDRAWN
+// Status: pending | negotiating | accepted | rejected | withdrawn
 
 export const MOCK_APPLICATIONS = [
     {
         id: "app_1",
-        jobId: "job_2",
+        jobId: "7",
         contractorId: "contractor_4",
-        status: "PENDING",
+        status: "pending",
         coverLetter: "I have 5 years of React experience and have built complex data-heavy dashboards for fintech clients. I am comfortable with MUI and REST integrations. Looking forward to contributing to your project.",
         createdAt: "2026-06-08",
         updatedAt: "2026-06-08",
     },
     {
         id: "app_2",
-        jobId: "job_2",
+        jobId: "8",
         contractorId: "contractor_3",
-        status: "NEGOTIATING",
+        status: "negotiating",
         coverLetter: "I specialise in MUI-based applications and REST API integrations. I have shipped three dashboard products in the last two years. Excited about this project.",
         createdAt: "2026-06-03",
         updatedAt: "2026-06-06",
     },
     {
         id: "app_3",
-        jobId: "job_3",
+        jobId: "9",
         contractorId: "contractor_1",
-        status: "PENDING",
+        status: "pending",
         coverLetter: "I have built multiple FastAPI backends and am very comfortable with microservices, Stripe, and PostgreSQL. Happy to start immediately.",
         createdAt: "2026-05-05",
         updatedAt: "2026-05-10",
     },
     {
         id: "app_4",
-        jobId: "job_2",
+        jobId: "7",
         contractorId: "contractor_2",
-        status: "REJECTED",
+        status: "rejected",
         coverLetter: "I have experience with React and would love to join your project. I am a fast learner and deliver on time.",
         createdAt: "2026-06-02",
         updatedAt: "2026-06-04",
     },
     {
         id: "app_5",
-        jobId: "job_5",
+        jobId: "7",
         contractorId: "contractor_4",
-        status: "WITHDRAWN",
+        status: "withdrawn",
         coverLetter: "I have extensive AWS and Kubernetes experience and have set up similar pipelines before.",
         createdAt: "2026-04-05",
         updatedAt: "2026-04-08",
     },
     {
         id: "app_6",
-        jobId: "job_4",
+        jobId: "8",
         contractorId: "contractor_1",
-        status: "ACCEPTED",
+        status: "accepted",
         coverLetter: "Data analysis and dashboard work is my core strength. I have built reporting pipelines with Pandas and Tableau for multiple clients.",
         createdAt: "2026-03-05",
         updatedAt: "2026-03-10",
     },
     {
         id: "app_7",
-        jobId: "job_2",
+        jobId: "9",
         contractorId: "contractor_3",
-        status: "ACCEPTED",
+        status: "accepted",
         coverLetter: "I specialise in MUI-based applications and REST API integrations. I have shipped three dashboard products in the last two years.",
         createdAt: "2026-06-07",
         updatedAt: "2026-06-11",
@@ -411,7 +411,7 @@ export const MOCK_APPLICATIONS = [
 ];
 
 // ─── NEGOTIATIONS ─────────────────────────────────────────────────────────────
-// Status: PENDING_CLIENT | PENDING_CONTRACTOR | ACCEPTED | REJECTED | WITHDRAWN
+// Status: pendingClient | pendingContractor | expired
 //
 export const MOCK_NEGOTIATIONS = [
     {
@@ -419,7 +419,7 @@ export const MOCK_NEGOTIATIONS = [
         applicationId: "app_2",
         clientId: "client_1",
         contractorId: "contractor_3",
-        status: "PENDING_CLIENT",
+        status: "pendingClient",
         createdAt: "2026-06-04T09:00:00Z",
         updatedAt: "2026-06-06T14:30:00Z",
     },
@@ -428,7 +428,7 @@ export const MOCK_NEGOTIATIONS = [
         applicationId: "app_3",
         clientId: "client_1",
         contractorId: "contractor_1",
-        status: "ACCEPTED",
+        status: "pendingClient",
         createdAt: "2026-05-06T10:00:00Z",
         updatedAt: "2026-05-10T16:00:00Z",
     },
@@ -437,7 +437,7 @@ export const MOCK_NEGOTIATIONS = [
         applicationId: "app_6",
         clientId: "client_1",
         contractorId: "contractor_1",
-        status: "ACCEPTED",
+        status: "pendingClient",
         createdAt: "2026-03-06T09:00:00Z",
         updatedAt: "2026-03-10T14:00:00Z",
     },
@@ -446,7 +446,7 @@ export const MOCK_NEGOTIATIONS = [
         applicationId: "app_7",
         clientId: "client_1",
         contractorId: "contractor_3",
-        status: "ACCEPTED",
+        status: "pendingClient",
         createdAt: "2026-06-07T10:00:00Z",
         updatedAt: "2026-06-10T15:00:00Z",
     },
@@ -563,14 +563,14 @@ export const MOCK_NEGOTIATION_UPDATES = [
 ];
 
 // CONTRACTS
-// Status: PENDING_CLIENT | PENDING_CONTRACTOR | COMPLETED | CANCELLED
+// Status: created | pendingClient | pendingContractor | signedByBoth | completed | cancelled
 // Negotiated contracts use the latest accepted update; direct contracts use the job terms.
 export const MOCK_CONTRACTS = [
     {
         id: "contract_1",
         applicationId: "app_3",
         negotiationId: "neg_2",
-        jobId: "job_3",
+        jobId: "7",
         clientId: "client_1",
         contractorId: "contractor_1",
         agreedBudget: 3600,
@@ -578,7 +578,7 @@ export const MOCK_CONTRACTS = [
         agreedHoursPerWeek: 40,
         agreedDuration: 60,
         agreedDeliverables: "Complete FastAPI backend with auth, job, application, contract, and payment services. Integration tests and OpenAPI docs included.",
-        status: "PENDING_CLIENT",
+        status: "pendingClient",
         clientSignedAt: null,
         contractorSignedAt: "2026-05-14T10:00:00Z",
         createdAt: "2026-05-12",
@@ -597,7 +597,7 @@ export const MOCK_CONTRACTS = [
         agreedDuration: 30,
         agreedDeliverables: "Three interactive dashboards with CSV export and an automated weekly report.",
         agreedRevisions: 2,
-        status: "COMPLETED",
+        status: "completed",
         startDate: "2026-03-15",
         endDate: "2026-05-02",
         clientSignedAt: "2026-03-13T09:00:00Z",
@@ -609,7 +609,7 @@ export const MOCK_CONTRACTS = [
         id: "contract_3",
         applicationId: "app_7",
         negotiationId: "neg_4",
-        jobId: "job_2",
+        jobId: "7",
         clientId: "client_1",
         contractorId: "contractor_3",
         agreedBudget: 1200,
@@ -618,7 +618,7 @@ export const MOCK_CONTRACTS = [
         agreedDuration: 120,
         agreedDeliverables: "Full dashboard implementation with 8+ reusable components and Storybook stories.",
         agreedRevisions: 2,
-        status: "PENDING_CONTRACTOR",
+        status: "pendingContractor",
         startDate: null,
         endDate: null,
         clientSignedAt: "2026-06-11T11:00:00Z",
@@ -629,7 +629,7 @@ export const MOCK_CONTRACTS = [
 ];
 
 // ─── PAYMENTS ─────────────────────────────────────────────────────────────────
-// Status: PENDING | PROCESSING | PAID | FAILED
+// Status: pending | processing | paid | failed
 
 export const MOCK_PAYMENTS = [
 
