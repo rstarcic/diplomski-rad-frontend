@@ -20,6 +20,42 @@ export const cardContentSx = {
 	flexDirection: "column",
 };
 
+export const headerRowSx = {
+	justifyContent: "space-between",
+	alignItems: "flex-start",
+};
+
+export const titleWrapSx = {
+	minWidth: 0,
+};
+
+export const categoryRowSx = {
+	alignItems: "center",
+	mt: 0.75,
+};
+
+export const chipRowSx = {
+	flexWrap: "wrap",
+};
+
+export const metaRowSx = {
+	flexWrap: "wrap",
+};
+
+export const footerSx = {
+	mt: "auto",
+	pt: 2,
+};
+
+export const footerDividerSx = {
+	mb: 2,
+};
+
+export const footerRowSx = {
+	justifyContent: "space-between",
+	alignItems: "center",
+};
+
 export const avatarSx = {
 	width: 36,
 	height: 36,

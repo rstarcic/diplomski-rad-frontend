@@ -15,45 +15,60 @@ import {
 	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
-	Typography,
 } from "@mui/material";
 
+import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { BUDGET_TYPES, INITIAL_JOB_FILTERS, LOCATION_TYPES, WORK_MODES } from "../../../../constants/jobFilters";
-import { filterCardSx, resetButtonSx, filterGridSx, budgetSectionSx, budgetLabelSx, budgetToggleGroupSx } from "./Filters.styles";
+import { BUDGET_TYPES, INITIAL_JOB_FILTERS, LOCATION_TYPES } from "../../../../constants/jobFilters";
+import { budgetToggleGroupSx, filterActionsSx, filterCardSx, filterGridSx, resetButtonSx } from "./Filters.styles";
+
+const EMPTY_OPTIONS = {
+	categories: [],
+	cities: [],
+};
+
+const getOptionValue = (option) => option?.value ?? option ?? "";
+const getOptionLabel = (option) => option?.label ?? option ?? "";
 
 export default function Filters({
 	filters = INITIAL_JOB_FILTERS,
+	options = EMPTY_OPTIONS,
 	onChange,
+	onApply,
 	onReset,
 	showSearchField = true,
 	showCategoryField = true,
-	showWorkModeField = true,
+	showLocationTypes = true,
 }) {
-	const isCityVisible = ["onsite", "hybrid"].includes(filters.workMode);
+	const { categories = [], cities = [] } = options;
+	const isCityVisible = filters.locationType !== "remote";
+	const hasBudgetType = Boolean(filters.budgetType);
 	const isFixedBudget = filters.budgetType === "fixed";
 
-	const minValue = isFixedBudget ? filters.minFixedBudget : filters.minHourlyRate;
-	const maxValue = isFixedBudget ? filters.maxFixedBudget : filters.maxHourlyRate;
-	const minField = isFixedBudget ? "minFixedBudget" : "minHourlyRate";
-	const maxField = isFixedBudget ? "maxFixedBudget" : "maxHourlyRate";
-	const budgetAdornment = isFixedBudget ? "€" : "€/h";
+	const minValue = filters.minBudget;
+	const maxValue = filters.maxBudget;
+	const budgetAdornment = isFixedBudget ? "EUR" : "EUR/h";
 
 	const handleChange = (field) => (event) => {
 		const value = event.target.value;
 		onChange?.({
 			...filters,
 			[field]: value,
-			...(field === "workMode" && value === "remote" ? { city: "" } : {}),
+			...(field === "locationType" && value === "remote" ? { city: "" } : {}),
 		});
 	};
 
-	const handleBudgetTypeChange = (event, value) => {
+	const handleCityChange = (_event, newValue) => {
+		onChange?.({ ...filters, city: getOptionValue(newValue) });
+	};
+
+	const handleBudgetTypeChange = (_event, value) => {
 		if (!value) return;
 		onChange?.({
 			...filters,
 			budgetType: value,
-			...(value === "fixed" ? { minHourlyRate: "", maxHourlyRate: "" } : { minFixedBudget: "", maxFixedBudget: "" }),
+			minBudget: "",
+			maxBudget: "",
 		});
 	};
 
@@ -64,25 +79,27 @@ export default function Filters({
 
 	return (
 		<Card elevation={0} sx={filterCardSx}>
-			{/* Header */}
-			<Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+			<Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", mb: 1.5 }}>
 				<Stack direction="row" sx={{ alignItems: "center", gap: 1 }}>
-					<FilterListRoundedIcon sx={{ color: "primary.main", fontSize: 25 }} />
+					<FilterListRoundedIcon sx={{ color: "primary.main", fontSize: 24 }} />
+					<Box component="span" sx={{ color: "text.primary", fontWeight: 700 }}>
+						Filters
+					</Box>
 				</Stack>
-				<Box component="button" onClick={handleReset} sx={resetButtonSx}>
-					<RestartAltRoundedIcon sx={{ color: "primary.main", fontSize: 25 }} />
-					<Typography>Reset</Typography>
+
+				<Box component="button" type="button" onClick={handleReset} sx={resetButtonSx}>
+					<RestartAltRoundedIcon sx={{ color: "primary.main", fontSize: 23 }} />
+					<Box component="span">Reset</Box>
 				</Box>
 			</Stack>
 
-			<Divider sx={{ mb: 2 }} />
+			<Divider sx={{ mb: 1.5 }} />
 
-			{/* Search, category, work mode, city */}
-			<Box sx={filterGridSx}>
+			<Box sx={filterGridSx(isCityVisible)}>
 				{showSearchField && (
 					<PrimaryTextField
 						label="Search jobs"
-						placeholder="Search by title, skill, or keyword"
+						placeholder="Search by title, category, or keyword"
 						value={filters.search}
 						onChange={handleChange("search")}
 						slotProps={{
@@ -100,23 +117,23 @@ export default function Filters({
 				{showCategoryField && (
 					<FormControl size="small" fullWidth>
 						<InputLabel>Category</InputLabel>
-						<Select label="Category" value={filters.category} onChange={handleChange("category")}>
+						<Select label="Category" value={filters.category ?? ""} onChange={handleChange("category")}>
 							<MenuItem value="">All categories</MenuItem>
-							{["it", "design", "marketing"].map((category) => (
-								<MenuItem key={category} value={category}>
-									{category}
+							{categories.map((category) => (
+								<MenuItem key={getOptionValue(category)} value={getOptionValue(category)}>
+									{getOptionLabel(category)}
 								</MenuItem>
 							))}
 						</Select>
 					</FormControl>
 				)}
 
-				{showWorkModeField && (
+				{showLocationTypes && (
 					<FormControl size="small" fullWidth>
 						<InputLabel>Work mode</InputLabel>
-						<Select label="Work mode" value={filters.workMode} onChange={handleChange("workMode")}>
+						<Select label="Work mode" value={filters.locationType ?? ""} onChange={handleChange("locationType")}>
 							<MenuItem value="">All modes</MenuItem>
-							{WORK_MODES.map((mode) => (
+							{LOCATION_TYPES.map((mode) => (
 								<MenuItem key={mode.value} value={mode.value}>
 									{mode.label}
 								</MenuItem>
@@ -127,66 +144,62 @@ export default function Filters({
 
 				{isCityVisible && (
 					<Autocomplete
-						options={LOCATION_TYPES}
-						value={LOCATION_TYPES.find((location) => location.value === filters.city) || null}
-						getOptionLabel={(option) => option.label}
-						isOptionEqualToValue={(option, value) => option.value === value.value}
-						onChange={(event, newValue) => {
-							onChange?.({ ...filters, city: newValue?.value || "" });
-						}}
-						renderInput={(params) => <TextField {...params} label="City" size="small" />}
+						options={cities}
+						value={cities.find((city) => getOptionValue(city) === filters.city) ?? null}
+						getOptionLabel={getOptionLabel}
+						isOptionEqualToValue={(option, value) => getOptionValue(option) === getOptionValue(value)}
+						onChange={handleCityChange}
+						renderInput={(params) => <TextField {...params} label="City" placeholder="All cities" size="small" />}
 					/>
 				)}
-			</Box>
 
-			{/* Budget section */}
-			<Box sx={budgetSectionSx}>
-				<Typography variant="caption" fontWeight={700} color="text.secondary" sx={budgetLabelSx}>
-					Budget
-				</Typography>
+				<ToggleButtonGroup
+					exclusive
+					size="small"
+					value={filters.budgetType ?? ""}
+					onChange={handleBudgetTypeChange}
+					sx={budgetToggleGroupSx}
+				>
+					{BUDGET_TYPES.map((type) => (
+						<ToggleButton key={type.value} value={type.value}>
+							{type.label}
+						</ToggleButton>
+					))}
+				</ToggleButtonGroup>
 
-				<Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ alignItems: { sm: "center" } }}>
-					<ToggleButtonGroup
-						exclusive
-						size="small"
-						value={filters.budgetType}
-						onChange={handleBudgetTypeChange}
-						sx={budgetToggleGroupSx}
-					>
-						{BUDGET_TYPES.map((type) => (
-							<ToggleButton key={type.value} value={type.value}>
-								{type.label}
-							</ToggleButton>
-						))}
-					</ToggleButtonGroup>
+				<TextField
+					label="Min"
+					type="number"
+					disabled={!hasBudgetType}
+					value={minValue}
+					onChange={handleChange("minBudget")}
+					size="small"
+					fullWidth
+					slotProps={{
+						input: { endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment> },
+						htmlInput: { min: 0 },
+					}}
+				/>
 
-					<Stack direction="row" spacing={1} flex={1} width="100%">
-						<TextField
-							label="Min"
-							type="number"
-							value={minValue}
-							onChange={handleChange(minField)}
-							size="small"
-							fullWidth
-							slotProps={{
-								input: { endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment> },
-								htmlInput: { min: 0 },
-							}}
-						/>
-						<TextField
-							label="Max"
-							type="number"
-							value={maxValue}
-							onChange={handleChange(maxField)}
-							size="small"
-							fullWidth
-							slotProps={{
-								input: { endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment> },
-								htmlInput: { min: 0 },
-							}}
-						/>
-					</Stack>
-				</Stack>
+				<TextField
+					label="Max"
+					type="number"
+					disabled={!hasBudgetType}
+					value={maxValue}
+					onChange={handleChange("maxBudget")}
+					size="small"
+					fullWidth
+					slotProps={{
+						input: { endAdornment: <InputAdornment position="end">{budgetAdornment}</InputAdornment> },
+						htmlInput: { min: 0 },
+					}}
+				/>
+
+				<Box sx={filterActionsSx}>
+					<PrimaryButton size="small" onClick={onApply}>
+						Apply filters
+					</PrimaryButton>
+				</Box>
 			</Box>
 		</Card>
 	);

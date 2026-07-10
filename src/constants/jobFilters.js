@@ -1,8 +1,3 @@
-export const WORK_MODES = [
-    { value: "remote", label: "Remote" },
-    { value: "hybrid", label: "Hybrid" },
-    { value: "onsite", label: "On-site" },
-];
 
 export const BUDGET_TYPES = [
     { value: "fixed", label: "Fixed price" },
@@ -20,9 +15,9 @@ export const INITIAL_JOB_FILTERS = {
     category: "",
     workMode: "",
     city: "",
-    budgetType: "hourly",
-    minHourlyRate: "",
-    maxHourlyRate: "",
-    minFixedBudget: "",
-    maxFixedBudget: "",
+    budgetType: "",
+    minBudget: "",
+    maxBudget: "",
 };
+
+export const JOBS_PAGE_SIZE = 9;

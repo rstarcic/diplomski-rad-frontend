@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import JobCard from "../search/JobCard";
 
@@ -7,6 +7,14 @@ const resultsGridSx = {
 };
 
 export default function JobsResultsSection({ jobs = [] }) {
+	if (!jobs.length) {
+		return (
+			<Typography color="text.secondary" sx={resultsGridSx}>
+				No jobs match your filters.
+			</Typography>
+		);
+	}
+
 	return (
 		<Grid container spacing={2.5} sx={resultsGridSx}>
 			{jobs.map((job) => (
