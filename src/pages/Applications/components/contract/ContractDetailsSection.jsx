@@ -13,7 +13,8 @@ import StatusChip from "../../../../components/ui/StatusChip";
 import { CONTRACT_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
-import { parseApiError } from "../../../../utils/parseApiError";
+import { parseApiError, parseBlobApiError } from "../../../../utils/parseApiError";
+import { downloadContractPdf, emailContractPdf } from "../../../../api/coreAPI";
 
 const actionBtnSx = {
 	textTransform: "none",
@@ -30,6 +31,8 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 	const [signDialogOpen, setSignDialogOpen] = useState(false);
 	const [signing, setSigning] = useState(false);
 	const [signFeedback, setSignFeedback] = useState(null);
+	const [downloading, setDownloading] = useState(false);
+	const [sendingEmail, setSendingEmail] = useState(false);
 
 	const statusKey = contract ? findStatusKey(contract.status, CONTRACT_STATUSES) : null;
 	const contractIsActive = statusKey === "active";
@@ -41,6 +44,7 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 		if (isSignatureTooLarge(signatureDataUrl)) {
 			setSignFeedback({
 				severity: "error",
+				title: "Contract could not be signed",
 				message: "Signature image must not exceed 500 KB. Please clear it and draw a simpler signature.",
 			});
 			setSignDialogOpen(false);
@@ -53,12 +57,13 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 			await onSignContract(signatureDataUrl);
 			setSignFeedback({
 				severity: "success",
+				title: "Contract signed",
 				message: "Contract signed successfully.",
 			});
 			setSignDialogOpen(false);
 		} catch (error) {
 			const apiError = parseApiError(error, {}, "The contract could not be signed. Please try again.");
-			setSignFeedback({ severity: "error", message: apiError.message });
+			setSignFeedback({ severity: "error", title: "Contract could not be signed", message: apiError.message });
 			setSignDialogOpen(false);
 		} finally {
 			setSigning(false);
@@ -69,12 +74,39 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 		window.open(`/contracts/${contract.id}/preview`, "_blank", "noopener,noreferrer");
 	};
 
-	const handleDownload = () => {
-		// TODO: download PDF
+	const handleDownload = async () => {
+		try {
+			setDownloading(true);
+			setSignFeedback(null);
+			await downloadContractPdf(contract.id, contract.contractNumber);
+		} catch (error) {
+			const apiError = await parseBlobApiError(
+				error,
+				{},
+				"The contract PDF could not be downloaded. Please try again.",
+			);
+			setSignFeedback({ severity: "error", title: "Download failed", message: apiError.message });
+		} finally {
+			setDownloading(false);
+		}
 	};
 
-	const handleSendEmail = () => {
-		// TODO: send contract to email
+	const handleSendEmail = async () => {
+		try {
+			setSendingEmail(true);
+			setSignFeedback(null);
+			const result = await emailContractPdf(contract.id);
+			setSignFeedback({
+				severity: "success",
+				title: "Email sent",
+				message: result.message ?? "Contract sent to your email successfully.",
+			});
+		} catch (error) {
+			const apiError = parseApiError(error, {}, "The contract could not be sent to your email. Please try again.");
+			setSignFeedback({ severity: "error", title: "Email could not be sent", message: apiError.message });
+		} finally {
+			setSendingEmail(false);
+		}
 	};
 
 	const contractActions = [
@@ -87,13 +119,13 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 				label: "Download PDF",
 				icon: <FileDownloadRoundedIcon />,
 				onClick: handleDownload,
-				disabled: !contractIsActive,
+				disabled: !contractIsActive || downloading,
 			},
 			{
 				label: "Send to my email",
 				icon: <MarkEmailReadRoundedIcon />,
 				onClick: handleSendEmail,
-				disabled: !contractIsActive,
+				disabled: !contractIsActive || sendingEmail,
 			},
 		];
 
@@ -119,7 +151,7 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 				{signFeedback && (
 					<AppAlert
 						severity={signFeedback.severity}
-						title={signFeedback.severity === "success" ? "Contract signed" : "Contract could not be signed"}
+						title={signFeedback.title}
 						onClose={() => setSignFeedback(null)}
 					>
 						{signFeedback.message}
@@ -161,7 +193,11 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 							disabled={action.disabled}
 							sx={actionBtnSx}
 						>
-							{action.label}
+						{action.label === "Download PDF" && downloading
+							? "Downloading..."
+							: action.label === "Send to my email" && sendingEmail
+								? "Sending..."
+								: action.label}
 						</Button>
 					))}
 				</Stack>

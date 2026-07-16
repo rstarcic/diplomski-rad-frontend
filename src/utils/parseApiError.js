@@ -1,5 +1,10 @@
 const DEFAULT_FALLBACK = "An unexpected error occurred. Please try again.";
 
+function cleanValidationMessage(message) {
+    if (typeof message !== "string") return null;
+    return message.replace("Value error, ", "");
+}
+
 /**
  * Parses a structured backend error ({ code, message, field }) from an axios error.
  * Pass a domain-specific error map from apiErrors.js to override backend messages.
@@ -21,15 +26,38 @@ export function parseApiError(err, errorMap = {}, fallback = DEFAULT_FALLBACK) {
     }
 
     if (Array.isArray(detail)) {
-        return { code: null, message: fallback, field: null };
+        const firstError = detail[0] ?? {};
+        const field = Array.isArray(firstError.loc) ? firstError.loc.at(-1) : null;
+
+        return {
+            code: firstError.type ?? null,
+            message: cleanValidationMessage(firstError.msg) ?? fallback,
+            field,
+        };
     }
 
     const { code, message, field } = detail;
     return {
         code: code ?? null,
-        message: errorMap[code] ?? message ?? fallback,
+        message: errorMap[code] ?? cleanValidationMessage(message) ?? fallback,
         field: field ?? null,
     };
+}
+
+export async function parseBlobApiError(err, errorMap = {}, fallback = DEFAULT_FALLBACK) {
+    const responseData = err.response?.data;
+    if (!(responseData instanceof Blob)) return parseApiError(err, errorMap, fallback);
+
+    try {
+        const parsedData = JSON.parse(await responseData.text());
+        return parseApiError(
+            { ...err, response: { ...err.response, data: parsedData } },
+            errorMap,
+            fallback,
+        );
+    } catch {
+        return parseApiError(err, errorMap, fallback);
+    }
 }
 
 /**

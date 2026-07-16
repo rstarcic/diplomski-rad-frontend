@@ -227,6 +227,38 @@ export async function signContract(contractId, signatureDataUrl) {
 	return mapContractFromAPI(data.contract ?? data);
 }
 
+function getDownloadFilename(contentDisposition, fallback) {
+	const encodedFilename = contentDisposition?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
+	if (encodedFilename) return decodeURIComponent(encodedFilename);
+
+	return contentDisposition?.match(/filename="?([^";]+)"?/i)?.[1] ?? fallback;
+}
+
+export async function downloadContractPdf(contractId, contractNumber) {
+	const response = await api.get(`/contracts/${contractId}/download`, {
+		responseType: "blob",
+	});
+	const fallbackFilename = `${contractNumber || `contract-${contractId}`}.pdf`;
+	const filename = getDownloadFilename(response.headers["content-disposition"], fallbackFilename);
+	const objectUrl = URL.createObjectURL(response.data);
+	const downloadLink = document.createElement("a");
+
+	try {
+		downloadLink.href = objectUrl;
+		downloadLink.download = filename;
+		document.body.appendChild(downloadLink);
+		downloadLink.click();
+	} finally {
+		downloadLink.remove();
+		URL.revokeObjectURL(objectUrl);
+	}
+}
+
+export async function emailContractPdf(contractId) {
+	const { data } = await api.post(`/contracts/${contractId}/email`);
+	return data;
+}
+
 
 export async function createJobApplication(
 	jobId,
