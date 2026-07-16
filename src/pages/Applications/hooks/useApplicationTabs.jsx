@@ -8,55 +8,32 @@ import ContractDetailsSection from "../components/contract/ContractDetailsSectio
 import NegotiationSection from "../components/negotiation/NegotiationSection";
 import PaymentsSection from "../components/payment/PaymentsSection";
 
-const REJECTED_APPLICATION_STATUSES = ["incomplete", "cancelled", "rejected", "withdrawn"];
-const ACTIVE_CONTRACT_STATUSES = ["created", "pendingClient", "pendingContractor", "signedByBoth", "completed"];
-
-export function getDerivedNegotiationStatus({ negotiation, application, contract }) {
-	const applicationStatus = application?.status;
-	const contractStatus = contract?.status;
-
-	if (REJECTED_APPLICATION_STATUSES.includes(applicationStatus)) {
-		return "rejected";
-	}
-
-	if (applicationStatus === "accepted" || ACTIVE_CONTRACT_STATUSES.includes(contractStatus)) return "accepted";
-
-	return negotiation?.status ?? null;
-}
-
-export function getApplicationWorkflowState({ application, negotiation, contract, payments = [] }) {
-	const applicationStatus = application?.status;
-	const contractStatus = contract?.status;
-	const negotiationStatus = getDerivedNegotiationStatus({ negotiation, application, contract });
-	const applicationRejected = REJECTED_APPLICATION_STATUSES.includes(applicationStatus);
-	const contractCreated = Boolean(contract) || applicationStatus === "accepted";
-	const contractSigned = contractStatus === "signedByBoth" || contractStatus === "completed";
-	const contractCompleted = contractStatus === "completed";
-	const paymentCompleted = payments.some((payment) => payment.status === "paid");
-
-	return {
-		applicationRejected,
-		negotiationStatus,
-		negotiationAccepted: negotiationStatus === "accepted",
-		contractCreated,
-		contractSigned,
-		contractCompleted,
-		paymentCompleted,
-	};
-}
-
 export function useApplicationTabs({
 	application,
+	job,
 	negotiation,
 	negotiationUpdates = [],
 	contract,
 	payments = [],
 	role = "client",
 	onAcceptNegotiation,
+	onSignContract,
 }) {
-	const workflow = getApplicationWorkflowState({ application, negotiation, contract, payments });
-
 	const reviewTarget = role === "client" ? "contractor" : "client";
+	const applicationIsSelected = String(application?.status).toLowerCase() === "selected";
+	const showNegotiation = applicationIsSelected || Boolean(negotiation);
+	const negotiationStatus = negotiation?.status ?? (applicationIsSelected ? "pendingContractor" : "");
+	const initialOffer = job
+		? {
+				budgetAmount: job.budgetAmount,
+				budgetType: job.budgetType,
+				currency: job.currency,
+				hoursPerWeek: job.hoursPerWeek,
+				duration: job.durationDays,
+				deliverables: job.deliverables,
+				message: "",
+			}
+		: null;
 
 	return [
 		{
@@ -65,8 +42,9 @@ export function useApplicationTabs({
 			locked: false,
 			content: (
 				<NegotiationSection
+					initialOffer={initialOffer}
 					negotiation={negotiation}
-					status={workflow.negotiationStatus}
+					status={negotiationStatus}
 					updates={negotiationUpdates}
 					role={role}
 					onAcceptNegotiation={onAcceptNegotiation}
@@ -76,24 +54,25 @@ export function useApplicationTabs({
 		{
 			label: "Contract",
 			icon: <GavelRoundedIcon fontSize="small" />,
-			locked: workflow.applicationRejected || !workflow.contractCreated,
-			lockReason: workflow.applicationRejected
-				? "This application is no longer active."
-				: "Negotiation must be accepted before viewing the contract.",
-			content: <ContractDetailsSection contract={contract} role={role} />,
+			locked: false,
+			content: (
+				<ContractDetailsSection
+					contract={contract}
+					role={role}
+					onSignContract={onSignContract}
+				/>
+			),
 		},
 		{
 			label: "Payment",
 			icon: <PaymentsOutlinedIcon fontSize="small" />,
-			locked: !workflow.contractSigned,
-			lockReason: "Contract must be signed by both parties before viewing payments.",
+			locked: false,
 			content: <PaymentsSection payments={payments} />,
 		},
 		{
 			label: "Review",
 			icon: <RateReviewOutlinedIcon fontSize="small" />,
-			locked: !workflow.paymentCompleted,
-			lockReason: "Payment must be completed before leaving a review.",
+			locked: false,
 			content: (
 				<ReviewForm
 					type={reviewTarget}
@@ -102,5 +81,5 @@ export function useApplicationTabs({
 				/>
 			),
 		},
-	];
+	].filter((tab) => tab.label !== "Negotiation" || showNegotiation);
 }

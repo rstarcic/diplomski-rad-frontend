@@ -2,18 +2,17 @@ import { useRef } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box } from "@mui/material";
 
-export default function SignContractDialog({ open, onClose, onConfirm }) {
+export default function SignContractDialog({ open, onClose, onConfirm, loading = false }) {
 	const sigRef = useRef(null);
 
-	const handleConfirm = () => {
+	const handleConfirm = async () => {
 		if (sigRef.current?.isEmpty()) return;
 		const signatureDataUrl = sigRef.current.getCanvas().toDataURL("image/png");
-		onConfirm(signatureDataUrl);
-		onClose();
+		await onConfirm(signatureDataUrl);
 	};
 
 	return (
-		<Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+		<Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="sm" fullWidth>
 			<DialogTitle>Sign contract</DialogTitle>
 			<DialogContent>
 				<Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, overflow: "hidden" }}>
@@ -21,10 +20,10 @@ export default function SignContractDialog({ open, onClose, onConfirm }) {
 				</Box>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => sigRef.current?.clear()}>Clear</Button>
-				<Button onClick={onClose}>Cancel</Button>
-				<Button variant="contained" onClick={handleConfirm}>
-					Confirm signature
+				<Button disabled={loading} onClick={() => sigRef.current?.clear()}>Clear</Button>
+				<Button disabled={loading} onClick={onClose}>Cancel</Button>
+				<Button disabled={loading} variant="contained" onClick={handleConfirm}>
+					{loading ? "Signing..." : "Confirm signature"}
 				</Button>
 			</DialogActions>
 		</Dialog>

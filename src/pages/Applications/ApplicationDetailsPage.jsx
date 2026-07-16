@@ -7,22 +7,19 @@ import { BackButton } from "../../components/ui/BackButton";
 import PageHeader from "../../components/ui/PageHeader";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
-import { getJobApplicationDetails } from "../../api/coreAPI";
+import { decideJobApplication, getJobApplicationDetails, acceptNegotiationTerms, signContract } from "../../api/coreAPI";
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
 
 import StepTabs from "./components/StepTabs";
 import ApplicationSection from "./components/ApplicationSection";
 import ContractorProfileSection from "./components/profile/ContractorProfileSection";
-import { getApplicationWorkflowState, useApplicationTabs } from "./hooks/useApplicationTabs";
+import { useApplicationTabs } from "./hooks/useApplicationTabs";
 
-function getInitialTab({ application, negotiation, contract, payments }) {
-	const workflow = getApplicationWorkflowState({ application, negotiation, contract, payments });
-
-	if (workflow.paymentCompleted) return 3;
-	if (workflow.contractSigned) return 2;
-	if (workflow.contractCreated && !workflow.applicationRejected) return 1;
-	return 0;
+function getInitialTab({ contract, tabs }) {
+	if (!contract) return 0;
+	const contractTab = tabs.findIndex((tab) => tab.label === "Contract");
+	return contractTab >= 0 ? contractTab : 0;
 }
 
 const emptyReviews = {
@@ -36,6 +33,9 @@ export default function ApplicationDetailsPage() {
 	const [applicationDetails, setApplicationDetails] = useState(null);
 	const [loadError, setLoadError] = useState("");
 	const [loading, setLoading] = useState(true);
+	const [decisionLoading, setDecisionLoading] = useState(false);
+	const [decisionError, setDecisionError] = useState("");
+	const [negotiationSuccess, setNegotiationSuccess] = useState("");
 
 	useEffect(() => {
 		async function loadApplicationDetails() {
@@ -44,7 +44,6 @@ export default function ApplicationDetailsPage() {
 
 			try {
 				const details = await getJobApplicationDetails(jobId, applicationId);
-				console.log(details);
 				setApplicationDetails(details);
 			} catch (error) {
 				console.error("Failed to load application details:", error);
@@ -64,9 +63,39 @@ export default function ApplicationDetailsPage() {
 		loadApplicationDetails();
 	}, [jobId, applicationId]);
 
+	const handleDecision = async (decision) => {
+		try {
+			setDecisionLoading(true);
+			setDecisionError("");
+			const updatedApplication = await decideJobApplication(jobId, applicationId, decision);
+
+			setApplicationDetails((current) => ({
+				...current,
+				application: {
+					...current.application,
+					...updatedApplication,
+				},
+			}));
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				APPLICATION_ERRORS,
+				"The application decision could not be saved. Please try again.",
+			);
+
+			setDecisionError(apiError.message);
+		} finally {
+			setDecisionLoading(false);
+		}
+	};
+
+	const handleAccept = () => handleDecision("selected");
+	const handleReject = () => handleDecision("rejected");
+
 	const details = useMemo(
 		() => ({
 			application: applicationDetails?.application ?? null,
+			job: applicationDetails?.job ?? null,
 			contractor: applicationDetails?.contractor ?? null,
 			contractorReviews: applicationDetails?.reviews ?? emptyReviews,
 			negotiation: applicationDetails?.negotiation ?? null,
@@ -77,22 +106,48 @@ export default function ApplicationDetailsPage() {
 		[applicationDetails],
 	);
 
+	const handleAcceptNegotiation = async () => {
+		try {
+			setDecisionLoading(true);
+			setDecisionError("");
+			setNegotiationSuccess("");
+
+			const result = await acceptNegotiationTerms(jobId, applicationId);
+
+			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+
+			setApplicationDetails(updatedDetails);
+			setNegotiationSuccess(result.message);
+		} catch (error) {
+			const apiError = parseApiError(error, APPLICATION_ERRORS, "Terms could not be accepted. Please try again.");
+
+			setDecisionError(apiError.message);
+		} finally {
+			setDecisionLoading(false);
+		}
+	};
+
+	const handleSignContract = async (signatureDataUrl) => {
+		await signContract(details.contract.id, signatureDataUrl);
+		const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+		setApplicationDetails(updatedDetails);
+	};
+
 	const tabs = useApplicationTabs({
 		application: details.application,
+		job: details.job,
 		negotiation: details.negotiation,
 		negotiationUpdates: details.negotiationUpdates,
 		contract: details.contract,
 		payments: details.payments,
 		role: "client",
-		onAcceptNegotiation: () => {
-			setApplicationDetails((prev) => ({
-				...prev,
-				application: {
-					...prev.application,
-					status: "accepted",
-				},
-			}));
-		},
+		onAcceptNegotiation: handleAcceptNegotiation,
+		onSignContract: handleSignContract,
+	});
+
+	const initialTab = getInitialTab({
+		contract: details.contract,
+		tabs,
 	});
 
 	if (loading) {
@@ -124,17 +179,27 @@ export default function ApplicationDetailsPage() {
 			<Grid container spacing={2} sx={{ mt: 3 }}>
 				<Grid size={{ xs: 12, md: 8 }}>
 					<Stack spacing={2}>
-						<ApplicationSection application={details.application} />
+						{negotiationSuccess && (
+							<AppAlert severity="success" title="Terms accepted">
+								{negotiationSuccess}
+							</AppAlert>
+						)}
 
-						<StepTabs
-							tabs={tabs}
-							initialTab={getInitialTab({
-								application: details.application,
-								negotiation: details.negotiation,
-								contract: details.contract,
-								payments: details.payments,
-							})}
+						{decisionError && (
+							<AppAlert severity="error" title="Decision could not be saved">
+								{decisionError}
+							</AppAlert>
+						)}
+
+						<ApplicationSection
+							application={details.application}
+							role="client"
+							onAccept={handleAccept}
+							onReject={handleReject}
+							decisionLoading={decisionLoading}
 						/>
+
+						<StepTabs key={initialTab} tabs={tabs} initialTab={initialTab} />
 					</Stack>
 				</Grid>
 

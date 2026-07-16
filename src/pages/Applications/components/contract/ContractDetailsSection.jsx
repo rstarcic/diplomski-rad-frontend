@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import DrawRoundedIcon from "@mui/icons-material/DrawRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import MarkEmailReadRoundedIcon from "@mui/icons-material/MarkEmailReadRounded";
@@ -6,11 +6,14 @@ import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import { Button, Card, Stack, Typography } from "@mui/material";
 
 import SignContractDialog from "./SignContractDialog";
+import { isSignatureTooLarge } from "./signatureValidation";
 
+import AppAlert from "../../../../components/ui/Alert";
 import StatusChip from "../../../../components/ui/StatusChip";
 import { CONTRACT_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
+import { parseApiError } from "../../../../utils/parseApiError";
 
 const actionBtnSx = {
 	textTransform: "none",
@@ -23,23 +26,47 @@ const signBtnSx = {
 	fontWeight: 800,
 };
 
-export default function ContractDetailsSection({ contract, role = "client" }) {
+export default function ContractDetailsSection({ contract, role = "client", onSignContract }) {
 	const [signDialogOpen, setSignDialogOpen] = useState(false);
+	const [signing, setSigning] = useState(false);
+	const [signFeedback, setSignFeedback] = useState(null);
 
 	const statusKey = contract ? findStatusKey(contract.status, CONTRACT_STATUSES) : null;
+	const contractIsActive = statusKey === "active";
+	const currentPartySignedAt = role === "client" ? contract?.clientSignedAt : contract?.contractorSignedAt;
+	const signingClosed = ["active", "signedByBoth", "completed", "cancelled"].includes(statusKey);
+	const needsSignature = Boolean(contract) && !currentPartySignedAt && !signingClosed;
 
-	const needsSignature =
-		(statusKey === "pendingClient" && role === "client") ||
-		(statusKey === "pendingContractor" && role === "contractor");
+	const handleSignConfirm = async (signatureDataUrl) => {
+		if (isSignatureTooLarge(signatureDataUrl)) {
+			setSignFeedback({
+				severity: "error",
+				message: "Signature image must not exceed 500 KB. Please clear it and draw a simpler signature.",
+			});
+			setSignDialogOpen(false);
+			return;
+		}
 
-	const handleSignConfirm = (signatureDataUrl) => {
-		// TODO: API call with signatureDataUrl
-		console.log("Signature submitted:", signatureDataUrl);
-		setSignDialogOpen(false);
+		try {
+			setSigning(true);
+			setSignFeedback(null);
+			await onSignContract(signatureDataUrl);
+			setSignFeedback({
+				severity: "success",
+				message: "Contract signed successfully.",
+			});
+			setSignDialogOpen(false);
+		} catch (error) {
+			const apiError = parseApiError(error, {}, "The contract could not be signed. Please try again.");
+			setSignFeedback({ severity: "error", message: apiError.message });
+			setSignDialogOpen(false);
+		} finally {
+			setSigning(false);
+		}
 	};
 
 	const handlePreview = () => {
-		// TODO: preview contract
+		window.open(`/contracts/${contract.id}/preview`, "_blank", "noopener,noreferrer");
 	};
 
 	const handleDownload = () => {
@@ -50,8 +77,7 @@ export default function ContractDetailsSection({ contract, role = "client" }) {
 		// TODO: send contract to email
 	};
 
-	const contractActions = useMemo(
-		() => [
+	const contractActions = [
 			{
 				label: "Preview contract",
 				icon: <VisibilityRoundedIcon />,
@@ -61,15 +87,15 @@ export default function ContractDetailsSection({ contract, role = "client" }) {
 				label: "Download PDF",
 				icon: <FileDownloadRoundedIcon />,
 				onClick: handleDownload,
+				disabled: !contractIsActive,
 			},
 			{
 				label: "Send to my email",
 				icon: <MarkEmailReadRoundedIcon />,
 				onClick: handleSendEmail,
+				disabled: !contractIsActive,
 			},
-		],
-		[],
-	);
+		];
 
 	if (!contract) {
 		return (
@@ -90,6 +116,15 @@ export default function ContractDetailsSection({ contract, role = "client" }) {
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
+				{signFeedback && (
+					<AppAlert
+						severity={signFeedback.severity}
+						title={signFeedback.severity === "success" ? "Contract signed" : "Contract could not be signed"}
+						onClose={() => setSignFeedback(null)}
+					>
+						{signFeedback.message}
+					</AppAlert>
+				)}
 				<Stack
 					direction="row"
 					spacing={2}
@@ -123,6 +158,7 @@ export default function ContractDetailsSection({ contract, role = "client" }) {
 							variant="outlined"
 							startIcon={action.icon}
 							onClick={action.onClick}
+							disabled={action.disabled}
 							sx={actionBtnSx}
 						>
 							{action.label}
@@ -135,6 +171,7 @@ export default function ContractDetailsSection({ contract, role = "client" }) {
 				open={signDialogOpen}
 				onClose={() => setSignDialogOpen(false)}
 				onConfirm={handleSignConfirm}
+				loading={signing}
 			/>
 		</Card>
 	);

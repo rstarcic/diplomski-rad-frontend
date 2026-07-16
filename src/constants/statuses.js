@@ -9,6 +9,7 @@ import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
 
 export const JOB_STATUSES = {
     open: { label: "Open", paletteKey: "success", icon: CheckCircleRoundedIcon },
+    awaitingContract: { label: "Awaiting contract", paletteKey: "warning", icon: DrawRoundedIcon },
     inProgress: { label: "In progress", paletteKey: "info", icon: AutorenewRoundedIcon },
     done: { label: "Done", paletteKey: "info", icon: TaskAltRoundedIcon },
     completed: { label: "Completed", paletteKey: "success", icon: TaskAltRoundedIcon },
@@ -18,13 +19,14 @@ export const JOB_STATUSES = {
 
 export const APPLICATION_STATUSES = {
     pending: { label: "Pending", paletteKey: "warning", icon: HourglassEmptyRoundedIcon },
-    negotiating: { label: "Negotiating", paletteKey: "info", icon: HandshakeRoundedIcon },
+    selected: { label: "Selected", paletteKey: "info", icon: HandshakeRoundedIcon },
     accepted: { label: "Accepted", paletteKey: "success", icon: CheckCircleRoundedIcon },
     rejected: { label: "Rejected", paletteKey: "error", icon: CancelRoundedIcon },
     withdrawn: { label: "Withdrawn", paletteKey: "warning", icon: BlockRoundedIcon },
     incomplete: { label: "Incomplete", paletteKey: "warning", icon: HourglassEmptyRoundedIcon },
     cancelled: { label: "Cancelled", paletteKey: "error", icon: CancelRoundedIcon },
 };
+
 
 export const NEGOTIATION_STATUSES = {
     pendingContractor: { label: "Awaiting contractor", paletteKey: "warning", icon: HourglassEmptyRoundedIcon },
@@ -36,9 +38,13 @@ export const NEGOTIATION_STATUSES = {
 
 export const CONTRACT_STATUSES = {
     created: { label: "Created", paletteKey: "info", icon: DrawRoundedIcon },
+    pendingSignatures: { label: "Pending signatures", paletteKey: "warning", icon: DrawRoundedIcon },
     pendingClient: { label: "Pending client", paletteKey: "warning", icon: DrawRoundedIcon },
     pendingContractor: { label: "Pending contractor", paletteKey: "warning", icon: DrawRoundedIcon },
+    pendingClientSignature: { label: "Pending client signature", paletteKey: "warning", icon: DrawRoundedIcon },
+    pendingContractorSignature: { label: "Pending contractor signature", paletteKey: "warning", icon: DrawRoundedIcon },
     signedByBoth: { label: "Signed by both", paletteKey: "success", icon: CheckCircleRoundedIcon },
+    active: { label: "Active", paletteKey: "success", icon: CheckCircleRoundedIcon },
     completed: { label: "Completed", paletteKey: "success", icon: TaskAltRoundedIcon },
     cancelled: { label: "Cancelled", paletteKey: "error", icon: CancelRoundedIcon },
 };

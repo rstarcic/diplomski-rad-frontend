@@ -1,9 +1,8 @@
 import dayjs from "dayjs";
-
-const WORK_MODE_LABELS = {
+import { mapReviewDataFromAPI } from "./profileMapper";
+const LOCATION_TYPE_LABELS = {
     remote: "Remote",
     hybrid: "Hybrid",
-    onsite: "On-site",
     on_site: "On-site",
 };
 
@@ -44,7 +43,7 @@ export function mapJobToAPI(job = {}) {
         category: job.category,
         description: job.description,
         location_type: LOCATION_TYPE_TO_API[job.locationType] ?? job.locationType,
-        location: job.location,
+        location: job.location ?? "",
         deadline: job.deadline ? dayjs(job.deadline).toISOString() : null,
         deliverables: job.deliverables,
         requirements: job.requirements,
@@ -64,7 +63,7 @@ export function mapJobFromAPI(job = {}) {
         category: job.category,
         description: job.description,
         locationType: LOCATION_TYPE_FROM_API[job.location_type] ?? job.location_type,
-        location: job.location,
+        location: job.location ?? "",
         deadline: job.deadline ? dayjs(job.deadline) : null,
         deliverables: job.deliverables,
         requirements: job.requirements,
@@ -84,7 +83,7 @@ export function mapJobSummaryFromAPI(job = {}) {
         title: job.title,
         category: job.category,
         location: job.location,
-        workMode: WORK_MODE_LABELS[job.location_type] ?? job.location_type,
+        locationType: LOCATION_TYPE_LABELS[job.location_type] ?? job.location_type,
         budgetType: BUDGET_TYPE_LABELS[job.budget_type] ?? job.budget_type,
         deadline: job.deadline ? dayjs(job.deadline) : null,
         applications: {
@@ -102,7 +101,6 @@ export function mapJobSummaryFromAPI(job = {}) {
 export function mapJobListItemFromAPI(item = {}) {
     const job = item.job ?? item;
     const client = item.client ?? job.client ?? {};
-    const locationType = LOCATION_TYPE_FROM_API[job.location_type] ?? job.location_type;
 
     return {
         id: job.id,
@@ -110,9 +108,8 @@ export function mapJobListItemFromAPI(item = {}) {
         category: job.category,
         description: job.description,
         location: job.location,
-        locationType,
-        workMode: WORK_MODE_LABELS[job.location_type] ?? job.location_type,
-        workModeKey: locationType,
+        locationType: LOCATION_TYPE_LABELS[job.location_type] ?? job.location_type,
+
         budgetType: BUDGET_TYPE_LABELS[job.budget_type] ?? job.budget_type,
         budgetTypeKey: job.budget_type,
         budgetAmount: job.budget_amount ?? "",
@@ -127,5 +124,50 @@ export function mapJobListItemFromAPI(item = {}) {
             fullName: client.full_name ?? job.full_name ?? job.client_full_name ?? "",
             profilePicture: client.profile_picture ?? job.profile_picture ?? job.client_profile_picture ?? null,
         },
+    };
+}
+
+export function mapJobDetailsPageFromAPI(data = {}) {
+    const client = data.client ?? {};
+    const job = data.job ?? {};
+    const application = data.application ?? null;
+    const applicationStatus = application?.status ?? "";
+
+    return {
+        job: {
+            ...mapJobFromAPI(job),
+
+        },
+
+        client: {
+            id: client.user_id,
+            fullName: client.full_name ?? "",
+            email: client.email ?? "",
+            phone: client.phone ?? "",
+            country: client.country ?? "",
+            city: client.city ?? "",
+            about: client.about ?? "",
+            profileImageUrl: client.profile_picture ?? null,
+            createdAt: client.created_at ?? null,
+        },
+
+        reviews: mapReviewDataFromAPI(data.reviews),
+
+        application: application || applicationStatus
+            ? {
+                id: application?.id ?? data.application_id ?? null,
+                status: mapStatusFromAPI(applicationStatus),
+            }
+            : null,
+        alreadyApplied: Boolean(application || applicationStatus || data.already_applied),
+    };
+}
+
+export function mapPaginationFromAPI(data) {
+    return {
+        page: data?.page ?? 1,
+        pageSize: data?.page_size ?? 9,
+        total: data?.total ?? 0,
+        totalPages: data?.total_pages ?? 0,
     };
 }
