@@ -166,6 +166,20 @@ export async function getJobFilterOptions() {
 	return data;
 }
 
+export async function markJobDone(jobId) {
+	const { data } = await api.patch(`/jobs/${jobId}/done`);
+	return data;
+}
+
+export async function markJobCompleted(jobId) {
+	const { data } = await api.patch(`/jobs/${jobId}/complete`);
+	return data;
+}
+
+export async function markJobIncomplete(jobId) {
+	const { data } = await api.patch(`/jobs/${jobId}/incomplete`);
+	return data;
+}
 
 // _______________APPLICATIONS _______________
 
@@ -197,7 +211,15 @@ export async function getJobApplications(jobId) {
 export async function getJobApplicationDetails(jobId, applicationId) {
 	const { data } = await api.get(`/jobs/${jobId}/applications/${applicationId}`);
 	const details = mapJobApplicationDetailsFromAPI(data);
-	return attachApplicationContract(details, applicationId);
+	const [detailsWithContract, job] = await Promise.all([
+		attachApplicationContract(details, applicationId),
+		details.job ? Promise.resolve(details.job) : getJobById(jobId),
+	]);
+
+	return {
+		...detailsWithContract,
+		job,
+	};
 }
 
 async function getContractByApplicationId(applicationId, signal) {
@@ -294,6 +316,15 @@ export async function decideJobApplication(
 	};
 }
 
+export async function withdrawApplication(applicationId) {
+	const { data } = await api.patch(
+		`/applications/${applicationId}/withdraw`,
+	);
+
+	return data;
+}
+
+
 // _______________NEGOTIATIONS _______________
 
 export async function acceptNegotiationTerms(jobId, applicationId) {
@@ -306,4 +337,30 @@ export async function acceptNegotiationTerms(jobId, applicationId) {
 		contractId: data.contract_id,
 		contractStatus: mapContractStatusFromAPI(data.contract_status),
 	};
+}
+
+export async function rejectNegotiationTerms(jobId, applicationId) {
+	const { data } = await api.post(
+		`/jobs/${jobId}/applications/${applicationId}/reject`,
+	);
+
+	return {
+		message: data.message,
+	};
+}
+
+export async function submitCounterOffer(jobId, applicationId, counterOffer) {
+	const { data } = await api.post(
+		`/jobs/${jobId}/applications/${applicationId}/counter-offer`,
+		{
+			budget_type: counterOffer.budgetType,
+			budget_amount: Number(counterOffer.budgetAmount),
+			hours_per_week: Number(counterOffer.hoursPerWeek),
+			duration: Number(counterOffer.duration),
+			deliverables: counterOffer.deliverables.trim(),
+			message: counterOffer.message.trim(),
+		},
+	);
+
+	return data;
 }

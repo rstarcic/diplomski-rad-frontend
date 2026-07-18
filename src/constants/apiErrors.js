@@ -41,6 +41,10 @@ export const JOB_ERRORS = {
 export const APPLICATION_ERRORS = {
     forbidden: "You do not have permission to view these applications.",
     job_not_found: "We couldn't find the job you're looking for.",
+    application_deadline_expired: "The application deadline for this job has expired.",
+    job_not_open_for_applications: "This job is no longer open for applications.",
+    application_already_exists: "You have already applied for this job.",
+    application_failed_to_create: "Your application could not be submitted. Please try again.",
     not_authenticated: "You must be logged in to access this resource.",
     token_expired: "Your session has expired. Please log in again.",
     invalid_or_expired_token: "Your session is no longer valid. Please log in again.",

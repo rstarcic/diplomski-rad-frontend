@@ -17,6 +17,47 @@ export const actionRowSx = {
 	justifyContent: "space-between",
 };
 
+export const footerSx = {
+	pt: 2.2,
+};
+
+export const footerDividerSx = {
+	mb: 2,
+};
+
+export const metaRowSx = {
+	mb: 2,
+	display: "grid",
+	gridTemplateColumns: {
+		xs: "1fr",
+		sm: "repeat(2, minmax(0, 1fr))",
+	},
+	gap: 1,
+};
+
+export const metaItemSx = {
+	minWidth: 0,
+};
+
+export const actionButtonsSx = {
+	mt: "2vh",
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+	gap: 1,
+	width: "100%",
+};
+
+export const actionButtonSx = {
+	width: "100%",
+	maxWidth: 260,
+	minHeight: 40,
+	borderRadius: 2,
+	textTransform: "none",
+	fontWeight: 800,
+	whiteSpace: "nowrap",
+};
+
 const iconBoxBase = {
 	width: 34,
 	height: 34,

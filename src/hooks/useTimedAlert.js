@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useTimedAlert(initial = null, duration = 5000) {
+export function useTimedAlert(initial = null, duration = 4000) {
     const [message, setMessage] = useState(initial ?? null);
     const timer = useRef(null);
 

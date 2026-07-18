@@ -53,6 +53,9 @@ export function mapJobToAPI(job = {}) {
         duration: job.durationDays,
         hours_per_week: job.hoursPerWeek,
         status: job.status,
+        ...(job.sourceJobId && {
+            source_job_id: job.sourceJobId,
+        }),
     }
 }
 
@@ -95,6 +98,7 @@ export function mapJobSummaryFromAPI(job = {}) {
         hoursPerWeek: job.hours_per_week,
         status: mapStatusFromAPI(job.status),
         updatedAt: job.updated_at,
+        replacementJobId: job.replacement_job_id ?? null,
     }
 }
 
@@ -128,10 +132,9 @@ export function mapJobListItemFromAPI(item = {}) {
 }
 
 export function mapJobDetailsPageFromAPI(data = {}) {
+    console.log(data?.application_status)
     const client = data.client ?? {};
     const job = data.job ?? {};
-    const application = data.application ?? null;
-    const applicationStatus = application?.status ?? "";
 
     return {
         job: {
@@ -153,13 +156,9 @@ export function mapJobDetailsPageFromAPI(data = {}) {
 
         reviews: mapReviewDataFromAPI(data.reviews),
 
-        application: application || applicationStatus
-            ? {
-                id: application?.id ?? data.application_id ?? null,
-                status: mapStatusFromAPI(applicationStatus),
-            }
-            : null,
-        alreadyApplied: Boolean(application || applicationStatus || data.already_applied),
+        applicationStatus: data?.application_status,
+        alreadyApplied: data?.already_applied
+
     };
 }
 

@@ -2,9 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
 import { useParams } from "react-router-dom";
 
-import { getMyApplicationDetails, acceptNegotiationTerms, signContract } from "../../api/coreAPI";
+import {
+	getMyApplicationDetails,
+	acceptNegotiationTerms,
+	rejectNegotiationTerms,
+	submitCounterOffer,
+	signContract,
+	markJobDone,
+	withdrawApplication,
+} from "../../api/coreAPI";
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
 
 import AppAlert from "../../components/ui/Alert";
 import { BackButton } from "../../components/ui/BackButton";
@@ -39,7 +48,11 @@ export default function ContractorApplicationDetailsPage() {
 	const [details, setDetails] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [loadError, setLoadError] = useState("");
-	const [negotiationSuccess, setNegotiationSuccess] = useState("");
+	const [negotiationSuccess, setNegotiationSuccess] = useTimedAlert();
+	const [jobDoneLoading, setJobDoneLoading] = useState(false);
+	const [jobDoneFeedback, setJobDoneFeedback] = useTimedAlert();
+	const [applicationWithdrawLoading, setApplicationWithdrawLoading] = useState(false);
+	const [applicationWithdrawFeedback, setApplicationWithdrawFeedback] = useTimedAlert();
 	const [selectedTab, setSelectedTab] = useState(null);
 	const tabsRef = useRef(null);
 
@@ -91,6 +104,26 @@ export default function ContractorApplicationDetailsPage() {
 	const contract = details?.contract ?? null;
 	const payments = details?.payment ? [details.payment] : [];
 
+	useEffect(() => {
+		if (details?.payment?.status !== "pending") return undefined;
+
+		let active = true;
+		const refreshPayment = async () => {
+			try {
+				const updatedDetails = await getMyApplicationDetails(applicationId);
+				if (active) setDetails(updatedDetails);
+			} catch {
+				// Keep the current payment visible and retry on the next polling interval.
+			}
+		};
+		const intervalId = window.setInterval(refreshPayment, 15000);
+
+		return () => {
+			active = false;
+			window.clearInterval(intervalId);
+		};
+	}, [details?.payment?.status, applicationId]);
+
 	const handleAcceptNegotiation = async () => {
 		setNegotiationSuccess("");
 		const result = await acceptNegotiationTerms(job.id, applicationId);
@@ -101,10 +134,80 @@ export default function ContractorApplicationDetailsPage() {
 		setNegotiationSuccess(result.message);
 	};
 
+	const handleRejectNegotiation = async () => {
+		setNegotiationSuccess("");
+		const result = await rejectNegotiationTerms(job.id, applicationId);
+		const updatedDetails = await getMyApplicationDetails(applicationId);
+
+		setDetails(updatedDetails);
+		setNegotiationSuccess(result.message);
+	};
+
+	const handleSubmitCounterOffer = async (counterOffer) => {
+		setNegotiationSuccess("");
+		const result = await submitCounterOffer(job.id, applicationId, counterOffer);
+		const updatedDetails = await getMyApplicationDetails(applicationId);
+
+		setDetails(updatedDetails);
+		setNegotiationSuccess(result.message ?? "Counter-offer submitted successfully.");
+	};
+
 	const handleSignContract = async (signatureDataUrl) => {
 		await signContract(contract.id, signatureDataUrl);
 		const updatedDetails = await getMyApplicationDetails(applicationId);
 		setDetails(updatedDetails);
+	};
+
+	const handleJobDone = async () => {
+		try {
+			setJobDoneLoading(true);
+			setJobDoneFeedback(null);
+
+			const result = await markJobDone(job.id);
+			const updatedDetails = await getMyApplicationDetails(applicationId);
+
+			setDetails(updatedDetails);
+			setJobDoneFeedback({
+				severity: "success",
+				message: result.message ?? "Job marked as done successfully.",
+			});
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				APPLICATION_ERRORS,
+				"The job could not be marked as done. Please try again.",
+			);
+
+			setJobDoneFeedback({ severity: "error", message: apiError.message });
+		} finally {
+			setJobDoneLoading(false);
+		}
+	};
+
+	const handleApplicationWithdraw = async () => {
+		try {
+			setApplicationWithdrawLoading(true);
+			setApplicationWithdrawFeedback(null);
+
+			const result = await withdrawApplication(applicationId);
+			const updatedDetails = await getMyApplicationDetails(applicationId);
+
+			setDetails(updatedDetails);
+			setApplicationWithdrawFeedback({
+				severity: "success",
+				message: result.message ?? "Application withdrawn successfully.",
+			});
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				APPLICATION_ERRORS,
+				"The application could not be withdrawn. Please try again.",
+			);
+
+			setApplicationWithdrawFeedback({ severity: "error", message: apiError.message });
+		} finally {
+			setApplicationWithdrawLoading(false);
+		}
 	};
 
 	const tabs = useApplicationTabs({
@@ -116,6 +219,8 @@ export default function ContractorApplicationDetailsPage() {
 		payments,
 		role: "contractor",
 		onAcceptNegotiation: handleAcceptNegotiation,
+		onRejectNegotiation: handleRejectNegotiation,
+		onSubmitCounterOffer: handleSubmitCounterOffer,
 		onSignContract: handleSignContract,
 	});
 
@@ -155,12 +260,44 @@ export default function ContractorApplicationDetailsPage() {
 				<Grid size={{ xs: 12, md: 8 }}>
 					<Stack spacing={3}>
 						{negotiationSuccess && (
-							<AppAlert severity="success" title="Terms accepted">
+							<AppAlert severity="success" title="Negotiation updated">
 								{negotiationSuccess}
 							</AppAlert>
 						)}
 
-						<ApplicationSection application={application} role="contractor" onReviewOffer={reviewOffer} />
+						{jobDoneFeedback && (
+							<AppAlert
+								severity={jobDoneFeedback.severity}
+								title={jobDoneFeedback.severity === "success" ? "Job updated" : "Job could not be updated"}
+							>
+								{jobDoneFeedback.message}
+							</AppAlert>
+						)}
+
+						{applicationWithdrawFeedback && (
+							<AppAlert
+								severity={applicationWithdrawFeedback.severity}
+								title={
+									applicationWithdrawFeedback.severity === "success"
+										? "Application withdrawn"
+										: "Application could not be withdrawn"
+								}
+							>
+								{applicationWithdrawFeedback.message}
+							</AppAlert>
+						)}
+
+						<ApplicationSection
+							application={application}
+							contract={contract}
+							job={job}
+							role="contractor"
+							onReviewOffer={reviewOffer}
+							onJobDone={handleJobDone}
+							onApplicationWithdraw={handleApplicationWithdraw}
+							jobDoneLoading={jobDoneLoading}
+							applicationWithdrawLoading={applicationWithdrawLoading}
+						/>
 						<JobDetailsSection job={job} />
 						<Box ref={tabsRef} sx={{ scrollMarginTop: 3 }}>
 							<StepTabs key={initialTab} tabs={tabs} initialTab={initialTab} selectedTab={selectedTab} />

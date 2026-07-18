@@ -2,15 +2,29 @@ import { useNavigate } from "react-router-dom";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import { Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
 
 import StatusChip from "../../../../components/ui/StatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-import { findStatusKey } from "../../../../utils/jobs";
+import { findStatusKey, formatDeadline } from "../../../../utils/jobs";
+import { formatDate } from "../../../../utils/formatters";
 import { JOB_STATUSES } from "../../../../constants/statuses";
-import { cardSx, actionRowSx, applicationsIconSx, contractIconSx, paymentIconSx } from "./MyJobCard.styles";
+import {
+	cardSx,
+	actionRowSx,
+	applicationsIconSx,
+	contractIconSx,
+	paymentIconSx,
+	footerSx,
+	footerDividerSx,
+	metaRowSx,
+	metaItemSx,
+	actionButtonsSx,
+	actionButtonSx,
+} from "./MyJobCard.styles";
 
 export default function MyJobCard({ job }) {
 	const navigate = useNavigate();
@@ -18,7 +32,9 @@ export default function MyJobCard({ job }) {
 
 	const handleApplications = () => navigate(`/client/jobs/${job.id}/applications`);
 	const handleEditJob = () => navigate(`/client/jobs/${job.id}/edit`);
+	const handleCreateSimilarJob = () => navigate(`/client/jobs/create?duplicateFrom=${job.id}`);
 
+	const canCreateSimilarJob = statusKey === "cancelled" && !job.replacementJobId;
 	return (
 		<Card sx={cardSx}>
 			<CardContent sx={{ p: 3, height: "100%", display: "flex", flexDirection: "column" }}>
@@ -36,8 +52,8 @@ export default function MyJobCard({ job }) {
 					</Stack>
 
 					<Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap" }}>
-						<Chip label={job.workMode} size="small" variant="outlined" />
-						{job.workMode !== "Remote" && <Chip label={job.location} size="small" variant="outlined" />}
+						<Chip label={job.locationType} size="small" variant="outlined" />
+						{job.locationType !== "Remote" && <Chip label={job.location} size="small" variant="outlined" />}
 						<Chip label={job.budgetType} size="small" color="primary" variant="outlined" />
 					</Stack>
 
@@ -95,23 +111,73 @@ export default function MyJobCard({ job }) {
 					</Stack>
 				</Stack>
 
-				<Box sx={{ pt: 2.2 }}>
-					<Divider sx={{ mb: 2 }} />
-					<Stack direction="row" spacing={1}>
-						<PrimaryButton fullWidth size="small" onClick={handleApplications}>
-							Applications
-						</PrimaryButton>
-						<Button
-							fullWidth
-							size="small"
-							variant="outlined"
-							startIcon={<EditOutlinedIcon />}
-							onClick={handleEditJob}
-							sx={{ borderRadius: 2, textTransform: "none", fontWeight: 800 }}
-						>
-							Edit
-						</Button>
+				<Box sx={footerSx}>
+					<Divider sx={footerDividerSx} />
+					<Stack sx={metaRowSx}>
+						<Box sx={metaItemSx}>
+							<Typography variant="caption" color="text.secondary">
+								Deadline
+							</Typography>
+							<Typography variant="body2" fontWeight={800}>
+								{formatDeadline(job.deadline)}
+							</Typography>
+						</Box>
+						<Box sx={metaItemSx}>
+							<Typography variant="caption" color="text.secondary">
+								Last updated
+							</Typography>
+							<Typography variant="body2" fontWeight={800}>
+								{formatDate(job.updatedAt)}
+							</Typography>
+						</Box>
 					</Stack>
+					{statusKey === "cancelled" ? (
+						<Stack sx={actionButtonsSx}>
+							{canCreateSimilarJob && (
+								<PrimaryButton
+									size="small"
+									startIcon={<ContentCopyOutlinedIcon />}
+									onClick={handleCreateSimilarJob}
+									sx={actionButtonSx}
+								>
+									Create similar job
+								</PrimaryButton>
+							)}
+
+							<Button
+								size="small"
+								variant="outlined"
+								startIcon={<PeopleAltOutlinedIcon />}
+								onClick={handleApplications}
+								sx={actionButtonSx}
+							>
+								Applications
+							</Button>
+						</Stack>
+					) : (
+						<Stack sx={actionButtonsSx}>
+							<PrimaryButton
+								size="small"
+								startIcon={<PeopleAltOutlinedIcon />}
+								onClick={handleApplications}
+								sx={actionButtonSx}
+							>
+								Applications
+							</PrimaryButton>
+
+							{statusKey === "open" && (
+								<Button
+									size="small"
+									variant="outlined"
+									startIcon={<EditOutlinedIcon />}
+									onClick={handleEditJob}
+									sx={actionButtonSx}
+								>
+									Edit
+								</Button>
+							)}
+						</Stack>
+					)}
 				</Box>
 			</CardContent>
 		</Card>

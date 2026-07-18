@@ -10,11 +10,12 @@ import { isSignatureTooLarge } from "./signatureValidation";
 
 import AppAlert from "../../../../components/ui/Alert";
 import StatusChip from "../../../../components/ui/StatusChip";
-import { CONTRACT_STATUSES } from "../../../../constants/statuses";
+import { CONTRACT_STATUSES, JOB_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
 import { parseApiError, parseBlobApiError } from "../../../../utils/parseApiError";
 import { downloadContractPdf, emailContractPdf } from "../../../../api/coreAPI";
+import { useTimedAlert } from "../../../../hooks/useTimedAlert";
 
 const actionBtnSx = {
 	textTransform: "none",
@@ -27,18 +28,30 @@ const signBtnSx = {
 	fontWeight: 800,
 };
 
-export default function ContractDetailsSection({ contract, role = "client", onSignContract }) {
+export default function ContractDetailsSection({ contract, job, role = "client", onSignContract }) {
 	const [signDialogOpen, setSignDialogOpen] = useState(false);
 	const [signing, setSigning] = useState(false);
-	const [signFeedback, setSignFeedback] = useState(null);
+	const [signFeedback, setSignFeedback] = useTimedAlert();
 	const [downloading, setDownloading] = useState(false);
 	const [sendingEmail, setSendingEmail] = useState(false);
 
 	const statusKey = contract ? findStatusKey(contract.status, CONTRACT_STATUSES) : null;
+	const jobStatusKey = job ? findStatusKey(job.status, JOB_STATUSES) : null;
 	const contractIsActive = statusKey === "active";
+	const jobIsAwaitingReview = jobStatusKey === "completedByClient";
+	const jobIsCompleted = jobStatusKey === "completedByClient";
+	const contractCanBeShared =
+		statusKey !== "cancelled" && (contractIsActive || jobIsCompleted || statusKey === "completed");
 	const currentPartySignedAt = role === "client" ? contract?.clientSignedAt : contract?.contractorSignedAt;
 	const signingClosed = ["active", "signedByBoth", "completed", "cancelled"].includes(statusKey);
 	const needsSignature = Boolean(contract) && !currentPartySignedAt && !signingClosed;
+	const contractDescription = jobIsCompleted
+		? "This job has been completed. You can still preview, download, or email a copy of the final contract."
+		: jobIsAwaitingReview
+			? "The contractor marked the job as done. The signed contract remains available while the client reviews the work."
+			: contractIsActive
+				? "This contract is active. You can preview it, download the PDF, or send a copy to your email."
+				: "Review the contract details and complete any required signature before the work begins.";
 
 	const handleSignConfirm = async (signatureDataUrl) => {
 		if (isSignatureTooLarge(signatureDataUrl)) {
@@ -110,24 +123,24 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 	};
 
 	const contractActions = [
-			{
-				label: "Preview contract",
-				icon: <VisibilityRoundedIcon />,
-				onClick: handlePreview,
-			},
-			{
-				label: "Download PDF",
-				icon: <FileDownloadRoundedIcon />,
-				onClick: handleDownload,
-				disabled: !contractIsActive || downloading,
-			},
-			{
-				label: "Send to my email",
-				icon: <MarkEmailReadRoundedIcon />,
-				onClick: handleSendEmail,
-				disabled: !contractIsActive || sendingEmail,
-			},
-		];
+		{
+			label: "Preview contract",
+			icon: <VisibilityRoundedIcon />,
+			onClick: handlePreview,
+		},
+		{
+			label: "Download PDF",
+			icon: <FileDownloadRoundedIcon />,
+			onClick: handleDownload,
+			disabled: !contractCanBeShared || downloading,
+		},
+		{
+			label: "Send to my email",
+			icon: <MarkEmailReadRoundedIcon />,
+			onClick: handleSendEmail,
+			disabled: !contractCanBeShared || sendingEmail,
+		},
+	];
 
 	if (!contract) {
 		return (
@@ -149,11 +162,7 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
 				{signFeedback && (
-					<AppAlert
-						severity={signFeedback.severity}
-						title={signFeedback.title}
-						onClose={() => setSignFeedback(null)}
-					>
+					<AppAlert severity={signFeedback.severity} title={signFeedback.title} onClose={() => setSignFeedback(null)}>
 						{signFeedback.message}
 					</AppAlert>
 				)}
@@ -171,6 +180,10 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 
 					{statusKey && <StatusChip status={statusKey} config={CONTRACT_STATUSES} />}
 				</Stack>
+
+				<Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+					{contractDescription}
+				</Typography>
 
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
 					{needsSignature && (
@@ -193,11 +206,11 @@ export default function ContractDetailsSection({ contract, role = "client", onSi
 							disabled={action.disabled}
 							sx={actionBtnSx}
 						>
-						{action.label === "Download PDF" && downloading
-							? "Downloading..."
-							: action.label === "Send to my email" && sendingEmail
-								? "Sending..."
-								: action.label}
+							{action.label === "Download PDF" && downloading
+								? "Downloading..."
+								: action.label === "Send to my email" && sendingEmail
+									? "Sending..."
+									: action.label}
 						</Button>
 					))}
 				</Stack>

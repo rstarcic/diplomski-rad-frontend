@@ -10,6 +10,7 @@ import { parseApiError } from "../../utils/parseApiError";
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
 import ApplicationsCard from "./components/ApplicationsCard";
 import { BackButton } from "../../components/ui/BackButton";
+import { findStatusKey } from "../../utils/jobs";
 
 export default function JobApplicationsPage() {
 	const { jobId } = useParams();
@@ -24,7 +25,7 @@ export default function JobApplicationsPage() {
 			applications.filter(({ application }) => {
 				if (selectedStatus === "all") return true;
 
-				return application.status?.toLowerCase() === selectedStatus;
+				return findStatusKey(application.status, APPLICATION_STATUSES) === selectedStatus;
 			}),
 		[applications, selectedStatus],
 	);
@@ -35,9 +36,7 @@ export default function JobApplicationsPage() {
 			setLoading(true);
 
 			try {
-				console.log(jobId);
 				const applications = await getJobApplications(jobId);
-				console.log(applications);
 				setApplications(applications);
 				setJobTitle(applications[0]?.job?.title ?? "");
 			} catch (error) {

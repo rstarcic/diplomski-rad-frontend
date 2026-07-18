@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Card, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
 
 import CurrentOfferCard from "./CurrentOfferCard";
 import DecisionSection from "./DecisionSection";
@@ -8,13 +8,33 @@ import StatusChip from "../../../../components/ui/StatusChip";
 import { NEGOTIATION_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
+import { getCurrentTermsTitle } from "./negotiationLabels";
+import AppAlert from "../../../../components/ui/Alert";
 
-export default function NegotiationSection({ negotiation, status, updates = [], role, onAcceptNegotiation }) {
+const MAX_NEGOTIATION_ROUNDS = 3;
+
+function normalizeBudgetType(value) {
+	return String(value ?? "").trim().toLowerCase();
+}
+
+export default function NegotiationSection({
+	initialOffer,
+	status,
+	updates = [],
+	role,
+	onAcceptNegotiation,
+	onRejectNegotiation,
+	onSubmitCounterOffer,
+}) {
 	const sortedUpdates = [...updates].sort((a, b) => a.roundNumber - b.roundNumber);
-	const currentOffer = sortedUpdates.at(-1) ?? null;
+	const currentOffer = sortedUpdates.at(-1) ?? initialOffer ?? null;
+	const currentRound = Math.min(Number(currentOffer?.roundNumber ?? 1), MAX_NEGOTIATION_ROUNDS);
 
 	const [isEditing, setIsEditing] = useState(false);
+	const [isSubmittingCounter, setIsSubmittingCounter] = useState(false);
+	const [counterError, setCounterError] = useState("");
 	const [editValues, setEditValues] = useState({
+		budgetType: normalizeBudgetType(currentOffer?.budgetType),
 		budgetAmount: currentOffer?.budgetAmount ?? "",
 		hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
 		duration: currentOffer?.duration ?? "",
@@ -23,15 +43,29 @@ export default function NegotiationSection({ negotiation, status, updates = [], 
 	});
 
 	const statusKey = status ? findStatusKey(status, NEGOTIATION_STATUSES) : null;
+	const negotiationIsFinal = ["accepted", "rejected", "expired"].includes(statusKey);
+	const canCounterOffer = currentRound < MAX_NEGOTIATION_ROUNDS;
+	const termsTitle = getCurrentTermsTitle(sortedUpdates, isEditing);
 
 	const handleEditChange = (field, value) => {
 		setEditValues((prev) => ({ ...prev, [field]: value }));
 	};
 
-	const handleCounterOffer = () => setIsEditing(true);
+	const handleCounterOffer = () => {
+		setEditValues({
+			budgetType: normalizeBudgetType(currentOffer?.budgetType),
+			budgetAmount: currentOffer?.budgetAmount ?? "",
+			hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
+			duration: currentOffer?.duration ?? "",
+			deliverables: currentOffer?.deliverables ?? "",
+			message: "",
+		});
+		setIsEditing(true);
+	};
 
 	const handleCancelEdit = () => {
 		setEditValues({
+			budgetType: normalizeBudgetType(currentOffer?.budgetType),
 			budgetAmount: currentOffer?.budgetAmount ?? "",
 			hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
 			duration: currentOffer?.duration ?? "",
@@ -41,43 +75,59 @@ export default function NegotiationSection({ negotiation, status, updates = [], 
 		setIsEditing(false);
 	};
 
-	const handleSubmitCounter = () => {
-		// TODO: API call with editValues
-		setIsEditing(false);
+	const handleSubmitCounter = async () => {
+		if (isSubmittingCounter) return;
+
+		if (!["fixed", "hourly"].includes(editValues.budgetType)) {
+			setCounterError("Select a valid budget type.");
+			return;
+		}
+
+		try {
+			setIsSubmittingCounter(true);
+			setCounterError("");
+			await onSubmitCounterOffer?.(editValues);
+			setIsEditing(false);
+		} catch (error) {
+			setCounterError(error?.message || "Counter-offer could not be submitted. Please try again.");
+		} finally {
+			setIsSubmittingCounter(false);
+		}
 	};
 
-	const handleAccept = () => {
-		// TODO: API call
-		onAcceptNegotiation?.();
+	const handleAccept = async () => {
+		await onAcceptNegotiation?.();
 	};
 
-	const handleReject = () => {
-		// TODO: API call
+	const handleReject = async () => {
+		await onRejectNegotiation?.();
 	};
-
-	if (!negotiation) {
-		return (
-			<Card elevation={0} sx={surfaceSectionSx}>
-				<Stack spacing={1}>
-					<Typography variant="h6" sx={sectionTitleSx}>
-						Negotiation
-					</Typography>
-					<Typography variant="body2" color="text.secondary">
-						No negotiation has been started for this application yet.
-					</Typography>
-				</Stack>
-			</Card>
-		);
-	}
 
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2.5}>
-				<Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+				{counterError && (
+					<AppAlert severity="error" title="Counter-offer could not be submitted">
+						{counterError}
+					</AppAlert>
+				)}
+				<Stack
+					direction={{ xs: "column", sm: "row" }}
+					sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 1 }}
+				>
 					<Typography variant="h6" sx={sectionTitleSx}>
-						Negotiation
+						{termsTitle}
 					</Typography>
-					{statusKey && <StatusChip status={statusKey} config={NEGOTIATION_STATUSES} />}
+					<Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+						<Chip
+							label={`Round ${currentRound} of ${MAX_NEGOTIATION_ROUNDS}`}
+							size="small"
+							color="primary"
+							variant="outlined"
+							sx={{ fontWeight: 800 }}
+						/>
+						{statusKey && <StatusChip status={statusKey} config={NEGOTIATION_STATUSES} />}
+					</Stack>
 				</Stack>
 
 				<Divider />
@@ -98,8 +148,10 @@ export default function NegotiationSection({ negotiation, status, updates = [], 
 								onAccept={handleAccept}
 								onReject={handleReject}
 								onCounterOffer={handleCounterOffer}
+								canCounterOffer={canCounterOffer}
 								onSubmitCounter={handleSubmitCounter}
 								onCancelEdit={handleCancelEdit}
+								isSubmittingCounter={isSubmittingCounter}
 								message={editValues.message}
 								onMessageChange={(value) => handleEditChange("message", value)}
 							/>
@@ -107,7 +159,19 @@ export default function NegotiationSection({ negotiation, status, updates = [], 
 					</Grid>
 
 					<Grid size={{ xs: 12, md: 4 }}>
-						<NegotiationTimeline updates={sortedUpdates} />
+						<Stack spacing={2}>
+							<NegotiationTimeline updates={sortedUpdates} />
+							{!negotiationIsFinal && currentRound === MAX_NEGOTIATION_ROUNDS - 1 && (
+								<AppAlert severity="warning" title="Final round next">
+									After the next counter-offer, the latest proposal must be accepted or rejected.
+								</AppAlert>
+							)}
+							{!negotiationIsFinal && currentRound >= MAX_NEGOTIATION_ROUNDS && (
+								<AppAlert severity="warning" title="Final round reached">
+									No more counter-offers are available. Accept or reject the latest proposal.
+								</AppAlert>
+							)}
+						</Stack>
 					</Grid>
 				</Grid>
 			</Stack>

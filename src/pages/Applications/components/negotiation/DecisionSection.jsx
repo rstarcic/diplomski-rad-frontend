@@ -14,11 +14,11 @@ import {
 	messageFieldSx,
 } from "./DecisionSection.styles";
 
-function EditingCard({ message, onMessageChange, onSubmit, onCancel }) {
+function EditingCard({ message, onMessageChange, onSubmit, onCancel, isSubmitting }) {
 	return (
 		<Box sx={actionCardSx}>
 			<Stack spacing={1.5}>
-				<Typography variant="subtitle2" fontWeight={800}>
+				<Typography variant="subtitle2" fontWeight={700}>
 					Submit your counter-offer
 				</Typography>
 				<Typography variant="body2" color="text.secondary">
@@ -37,21 +37,15 @@ function EditingCard({ message, onMessageChange, onSubmit, onCancel }) {
 				/>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
 					<PrimaryButton
-						fullWidth
-						variant="contained"
+						variant="outlined"
 						startIcon={<SwapHorizRoundedIcon />}
 						onClick={onSubmit}
+						disabled={isSubmitting}
 						sx={counterBtnSx}
 					>
-						Submit Counter-Offer
+						{isSubmitting ? "Submitting..." : "Submit counter-offer"}
 					</PrimaryButton>
-					<PrimaryButton
-						fullWidth
-						variant="outlined"
-						startIcon={<CloseRoundedIcon />}
-						onClick={onCancel}
-						sx={cancelBtnSx}
-					>
+					<PrimaryButton variant="outlined" startIcon={<CloseRoundedIcon />} onClick={onCancel} disabled={isSubmitting} sx={cancelBtnSx}>
 						Cancel
 					</PrimaryButton>
 				</Stack>
@@ -60,32 +54,34 @@ function EditingCard({ message, onMessageChange, onSubmit, onCancel }) {
 	);
 }
 
-function ActionCard({ role, onAccept, onReject, onCounterOffer }) {
-	const title = role === "client" ? "Your Decision" : "Contractor Decision";
+function ActionCard({ role, onAccept, onReject, onCounterOffer, canCounterOffer }) {
+	const title = "Your response";
 	const question = role === "client" ? "Do you accept the contractor's terms?" : "Do you accept the client's terms?";
 
 	return (
 		<Box sx={actionCardSx}>
-			<Stack spacing={1.5}>
-				<Typography variant="subtitle2" fontWeight={800}>
+			<Stack spacing={1.25}>
+				<Typography variant="subtitle2" fontWeight={700}>
 					{title}
 				</Typography>
 				<Typography variant="body2" color="text.secondary">
 					{question}
 				</Typography>
-				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+				<Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ alignItems: { sm: "center" } }}>
 					<PrimaryButton variant="contained" startIcon={<CheckRoundedIcon />} onClick={onAccept} sx={acceptBtnSx}>
 						Accept
 					</PrimaryButton>
-					<PrimaryButton
-						variant="outlined"
-						startIcon={<SwapHorizRoundedIcon />}
-						onClick={onCounterOffer}
-						sx={counterBtnSx}
-					>
-						Counter-Offer
-					</PrimaryButton>
-					<PrimaryButton variant="contained" startIcon={<CloseRoundedIcon />} onClick={onReject} sx={rejectBtnSx}>
+					{canCounterOffer && (
+						<PrimaryButton
+							variant="outlined"
+							startIcon={<SwapHorizRoundedIcon />}
+							onClick={onCounterOffer}
+							sx={counterBtnSx}
+						>
+							Counter-Offer
+						</PrimaryButton>
+					)}
+					<PrimaryButton variant="outlined" startIcon={<CloseRoundedIcon />} onClick={onReject} sx={rejectBtnSx}>
 						Reject
 					</PrimaryButton>
 				</Stack>
@@ -137,10 +133,12 @@ export default function DecisionSection({
 	onAccept,
 	onReject,
 	onCounterOffer,
+	canCounterOffer = true,
 	onSubmitCounter,
 	onCancelEdit,
 	message,
 	onMessageChange,
+	isSubmittingCounter,
 }) {
 	if (isEditing) {
 		return (
@@ -149,6 +147,7 @@ export default function DecisionSection({
 				onMessageChange={onMessageChange}
 				onSubmit={onSubmitCounter}
 				onCancel={onCancelEdit}
+				isSubmitting={isSubmittingCounter}
 			/>
 		);
 	}
@@ -161,7 +160,15 @@ export default function DecisionSection({
 		(status === "pendingClient" && role === "client") || (status === "pendingContractor" && role === "contractor");
 
 	if (isActiveParty) {
-		return <ActionCard role={role} onAccept={onAccept} onReject={onReject} onCounterOffer={onCounterOffer} />;
+		return (
+			<ActionCard
+				role={role}
+				onAccept={onAccept}
+				onReject={onReject}
+				onCounterOffer={onCounterOffer}
+				canCounterOffer={canCounterOffer}
+			/>
+		);
 	}
 
 	return <WaitingCard waitingFor={status === "pendingClient" ? "client" : "contractor"} />;

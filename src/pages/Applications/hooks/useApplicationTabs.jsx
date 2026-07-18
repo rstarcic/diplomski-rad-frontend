@@ -17,6 +17,8 @@ export function useApplicationTabs({
 	payments = [],
 	role = "client",
 	onAcceptNegotiation,
+	onRejectNegotiation,
+	onSubmitCounterOffer,
 	onSignContract,
 }) {
 	const reviewTarget = role === "client" ? "contractor" : "client";
@@ -48,6 +50,8 @@ export function useApplicationTabs({
 					updates={negotiationUpdates}
 					role={role}
 					onAcceptNegotiation={onAcceptNegotiation}
+					onRejectNegotiation={onRejectNegotiation}
+					onSubmitCounterOffer={onSubmitCounterOffer}
 				/>
 			),
 		},
@@ -58,6 +62,7 @@ export function useApplicationTabs({
 			content: (
 				<ContractDetailsSection
 					contract={contract}
+					job={job}
 					role={role}
 					onSignContract={onSignContract}
 				/>

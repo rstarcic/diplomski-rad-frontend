@@ -64,15 +64,15 @@ export default function ContractorApplicationCard({ application, job, client }) 
 
 	if (!application || !job) return null;
 	const statusKey = findStatusKey(application.status, APPLICATION_STATUSES);
-	const clientName = client ? `${client.firstName} ${client.lastName}` : "Unknown client";
+	const clientName = client?.fullName || "Unknown client";
 	const clientLocation = [client?.city, client?.country].filter(Boolean).join(", ");
 	const openApplication = () => {
 		navigate(`/contractor/applications/${application.id}`);
 	};
 
 	const openClientProfile = () => {
-		if (client?.id) {
-			navigate(`/contractor/clients/${client.id}`);
+		if (client?.userId) {
+			navigate(`/contractor/clients/${client.userId}`);
 		}
 	};
 

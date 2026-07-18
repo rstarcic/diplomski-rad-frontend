@@ -7,9 +7,19 @@ import { BackButton } from "../../components/ui/BackButton";
 import PageHeader from "../../components/ui/PageHeader";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
-import { decideJobApplication, getJobApplicationDetails, acceptNegotiationTerms, signContract } from "../../api/coreAPI";
+import {
+	decideJobApplication,
+	getJobApplicationDetails,
+	acceptNegotiationTerms,
+	rejectNegotiationTerms,
+	submitCounterOffer,
+	signContract,
+	markJobCompleted,
+	markJobIncomplete,
+} from "../../api/coreAPI";
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
 
 import StepTabs from "./components/StepTabs";
 import ApplicationSection from "./components/ApplicationSection";
@@ -34,8 +44,12 @@ export default function ApplicationDetailsPage() {
 	const [loadError, setLoadError] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [decisionLoading, setDecisionLoading] = useState(false);
-	const [decisionError, setDecisionError] = useState("");
-	const [negotiationSuccess, setNegotiationSuccess] = useState("");
+	const [decisionError, setDecisionError] = useTimedAlert();
+	const [negotiationSuccess, setNegotiationSuccess] = useTimedAlert();
+	const [jobCompletedLoading, setJobCompletedLoading] = useState(false);
+	const [jobCompletedSuccess, setJobCompletedSuccess] = useTimedAlert();
+	const [jobIncompleteLoading, setJobIncompleteLoading] = useState(false);
+	const [jobIncompleteSuccess, setJobIncompleteSuccess] = useTimedAlert();
 
 	useEffect(() => {
 		async function loadApplicationDetails() {
@@ -106,6 +120,26 @@ export default function ApplicationDetailsPage() {
 		[applicationDetails],
 	);
 
+	useEffect(() => {
+		if (applicationDetails?.payment?.status !== "pending") return undefined;
+
+		let active = true;
+		const refreshPayment = async () => {
+			try {
+				const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+				if (active) setApplicationDetails(updatedDetails);
+			} catch {
+				// Keep the current payment visible and retry on the next polling interval.
+			}
+		};
+		const intervalId = window.setInterval(refreshPayment, 15000);
+
+		return () => {
+			active = false;
+			window.clearInterval(intervalId);
+		};
+	}, [applicationDetails?.payment?.status, jobId, applicationId]);
+
 	const handleAcceptNegotiation = async () => {
 		try {
 			setDecisionLoading(true);
@@ -127,6 +161,97 @@ export default function ApplicationDetailsPage() {
 		}
 	};
 
+	const handleRejectNegotiation = async () => {
+		try {
+			setDecisionLoading(true);
+			setDecisionError("");
+			setNegotiationSuccess("");
+
+			const result = await rejectNegotiationTerms(jobId, applicationId);
+			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+
+			setApplicationDetails(updatedDetails);
+			setNegotiationSuccess(result.message);
+		} catch (error) {
+			const apiError = parseApiError(error, APPLICATION_ERRORS, "Terms could not be rejected. Please try again.");
+
+			setDecisionError(apiError.message);
+		} finally {
+			setDecisionLoading(false);
+		}
+	};
+
+	const handleSubmitCounterOffer = async (counterOffer) => {
+		try {
+			setDecisionLoading(true);
+			setDecisionError("");
+			setNegotiationSuccess("");
+
+			const result = await submitCounterOffer(jobId, applicationId, counterOffer);
+			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+
+			setApplicationDetails(updatedDetails);
+			setNegotiationSuccess(result.message ?? "Counter-offer submitted successfully.");
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				APPLICATION_ERRORS,
+				"Counter-offer could not be submitted. Please try again.",
+			);
+			setDecisionError(apiError.message);
+		} finally {
+			setDecisionLoading(false);
+		}
+	};
+
+	const handleJobCompleted = async () => {
+		try {
+			setJobCompletedLoading(true);
+			setDecisionError("");
+			setJobCompletedSuccess("");
+
+			const result = await markJobCompleted(jobId);
+			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+
+			setApplicationDetails(updatedDetails);
+			setJobCompletedSuccess(result.message ?? "Job completion confirmed successfully.");
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				APPLICATION_ERRORS,
+				"The job completion could not be confirmed. Please try again.",
+			);
+
+			setDecisionError(apiError.message);
+		} finally {
+			setJobCompletedLoading(false);
+		}
+	};
+
+	const handleJobIncomplete = async () => {
+		try {
+			setJobIncompleteLoading(true);
+			setDecisionError("");
+			setJobIncompleteSuccess("");
+
+			const result = await markJobIncomplete(jobId);
+			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
+
+			setApplicationDetails(updatedDetails);
+			setJobIncompleteSuccess(result.message ?? "Job marked as incomplete.");
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				APPLICATION_ERRORS,
+				"The job could not be marked as incomplete. Please try again.",
+			);
+
+			setDecisionError(apiError.message);
+		} finally {
+			setJobIncompleteLoading(false);
+		}
+	};
+
 	const handleSignContract = async (signatureDataUrl) => {
 		await signContract(details.contract.id, signatureDataUrl);
 		const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
@@ -142,6 +267,8 @@ export default function ApplicationDetailsPage() {
 		payments: details.payments,
 		role: "client",
 		onAcceptNegotiation: handleAcceptNegotiation,
+		onRejectNegotiation: handleRejectNegotiation,
+		onSubmitCounterOffer: handleSubmitCounterOffer,
 		onSignContract: handleSignContract,
 	});
 
@@ -180,23 +307,41 @@ export default function ApplicationDetailsPage() {
 				<Grid size={{ xs: 12, md: 8 }}>
 					<Stack spacing={2}>
 						{negotiationSuccess && (
-							<AppAlert severity="success" title="Terms accepted">
+							<AppAlert severity="success" title="Negotiation updated">
 								{negotiationSuccess}
 							</AppAlert>
 						)}
 
 						{decisionError && (
-							<AppAlert severity="error" title="Decision could not be saved">
+							<AppAlert severity="error" title="Action could not be completed">
 								{decisionError}
+							</AppAlert>
+						)}
+
+						{jobCompletedSuccess && (
+							<AppAlert severity="success" title="Job completed">
+								{jobCompletedSuccess}
+							</AppAlert>
+						)}
+
+						{jobIncompleteSuccess && (
+							<AppAlert severity="warning" title="Job incomplete">
+								{jobIncompleteSuccess}
 							</AppAlert>
 						)}
 
 						<ApplicationSection
 							application={details.application}
+							contract={details.contract}
+							job={details.job}
 							role="client"
 							onAccept={handleAccept}
 							onReject={handleReject}
+							onJobCompleted={handleJobCompleted}
+							onJobIncomplete={handleJobIncomplete}
 							decisionLoading={decisionLoading}
+							jobCompletedLoading={jobCompletedLoading}
+							jobIncompleteLoading={jobIncompleteLoading}
 						/>
 
 						<StepTabs key={initialTab} tabs={tabs} initialTab={initialTab} />

@@ -16,9 +16,10 @@ export function mapProfileFromAPI(profile = {}) {
         phone: profile.phone ?? "",
         country: profile.country ?? "",
         city: profile.city ?? "",
-        about: profile.about ?? "",
-        image: profile.profile_picture ?? null,
-        role: profile.role ?? "",
+          about: profile.about ?? "",
+          image: profile.profile_picture ?? null,
+          createdAt: profile.created_at ?? null,
+          role: profile.role ?? "",
         profileCompleted: profile.profile_completed ?? false,
     };
 }

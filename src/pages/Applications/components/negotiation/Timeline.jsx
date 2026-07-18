@@ -1,5 +1,6 @@
 import { Box, Chip, Stack, Typography } from "@mui/material";
 import { formatDate } from "../../../../utils/formatters";
+import { getNegotiationUpdateLabel } from "./negotiationLabels";
 
 const rightPanelTitleSx = {
 	fontWeight: 800,
@@ -17,6 +18,7 @@ export default function NegotiationTimeline({ updates }) {
 			<Stack spacing={0}>
 				{updates.map((update, index) => {
 					const isLast = index === updates.length - 1;
+					const updateLabel = getNegotiationUpdateLabel(update, index);
 					return (
 						<Box key={update.id} sx={{ display: "flex", gap: 1.5 }}>
 							<Stack sx={{ width: 16, alignItems: "center", flexShrink: 0, mt: 0.3 }}>
@@ -37,7 +39,7 @@ export default function NegotiationTimeline({ updates }) {
 							<Box sx={{ pb: isLast ? 0 : 2, minWidth: 0 }}>
 								<Stack direction="row" spacing={0.75} sx={{ alignItems: "center", flexWrap: "wrap" }}>
 									<Typography variant="body2" fontWeight={800}>
-										Offer #{update.roundNumber}
+										{updateLabel}
 									</Typography>
 									{isLast && (
 										<Chip

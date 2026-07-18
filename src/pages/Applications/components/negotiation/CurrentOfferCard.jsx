@@ -1,4 +1,9 @@
-import { Box, Stack, TextField, Typography } from "@mui/material";
+import { Box, MenuItem, Stack, TextField, Typography } from "@mui/material";
+
+const BUDGET_TYPE_OPTIONS = [
+	{ value: "fixed", label: "Fixed" },
+	{ value: "hourly", label: "Hourly" },
+];
 
 const termBoxSx = {
 	p: 2,
@@ -8,7 +13,7 @@ const termBoxSx = {
 	bgcolor: "background.paper",
 };
 
-function TermCell({ label, value, editedBy, isEditing, inputType, multiline, editValue, onChange }) {
+function TermCell({ label, value, editedBy, isEditing, inputType, multiline, editValue, onChange, options }) {
 	return (
 		<Stack direction="row" spacing={2} sx={{ alignItems: multiline ? "flex-start" : "center" }}>
 			<Box sx={{ flex: 1, minWidth: 0 }}>
@@ -29,17 +34,22 @@ function TermCell({ label, value, editedBy, isEditing, inputType, multiline, edi
 			</Box>
 			{isEditing && (
 				<TextField
+					select={Boolean(options)}
 					value={editValue}
 					onChange={(e) => onChange(e.target.value)}
 					size="small"
-					type={inputType || "text"}
-					multiline={multiline}
-					minRows={multiline ? 2 : undefined}
+					type={options ? undefined : inputType || "text"}
+					multiline={!options && multiline}
+					minRows={!options && multiline ? 2 : undefined}
 					sx={{ width: 220, flexShrink: 0 }}
-					slotProps={{
-						htmlInput: { min: 0 },
-					}}
-				/>
+					slotProps={options ? undefined : { htmlInput: { min: 0 } }}
+				>
+					{options?.map((option) => (
+						<MenuItem key={option.value} value={option.value}>
+							{option.label}
+						</MenuItem>
+					))}
+				</TextField>
 			)}
 		</Stack>
 	);
@@ -50,6 +60,19 @@ export default function CurrentOfferCard({ offer, isEditing, editValues, onEditC
 
 	return (
 		<Stack spacing={1.5}>
+			<Box sx={termBoxSx}>
+				<TermCell
+					label="Budget type"
+					value={
+						BUDGET_TYPE_OPTIONS.find((option) => option.value === String(offer.budgetType).toLowerCase())
+							?.label ?? "Not specified"
+					}
+					isEditing={isEditing}
+					editValue={editValues.budgetType}
+					onChange={(val) => onEditChange("budgetType", val)}
+					options={BUDGET_TYPE_OPTIONS}
+				/>
+			</Box>
 			<Box sx={termBoxSx}>
 				<TermCell
 					label="Budget amount"
