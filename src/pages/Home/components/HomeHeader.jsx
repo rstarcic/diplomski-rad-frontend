@@ -56,7 +56,7 @@ export default function HomeHeader({ onLogin, onSignup }) {
 				<Button variant="outlined" onClick={onLogin} startIcon={<LoginRoundedIcon />} sx={loginSx}>
 					Log in
 				</Button>
-				<Button variant="contained" onClick={onSignup} startIcon={<PersonAddAlt1RoundedIcon />} sx={signupSx}>
+				<Button variant="contained" onClick={() => onSignup()} startIcon={<PersonAddAlt1RoundedIcon />} sx={signupSx}>
 					Sign up
 				</Button>
 			</Stack>
