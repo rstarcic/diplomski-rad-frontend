@@ -22,5 +22,13 @@ export const formatOption = (value, fallback = "Not set") => {
 export const formatDeadline = (deadline) => formatDate(deadline, "No deadline");
 
 export const findStatusKey = (rawStatus, statusConfig) => {
-    return statusConfig[rawStatus] ? rawStatus : null;
+    if (!rawStatus || !statusConfig) return null;
+
+    const normalizedStatus = String(rawStatus)
+        .trim()
+        .toLowerCase()
+        .replace(/[_-]+(.)/g, (_, character) => character.toUpperCase());
+    return Object.keys(statusConfig).find(
+        (statusKey) => statusKey.toLowerCase() === normalizedStatus.toLowerCase(),
+    ) ?? null;
 };

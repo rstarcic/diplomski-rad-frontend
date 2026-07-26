@@ -16,6 +16,7 @@ import { parseApiError } from "../../utils/parseApiError";
 import { JOB_ERRORS } from "../../constants/apiErrors";
 import { getJobById, updateJob } from "../../api/coreAPI";
 import { useAuth } from "../../hooks/useAuth";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
 
 const desktopSubmitWrapSx = {
 	display: { xs: "none", md: "flex" },
@@ -50,7 +51,7 @@ export default function EditJobPage() {
 	const [jobData, setJobData] = useState(initialJobData);
 	const [jobTitle, setJobTitle] = useState("");
 	const [loadError, setLoadError] = useState("");
-	const [success, setSuccess] = useState("");
+	const [success, setSuccess] = useTimedAlert();
 	const [validationWarning, setValidationWarning] = useState("");
 	const [submitError, setSubmitError] = useState("");
 	const [saving, setSaving] = useState(false);
@@ -58,10 +59,9 @@ export default function EditJobPage() {
 	const setup = {
 		...accountSetup,
 		role: role ?? "client",
-		paymentCompleted: true,
 	};
 
-	const accountIsComplete = setup.profileCompleted && setup.paymentCompleted;
+	const accountIsComplete = setup.profileCompleted;
 	const missingFields = getMissingFields(jobData);
 	const formIsComplete = missingFields.length === 0;
 	const canSave = formIsComplete && !saving;
@@ -137,7 +137,7 @@ export default function EditJobPage() {
 				<AccountSetupAlert
 					accountSetup={setup}
 					actionName="edit a job"
-					settingsPath="/client/settings"
+					settingsPath="/client/profile"
 					sx={{ mt: 3 }}
 				/>
 			)}

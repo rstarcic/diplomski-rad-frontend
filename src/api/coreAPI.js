@@ -94,7 +94,6 @@ export async function updateMyProfile(profileData) {
 	};
 }
 
-
 // _______________JOBS _______________
 
 export async function createJob(jobData) {
@@ -222,10 +221,11 @@ export async function getJobApplicationDetails(jobId, applicationId) {
 	};
 }
 
-async function getContractByApplicationId(applicationId, signal) {
+async function getContractByApplicationId(applicationId, signal, fallbackJob = null) {
 	try {
 		const { data } = await api.get(`/contracts/application/${applicationId}`, { signal });
-		return mapContractFromAPI(data);
+		console.log("dataaaa",data)
+		return mapContractFromAPI(data, fallbackJob);
 	} catch (error) {
 		if (error.response?.status === 404) return null;
 		throw error;
@@ -237,7 +237,7 @@ async function attachApplicationContract(details, applicationId, signal) {
 		return details;
 	}
 
-	const contract = await getContractByApplicationId(applicationId, signal);
+	const contract = await getContractByApplicationId(applicationId, signal, details.job);
 	return { ...details, contract };
 }
 

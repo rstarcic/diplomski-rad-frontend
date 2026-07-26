@@ -6,22 +6,30 @@ function splitFullName(fullName = "") {
     };
 }
 
-export function mapProfileFromAPI(profile = {}) {
+export function mapProfileFromAPI(profile = {}, { includePrivate = false } = {}) {
     const { firstName, lastName } = splitFullName(profile.full_name);
 
-    return {
+    const mappedProfile = {
         firstName,
         lastName,
         email: profile.email ?? "",
         phone: profile.phone ?? "",
         country: profile.country ?? "",
         city: profile.city ?? "",
-          about: profile.about ?? "",
-          image: profile.profile_picture ?? null,
-          createdAt: profile.created_at ?? null,
-          role: profile.role ?? "",
+        about: profile.about ?? "",
+        image: profile.profile_picture ?? null,
+        createdAt: profile.created_at ?? null,
+        role: profile.role ?? "",
         profileCompleted: profile.profile_completed ?? false,
     };
+
+    if (includePrivate) {
+        mappedProfile.address = profile.address ?? "";
+        mappedProfile.postalCode = profile.postal_code ?? "";
+        mappedProfile.countryCode = profile.country_code ?? "";
+    }
+
+    return mappedProfile;
 }
 
 export function mapProfileToAPI(formData = {}) {
@@ -35,6 +43,18 @@ export function mapProfileToAPI(formData = {}) {
             about: formData.about,
         },
     };
+
+    if (formData.address !== undefined) {
+        payload.profile.address = formData.address.trim();
+    }
+
+    if (formData.postalCode !== undefined) {
+        payload.profile.postal_code = formData.postalCode.trim();
+    }
+
+    if (formData.countryCode !== undefined) {
+        payload.profile.country_code = formData.countryCode.trim().toUpperCase();
+    }
 
     if (formData.skills) {
         payload.skills = mapSkillsToAPI(formData.skills);

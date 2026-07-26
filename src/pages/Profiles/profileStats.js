@@ -1,20 +1,18 @@
-import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
-import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
-import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
-
+import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
+import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
 export const profileStatCardConfig = {
 	client: {
 		jobsPosted: {
 			label: "Jobs posted",
-			Icon: WorkOutlineRoundedIcon,
+			Icon: WorkRoundedIcon,
 			accent: "#0f766e",
 		},
 		jobsCompleted: {
 			label: "Jobs completed",
-			Icon: CheckCircleOutlineRoundedIcon,
+			Icon: CheckCircleRoundedIcon,
 			accent: "#16a34a",
 		},
 		activeJobs: {
@@ -22,22 +20,16 @@ export const profileStatCardConfig = {
 			Icon: AssignmentTurnedInRoundedIcon,
 			accent: "#ea580c",
 		},
-		preferredCategories: {
-			label: "Preferred categories",
-			Icon: CategoryOutlinedIcon,
-			accent: "#7c3aed",
-		},
 		averageResponseTime: {
 			label: "Response time",
-			Icon: AccessTimeRoundedIcon,
+			Icon: AccessTimeFilledRoundedIcon,
 			accent: "#1d4ed8",
 		},
 	},
-
 	contractor: {
 		completedJobs: {
 			label: "Completed jobs",
-			Icon: CheckCircleOutlineRoundedIcon,
+			Icon: CheckCircleRoundedIcon,
 			accent: "#16a34a",
 		},
 		activeContracts: {
@@ -45,20 +37,15 @@ export const profileStatCardConfig = {
 			Icon: AssignmentTurnedInRoundedIcon,
 			accent: "#0f766e",
 		},
-		totalEarnings: {
-			label: "Total earnings",
-			Icon: AccountBalanceWalletRoundedIcon,
-			accent: "#1d4ed8",
-		},
-		specialties: {
-			label: "Specialties",
-			Icon: CategoryOutlinedIcon,
-			accent: "#7c3aed",
-		},
 		averageResponseTime: {
 			label: "Response time",
-			Icon: AccessTimeRoundedIcon,
+			Icon: AccessTimeFilledRoundedIcon,
 			accent: "#ea580c",
+		},
+		profileStrength: {
+			label: "Profile strength",
+			Icon: CategoryRoundedIcon,
+			accent: "#7c3aed",
 		},
 	},
 };

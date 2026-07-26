@@ -9,6 +9,10 @@ export const REQUIRED_PROFILE_FIELDS = [
 	{ key: "image", label: "Image" },
 ];
 
+export const CLIENT_REQUIRED_PROFILE_FIELDS = REQUIRED_PROFILE_FIELDS;
+
+export const CONTRACTOR_REQUIRED_PROFILE_FIELDS = REQUIRED_PROFILE_FIELDS;
+
 const hasValue = (value) =>
 	typeof value === "string" ? value.trim().length > 0 : Boolean(value);
 

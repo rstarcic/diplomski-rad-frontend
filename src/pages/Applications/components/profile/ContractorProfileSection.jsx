@@ -4,6 +4,7 @@ import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import { Avatar, Box, Card, Divider, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { formatDate } from "../../../../utils/formatters";
@@ -13,6 +14,26 @@ const avatarSx = {
 	height: 64,
 	bgcolor: "primary.light",
 	flexShrink: 0,
+};
+
+const profileLinkSx = {
+	color: "inherit",
+	textDecoration: "none",
+	borderRadius: 2,
+	"&:focus-visible": {
+		outline: "2px solid",
+		outlineColor: "primary.main",
+		outlineOffset: 3,
+	},
+};
+
+const clickableAvatarSx = {
+	...avatarSx,
+	transition: "transform 160ms ease, box-shadow 160ms ease",
+	"&:hover": {
+		transform: "scale(1.05)",
+		boxShadow: 3,
+	},
 };
 
 const contactBoxSx = {
@@ -47,9 +68,9 @@ const memberSinceSx = (theme) => ({
 export default function ContractorProfileSection({ contractor }) {
 	if (!contractor) return null;
 
-	const fullName = `${contractor.firstName} ${contractor.lastName}`;
 	const location =
 		contractor.city && contractor.country ? `${contractor.city}, ${contractor.country}` : "Location not provided";
+	const contractorProfilePath = contractor.userId ? `/client/contractors/${contractor.userId}` : null;
 
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
@@ -61,19 +82,45 @@ export default function ContractorProfileSection({ contractor }) {
 				<Divider />
 
 				<Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-					<Avatar alt={fullName} src={contractor.profileImageUrl} sx={avatarSx}>
-						<PersonOutlineRoundedIcon />
-					</Avatar>
+					{contractorProfilePath ? (
+						<Box
+							component={RouterLink}
+							to={contractorProfilePath}
+							aria-label={`View ${contractor.fullName}'s public profile`}
+							sx={profileLinkSx}
+						>
+							<Avatar alt={`${contractor.fullName}`} src={contractor.profileImageUrl} sx={clickableAvatarSx}>
+								<PersonOutlineRoundedIcon />
+							</Avatar>
+						</Box>
+					) : (
+						<Avatar alt={`${contractor.fullName}`} src={contractor.profileImageUrl} sx={avatarSx}>
+							<PersonOutlineRoundedIcon />
+						</Avatar>
+					)}
 
 					<Box sx={{ minWidth: 0 }}>
-						<Typography variant="subtitle1" sx={{ fontWeight: 900, lineHeight: 1.25 }}>
-							{fullName}
-						</Typography>
-						{contractor.title && (
-							<Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-								{contractor.title}
+						{contractorProfilePath ? (
+							<Typography
+								component={RouterLink}
+								to={contractorProfilePath}
+								variant="subtitle1"
+								sx={{
+									...profileLinkSx,
+									display: "inline-block",
+									fontWeight: 900,
+									lineHeight: 1.25,
+									"&:hover": { color: "primary.main", textDecoration: "underline" },
+								}}
+							>
+								{`${contractor.fullName}`}
+							</Typography>
+						) : (
+							<Typography variant="subtitle1" sx={{ fontWeight: 900, lineHeight: 1.25 }}>
+								{`${contractor.fullName}`}
 							</Typography>
 						)}
+
 						<Stack direction="row" spacing={0.5} sx={{ mt: 0.5, alignItems: "center" }}>
 							<LocationOnRoundedIcon sx={{ fontSize: 15, color: "text.secondary" }} />
 							<Typography variant="body2" color="text.secondary" noWrap>

@@ -2,8 +2,8 @@ import { Box, Stack, Typography, LinearProgress } from "@mui/material";
 import { cardSx, mutedTextSx, percentageSx, progressSx } from "./ProfileProgressCard.styles";
 import { getProfileCompletion } from "./profileCompletion";
 
-export default function ProfileProgressCard({ profileData = {} }) {
-	const { completedCount, totalCount, completionPercent, isComplete } = getProfileCompletion(profileData);
+export default function ProfileProgressCard({ profileData = {}, requiredFields }) {
+	const { completedCount, totalCount, completionPercent, isComplete } = getProfileCompletion(profileData, requiredFields);
 
 	const statusText = isComplete
 		? "Your profile is complete and ready to use."

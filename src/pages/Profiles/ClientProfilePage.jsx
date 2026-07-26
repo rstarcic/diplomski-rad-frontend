@@ -10,7 +10,11 @@ import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
 import { getMyProfile, updateMyProfile } from "../../api/coreAPI";
-
+import { useAuth } from "../../hooks/useAuth";
+import { PROFILE_ERRORS } from "../../constants/apiErrors";
+import { parseApiError } from "../../utils/parseApiError";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
+import { CLIENT_REQUIRED_PROFILE_FIELDS } from "./components/edit/profileCompletion";
 const emptyProfileData = {
 	firstName: "",
 	lastName: "",
@@ -28,18 +32,19 @@ const emptyReviewData = {
 };
 
 export default function ClientProfilePage() {
+	const { setProfileCompleted } = useAuth();
 	const [profileData, setProfileData] = useState(emptyProfileData);
 	const [reviewData, setReviewData] = useState(emptyReviewData);
 	const [loadError, setLoadError] = useState("");
 	const [saveError, setSaveError] = useState("");
-	const [success, setSuccess] = useState("");
+	const [success, setSuccess] = useTimedAlert();
 	const [saving, setSaving] = useState(false);
 
 	useEffect(() => {
 		async function loadProfile() {
 			try {
 				const { profile, reviews } = await getMyProfile();
-
+				setProfileCompleted(profile.profileCompleted);
 				setProfileData({
 					...emptyProfileData,
 					...profile,
@@ -51,19 +56,24 @@ export default function ClientProfilePage() {
 				});
 			} catch (err) {
 				console.error("Failed to load client profile:", err);
-				setLoadError(
-					err.data?.message || "We couldn't load your profile data. Please refresh the page or try again later.",
+				const apiError = parseApiError(
+					err,
+					PROFILE_ERRORS,
+					"We couldn't load your profile data. Please refresh the page or try again later.",
 				);
+				setLoadError(apiError.message);
 			}
 		}
 
 		loadProfile();
-	}, []);
+	}, [setProfileCompleted]);
 
 	const updateField = (field) => (event) => {
+		const value = event.target.value;
+
 		setProfileData((prev) => ({
 			...prev,
-			[field]: event.target.value,
+			[field]: value,
 		}));
 	};
 
@@ -79,15 +89,18 @@ export default function ClientProfilePage() {
 
 		setSaveError("");
 		setSuccess("");
+
 		setSaving(true);
 
 		try {
-			await updateMyProfile(profileData);
+			const { profile } = await updateMyProfile(profileData);
 
+			setProfileCompleted(profile.profileCompleted);
 			setSuccess("Profile saved successfully.");
 		} catch (err) {
 			console.error("Failed to update profile:", err);
-			setSaveError(err.response?.data?.message || "We couldn't save your profile. Please try again later.");
+			const apiError = parseApiError(err, PROFILE_ERRORS, "We couldn't save your profile. Please try again later.");
+			setSaveError(apiError.message);
 		} finally {
 			setSaving(false);
 		}
@@ -100,7 +113,7 @@ export default function ClientProfilePage() {
 				title="Client Profile"
 				subtitle="Complete your profile before publishing jobs and starting contracts."
 			>
-				<ProfileProgressCard profileData={profileData} />
+				<ProfileProgressCard profileData={profileData} requiredFields={CLIENT_REQUIRED_PROFILE_FIELDS} />
 			</PageHeader>
 
 			{loadError && (
@@ -126,6 +139,7 @@ export default function ClientProfilePage() {
 						<ProfileDetailsSection
 							profileData={profileData}
 							updateField={updateField}
+							saving={saving}
 							aboutPlaceholder="Write a short introduction for contractors."
 						/>
 					</Grid>

@@ -32,7 +32,6 @@ export default function ReviewComment({ review, criteria = [] }) {
 
 	const reviewerName = getReviewerName(review.reviewer);
 	const overallRating = review?.overallRating ?? 0;
-	console.log("ReviewComment review:", review);
 
 	return (
 		<Box sx={reviewItemSx}>

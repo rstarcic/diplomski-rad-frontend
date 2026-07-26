@@ -75,6 +75,7 @@ export default function ProfileDetailsSection({
 							minRows={4}
 						/>
 					</Grid>
+
 				</Grid>
 
 				<Box sx={{ display: "flex", justifyContent: "flex-end" }}>

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Box, Grid, Stack, Typography } from "@mui/material";
+
 import PageHeader from "../../components/ui/PageHeader";
 import JobDetailsSection from "./components/create/JobDetailsSection";
 import ContractSection from "./components/create/ContractSection";
@@ -8,11 +10,14 @@ import PreviewSection from "./components/create/PreviewSection";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import AppAlert from "../../components/ui/Alert";
 import AccountSetupAlert from "../../components/account/AccountAlert";
+
 import { getMissingFields, getMissingFieldsMessage } from "../../utils/jobs";
 import { parseApiError } from "../../utils/parseApiError";
 import { JOB_ERRORS } from "../../constants/apiErrors";
-import { createJob } from "../../api/coreAPI";
+import { createJob, getJobById } from "../../api/coreAPI";
 import { useAuth } from "../../hooks/useAuth";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
+
 const initialJobData = {
 	title: "",
 	category: "",
@@ -31,21 +36,73 @@ const initialJobData = {
 
 export default function CreateJobPage() {
 	const { accountSetup, role } = useAuth();
+	const [searchParams] = useSearchParams();
+
+	const duplicateFrom = searchParams.get("duplicateFrom");
+	const isCreatingCopy = Boolean(duplicateFrom);
+
 	const [jobData, setJobData] = useState(initialJobData);
-	const [success, setSuccess] = useState("");
+	const [sourceJobTitle, setSourceJobTitle] = useState("");
+	const [loadingSourceJob, setLoadingSourceJob] = useState(false);
+	const [sourceJobError, setSourceJobError] = useState("");
+
+	const [success, setSuccess] = useTimedAlert();
 	const [validationWarning, setValidationWarning] = useState("");
 	const [submitError, setSubmitError] = useState("");
 	const [publishing, setPublishing] = useState(false);
+
 	const setup = {
 		...accountSetup,
 		role: role ?? "client",
-		paymentCompleted: true,
 	};
+
+	useEffect(() => {
+		if (!duplicateFrom) return;
+
+		let ignore = false;
+
+		async function loadSourceJob() {
+			try {
+				const job = await getJobById(duplicateFrom);
+
+				if (ignore) return;
+
+				setJobData({
+					...initialJobData,
+					...job,
+
+					deadline: null,
+
+					requirements: job.requirements?.length > 0 ? [...job.requirements] : [""],
+				});
+
+				setSourceJobTitle(job.title ?? "");
+			} catch (error) {
+				if (ignore) return;
+
+				const apiError = parseApiError(error, JOB_ERRORS, "We couldn't load the job you want to copy.");
+
+				setSourceJobError(apiError.message);
+			} finally {
+				if (!ignore) {
+					setLoadingSourceJob(false);
+				}
+			}
+		}
+
+		loadSourceJob();
+
+		return () => {
+			ignore = true;
+		};
+	}, [duplicateFrom]);
 
 	const missingFields = getMissingFields(jobData);
 	const formIsComplete = missingFields.length === 0;
-	const accountIsComplete = setup.profileCompleted && setup.paymentCompleted;
-	const canPublish = formIsComplete && accountIsComplete && !publishing;
+	const accountIsComplete = setup.profileCompleted;
+
+	const canPublish = formIsComplete && accountIsComplete && !publishing && !loadingSourceJob;
+
 	const showSetupAlert = !accountIsComplete;
 
 	const handleSubmit = async (event) => {
@@ -55,11 +112,16 @@ export default function CreateJobPage() {
 			setSuccess("");
 			setSubmitError("");
 			setValidationWarning(getMissingFieldsMessage(missingFields));
-			window.scrollTo({ top: 0, behavior: "smooth" });
+
+			window.scrollTo({
+				top: 0,
+				behavior: "smooth",
+			});
+
 			return;
 		}
 
-		if (!accountIsComplete || publishing) {
+		if (!accountIsComplete || publishing || loadingSourceJob) {
 			return;
 		}
 
@@ -69,60 +131,104 @@ export default function CreateJobPage() {
 		setPublishing(true);
 
 		try {
-			const createdJob = await createJob(jobData);
-			console.log("Created job:", createdJob);
+			const jobToCreate = {
+				...jobData,
+				...(duplicateFrom && {
+					sourceJobId: Number(duplicateFrom),
+				}),
+			};
+
+			await createJob(jobToCreate);
+
 			setSuccess("Job created successfully.");
 			setJobData(initialJobData);
+			setSourceJobTitle("");
 		} catch (error) {
-			console.error("Error submitting job:", error);
 			const apiError = parseApiError(error, JOB_ERRORS, "We couldn't create the job. Please try again later.");
+
 			setSubmitError(apiError.message);
 		} finally {
 			setPublishing(false);
-			window.scrollTo({ top: 0, behavior: "smooth" });
+
+			window.scrollTo({
+				top: 0,
+				behavior: "smooth",
+			});
 		}
 	};
 
 	return (
 		<Box>
 			<PageHeader
-				label="Job creation"
-				title="Create New Job"
-				subtitle="Fill in the details below to create a new job."
+				label={isCreatingCopy ? "Create similar job" : "Job creation"}
+				title={isCreatingCopy ? "Create Similar Job" : "Create New Job"}
+				subtitle={
+					isCreatingCopy
+						? "Review the copied details before publishing this as a new job."
+						: "Fill in the details below to create a new job."
+				}
 			/>
+
+			{isCreatingCopy && sourceJobTitle && (
+				<AppAlert severity="info" title={`Creating a new job from "${sourceJobTitle}"`} sx={{ mt: 3 }}>
+					Review the copied details, choose a new deadline, and make any changes before publishing. The original
+					cancelled job will remain unchanged.
+				</AppAlert>
+			)}
+
+			{loadingSourceJob && (
+				<AppAlert title="Loading job details" sx={{ mt: 3 }}>
+					Please wait while we prepare the copied job.
+				</AppAlert>
+			)}
+
+			{sourceJobError && (
+				<AppAlert severity="error" title="Job could not be copied" sx={{ mt: 3 }}>
+					{sourceJobError}
+				</AppAlert>
+			)}
+
 			{showSetupAlert && (
 				<AccountSetupAlert
 					accountSetup={setup}
 					actionName="publish a job"
-					settingsPath="/client/settings"
+					settingsPath="/client/profile"
 					sx={{ mt: 3 }}
 				/>
 			)}
+
 			{validationWarning && (
 				<AppAlert severity="warning" title="Complete the job details" sx={{ mt: 3 }}>
 					{validationWarning}
 				</AppAlert>
 			)}
+
 			{submitError && (
 				<AppAlert severity="error" title="Job could not be created" sx={{ mt: 3 }}>
 					{submitError}
 				</AppAlert>
 			)}
+
 			{success && (
 				<AppAlert severity="success" title="Job created" sx={{ mt: 3 }}>
 					{success}
 				</AppAlert>
 			)}
+
 			<Box component="form" noValidate sx={{ mt: 3 }} onSubmit={handleSubmit}>
 				<Grid container spacing={3}>
-					{/* LEFT COLUMN */}
 					<Grid size={{ xs: 12, md: 8 }}>
 						<Stack spacing={3}>
 							<JobDetailsSection jobData={jobData} setJobData={setJobData} />
+
 							<ContractSection jobData={jobData} setJobData={setJobData} />
+
 							<Box
 								sx={{
-									display: { xs: "none", md: "flex" },
+									display: {
+										xs: "none",
+										md: "flex",
+									},
 									justifyContent: "flex-end",
 								}}
 							>
@@ -141,11 +247,20 @@ export default function CreateJobPage() {
 						</Stack>
 					</Grid>
 
-					{/* RIGHT COLUMN*/}
 					<Grid size={{ xs: 12, md: 4 }}>
 						<Stack spacing={3}>
 							<BudgetWorkloadSection jobData={jobData} setJobData={setJobData} />
-							<Box sx={{ display: { xs: "flex", md: "none" }, flexDirection: "column", gap: 0.75 }}>
+
+							<Box
+								sx={{
+									display: {
+										xs: "flex",
+										md: "none",
+									},
+									flexDirection: "column",
+									gap: 0.75,
+								}}
+							>
 								<PrimaryButton type="submit" size="large" fullWidth disabled={!canPublish}>
 									{publishing ? "Publishing..." : "Publish job"}
 								</PrimaryButton>
@@ -156,6 +271,7 @@ export default function CreateJobPage() {
 									</Typography>
 								)}
 							</Box>
+
 							<PreviewSection jobData={jobData} />
 						</Stack>
 					</Grid>

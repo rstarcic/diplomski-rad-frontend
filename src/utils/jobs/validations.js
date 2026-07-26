@@ -6,15 +6,17 @@ const hasPositiveNumber = (value) => {
     return Number(value) > 0;
 };
 
+const hasText = (value) => typeof value === "string" && value.trim().length > 0;
+
 export const getMissingFields = (jobData) => {
     const missingFields = [];
 
-    if (!jobData.title.trim()) missingFields.push("job title");
-    if (!jobData.category.trim()) missingFields.push("category");
-    if (!jobData.description.trim()) missingFields.push("description");
+    if (!hasText(jobData.title)) missingFields.push("job title");
+    if (!hasText(jobData.category)) missingFields.push("category");
+    if (!hasText(jobData.description)) missingFields.push("description");
     if (!jobData.locationType) missingFields.push("location type");
 
-    if ((jobData.locationType === "onsite" || jobData.locationType === "hybrid") && !jobData.location.trim()) {
+    if ((jobData.locationType === "onsite" || jobData.locationType === "hybrid") && !hasText(jobData.location)) {
         missingFields.push("location");
     }
 
@@ -43,8 +45,8 @@ export const getMissingFields = (jobData) => {
         missingFields.push("Hours per week greater than 0");
     }
 
-    if (!jobData.deliverables.trim()) missingFields.push("deliverables");
-    if (!jobData.requirements?.some((requirement) => requirement.trim())) missingFields.push("requirements");
+    if (!hasText(jobData.deliverables)) missingFields.push("deliverables");
+    if (!jobData.requirements?.some(hasText)) missingFields.push("requirements");
 
     return missingFields;
 };

@@ -1,20 +1,104 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Grid, Stack } from "@mui/material";
+import { Box, CircularProgress, Grid, Stack, Typography } from "@mui/material";
+
+import AppAlert from "../../components/ui/Alert";
 import PageHeader from "../../components/ui/PageHeader";
-import JobDetailsSection from "./components/details/JobDetailsSection";
-import ApplyCard from "./components/details/ApplyCard";
-import ClientProfileSection from "./components/details/ClientProfileSection";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
-import { MOCK_JOBS, MOCK_CLIENTS } from "../../mock/MockData";
-import { clientProfileReviewData } from "../../mock/ProfileReviews";
+import ApplyCard from "./components/details/ApplyCard";
+import ClientProfileSection from "./components/details/ClientProfileSection";
+import JobDetailsSection from "./components/details/JobDetailsSection";
+
+import { createJobApplication, getJobDetails } from "../../api/coreAPI";
+import { APPLICATION_ERRORS, JOB_ERRORS } from "../../constants/apiErrors";
+import { parseApiError } from "../../utils/parseApiError";
+
+const loadingContainerSx = {
+	minHeight: "50vh",
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+	justifyContent: "center",
+	gap: 1.5,
+};
+
+const detailsGridSx = {
+	mt: 3,
+	alignItems: "flex-start",
+};
+
+const sidebarSx = {
+	position: { md: "sticky" },
+	top: 24,
+};
+
 export default function JobDetailsPage() {
 	const { jobId } = useParams();
+	const [details, setDetails] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState("");
 
-	const job = MOCK_JOBS.find((j) => j.id === jobId);
-	const client = MOCK_CLIENTS.find((c) => c.id === job?.clientId);
+	useEffect(() => {
+		const controller = new AbortController();
 
-	if (!job || !client) return null;
+		async function loadJobDetails() {
+			try {
+				setLoading(true);
+				setError("");
+
+				const data = await getJobDetails(jobId, controller.signal);
+				console.log("Job details", data);
+				setDetails(data);
+			} catch (err) {
+				if (err.name === "CanceledError" || err.name === "AbortError") return;
+
+				const apiError = parseApiError(err, JOB_ERRORS, "Could not load job details.");
+				setError(apiError.message);
+				setDetails(null);
+			} finally {
+				if (!controller.signal.aborted) setLoading(false);
+			}
+		}
+
+		loadJobDetails();
+
+		return () => controller.abort();
+	}, [jobId]);
+
+	const handleApply = async ({ coverLetter }) => {
+		try {
+			return await createJobApplication(jobId, {
+				coverLetter,
+			});
+		} catch (err) {
+			const apiError = parseApiError(err, APPLICATION_ERRORS, "Your application could not be submitted.");
+
+			setError(apiError.message);
+			setDetails(null);
+		}
+	};
+
+	if (loading) {
+		return (
+			<Box sx={loadingContainerSx}>
+				<CircularProgress />
+				<Typography color="text.secondary">Loading job details...</Typography>
+			</Box>
+		);
+	}
+
+	if (error) {
+		return (
+			<AppAlert severity="error" title="Job details could not be loaded">
+				{error}
+			</AppAlert>
+		);
+	}
+
+	if (!details) return null;
+
+	const { job, client, reviews, applicationStatus, alreadyApplied } = details;
 
 	return (
 		<Box>
@@ -24,21 +108,26 @@ export default function JobDetailsPage() {
 				subtitle="Review the full job description, client profile and client reviews."
 			/>
 
-			<Grid container spacing={3} sx={{ mt: 3, alignItems: "flex-start" }}>
+			<Grid container spacing={3} sx={detailsGridSx}>
 				<Grid size={{ xs: 12, md: 8 }}>
 					<Stack spacing={3}>
 						<JobDetailsSection job={job} />
-						<ApplyCard job={job} alreadyApplied={false} onApply={() => {}} />
+						<ApplyCard
+							job={{ ...job, client }}
+							alreadyApplied={alreadyApplied}
+							applicationStatus={applicationStatus}
+							onApply={handleApply}
+						/>
 					</Stack>
 				</Grid>
 
 				<Grid size={{ xs: 12, md: 4 }}>
-					<Stack spacing={3} sx={{ position: { md: "sticky" }, top: 24 }}>
+					<Stack spacing={3} sx={sidebarSx}>
 						<ClientProfileSection client={client} />
 						<ReviewSummaryCard
 							title="Client reviews"
-							reviews={clientProfileReviewData.reviews}
-							summary={clientProfileReviewData.summary}
+							reviews={reviews.reviews}
+							summary={reviews.summary}
 							criteria={reviewCriteria.client}
 						/>
 					</Stack>

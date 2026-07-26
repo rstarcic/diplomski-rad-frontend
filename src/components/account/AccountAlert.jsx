@@ -1,4 +1,5 @@
 import { Link, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import AppAlert from "../../components/ui/Alert";
 import { ACCOUNT_SETUP_MESSAGES } from "../../constants/accountSetupMessages";
 
@@ -7,15 +8,9 @@ const getRequirementMessage = (accountSetup) => {
 	if (!messages) {
 		return null;
 	}
-	const isClient = accountSetup.role === "client";
 	const isContractor = accountSetup.role === "contractor";
 	const needsProfile = !accountSetup.profileCompleted;
-	const needsPayment = isClient && !accountSetup.paymentCompleted;
 	const needsPayout = isContractor && !accountSetup.payoutCompleted;
-
-	if (needsProfile && needsPayment) {
-		return messages.missingProfileAndPayment;
-	}
 
 	if (needsProfile && needsPayout) {
 		return messages.missingProfileAndPayout;
@@ -23,10 +18,6 @@ const getRequirementMessage = (accountSetup) => {
 
 	if (needsProfile) {
 		return messages.missingProfile;
-	}
-
-	if (needsPayment) {
-		return messages.missingPayment;
 	}
 
 	if (needsPayout) {
@@ -38,6 +29,7 @@ const getRequirementMessage = (accountSetup) => {
 
 export default function AccountSetupAlert({ accountSetup, actionName = "continue", settingsPath = "/settings", sx }) {
 	const message = getRequirementMessage(accountSetup);
+	if (!message) return null;
 
 	return (
 		<AppAlert severity="warning" sx={sx}>
@@ -46,7 +38,7 @@ export default function AccountSetupAlert({ accountSetup, actionName = "continue
 					{message.title} to {actionName}.
 				</strong>{" "}
 				{message.description}{" "}
-				<Link href={settingsPath} underline="hover" sx={{ fontWeight: 800 }}>
+				<Link component={RouterLink} to={settingsPath} underline="hover" sx={{ fontWeight: 800 }}>
 					Settings
 				</Link>
 				.

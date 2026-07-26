@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
-
+import { useAuth } from "../../hooks/useAuth";
 import PsychologyRoundedIcon from "@mui/icons-material/PsychologyRounded";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 
@@ -15,6 +15,10 @@ import SkillsCard from "./components/shared/SkillsCard";
 
 import { reviewCriteria } from "../../components/reviews/reviewCriteria";
 import { getMyProfile, updateMyProfile } from "../../api/coreAPI";
+import { PROFILE_ERRORS } from "../../constants/apiErrors";
+import { parseApiError } from "../../utils/parseApiError";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
+import { CONTRACTOR_REQUIRED_PROFILE_FIELDS } from "./components/edit/profileCompletion";
 
 const emptyProfileData = {
 	firstName: "",
@@ -35,18 +39,20 @@ const emptyReviewData = {
 };
 
 export default function ContractorProfilePage() {
+	const { setProfileCompleted } = useAuth();
+
 	const [profileData, setProfileData] = useState(emptyProfileData);
 	const [reviewData, setReviewData] = useState(emptyReviewData);
 	const [loadError, setLoadError] = useState("");
 	const [saveError, setSaveError] = useState("");
-	const [success, setSuccess] = useState("");
+	const [success, setSuccess] = useTimedAlert();
 	const [saving, setSaving] = useState(false);
 
 	useEffect(() => {
 		async function loadProfile() {
 			try {
 				const { profile, reviews, skills = [], portfolio = [] } = await getMyProfile();
-
+				setProfileCompleted(profile.profileCompleted);
 				setProfileData({
 					...emptyProfileData,
 					...profile,
@@ -57,17 +63,24 @@ export default function ContractorProfilePage() {
 				setReviewData(reviews);
 			} catch (err) {
 				console.error("Failed to load contractor profile:", err);
-				setLoadError("We couldn't load your profile data. Please refresh the page or try again later.");
+				const apiError = parseApiError(
+					err,
+					PROFILE_ERRORS,
+					"We couldn't load your profile data. Please refresh the page or try again later.",
+				);
+				setLoadError(apiError.message);
 			}
 		}
 
 		loadProfile();
-	}, []);
+	}, [setProfileCompleted]);
 
 	const updateField = (field) => (event) => {
+		const value = event.target.value;
+
 		setProfileData((prev) => ({
 			...prev,
-			[field]: event.target.value,
+			[field]: value,
 		}));
 	};
 
@@ -124,11 +137,12 @@ export default function ContractorProfilePage() {
 
 		setSaveError("");
 		setSuccess("");
+
 		setSaving(true);
 
 		try {
 			const { profile, reviews, skills = [], portfolio = [] } = await updateMyProfile(profileData);
-
+			setProfileCompleted(profile.profileCompleted);
 			setProfileData({
 				...emptyProfileData,
 				...profile,
@@ -141,7 +155,8 @@ export default function ContractorProfilePage() {
 			setSuccess("Profile saved successfully.");
 		} catch (err) {
 			console.error("Failed to update profile:", err);
-			setSaveError(err.response?.data?.message || "We couldn't save your profile. Please try again later.");
+			const apiError = parseApiError(err, PROFILE_ERRORS, "We couldn't save your profile. Please try again later.");
+			setSaveError(apiError.message);
 		} finally {
 			setSaving(false);
 			window.scrollTo({ top: 0, behavior: "smooth" });
@@ -154,7 +169,7 @@ export default function ContractorProfilePage() {
 				title="Contractor Profile"
 				subtitle="Complete your profile before publishing jobs and starting contracts."
 			>
-				<ProfileProgressCard profileData={profileData} />
+				<ProfileProgressCard profileData={profileData} requiredFields={CONTRACTOR_REQUIRED_PROFILE_FIELDS} />
 			</PageHeader>
 			{loadError && (
 				<AppAlert severity="error" title="Profile could not be loaded" sx={{ mt: 3 }}>
