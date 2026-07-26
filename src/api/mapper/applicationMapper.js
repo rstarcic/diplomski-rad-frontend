@@ -73,65 +73,93 @@ function mapNegotiationUpdateFromAPI(update = {}) {
 	};
 }
 
-export function mapContractFromAPI(contract = null) {
+export function mapContractFromAPI(contract = null, fallbackJob = null) {
 	if (!contract) return null;
-	const rawContract = Array.isArray(contract) ? contract[0] : contract;
-	const contractData = rawContract?.contract ?? rawContract;
+	const contractData = contract?.contract ?? contract;
 	if (!contractData) return null;
+
+	const fallback = fallbackJob ?? {};
+	const client = contractData.client ?? contractData.client_details ?? contractData.clientInfo ?? {};
+	const contractor = contractData.contractor ?? contractData.contractor_details ?? contractData.contractorInfo ?? {};
+	const platform = contractData.platform ?? {};
+	const job = contractData.job ?? fallback;
+
+	const buildPersonName = (person = {}) => {
+		if (!person || typeof person !== "object") return "";
+		return (
+			person.full_name ??
+			person.fullName ??
+			person.name ??
+			person.username ??
+			[person.first_name, person.last_name].filter(Boolean).join(" ") ??
+			""
+		);
+	};
 
 	return {
 		id: contractData.id ?? contractData.contractId ?? contractData.contract_id,
-		contractNumber: contractData.contractNumber ?? contractData.contract_number ?? "",
-		platformName: contractData.platformName ?? contractData.platform_name ?? "",
-		applicationId: contractData.applicationId ?? contractData.application_id,
-		negotiationId: contractData.negotiationId ?? contractData.negotiation_id ?? null,
+		contractNumber: contractData.contract_number ?? contractData.contractNumber ?? "",
+		platformName: contractData.platform_name ?? contractData.platformName ?? platform.name ?? platform.title ?? fallback.platform_name ?? fallback.platformName ?? fallback.platform ?? "",
+		applicationId: contractData.application_id ?? contractData.applicationId ?? "",
+		negotiationId: contractData.negotiation_id ?? contractData.negotiationId ?? null,
 
-		clientId: contractData.clientId ?? contractData.client_id,
-		clientName: contractData.clientName ?? contractData.client_name ?? "",
-		clientEmail: contractData.clientEmail ?? contractData.client_email ?? "",
-		clientSignedAt: contractData.clientSignedAt ?? contractData.client_signed_at ?? null,
-		clientSignatureUrl: contractData.clientSignatureUrl ?? contractData.client_signature_url ?? null,
+		clientId: contractData.client_id ?? contractData.clientId ?? client.id ?? client.user_id ?? null,
+		clientName: contractData.client_name ?? contractData.clientName ?? buildPersonName(client) ?? fallback.client_name ?? fallback.clientName ?? "",
+		clientEmail: contractData.client_email ?? contractData.clientEmail ?? client.email ?? fallback.client_email ?? fallback.clientEmail ?? "",
+		clientSignedAt: contractData.client_signed_at ?? contractData.clientSignedAt ?? null,
+		clientSignatureUrl: contractData.client_signature_url ?? contractData.clientSignatureUrl ?? null,
 
-		contractorId: contractData.contractorId ?? contractData.contractor_id,
-		contractorName: contractData.contractorName ?? contractData.contractor_name ?? "",
-		contractorEmail: contractData.contractorEmail ?? contractData.contractor_email ?? "",
-		contractorSignedAt: contractData.contractorSignedAt ?? contractData.contractor_signed_at ?? null,
-		contractorSignatureUrl: contractData.contractorSignatureUrl ?? contractData.contractor_signature_url ?? null,
+		contractorId: contractData.contractor_id ?? contractData.contractorId ?? contractor.id ?? contractor.user_id ?? null,
+		contractorName: contractData.contractor_name ?? contractData.contractorName ?? buildPersonName(contractor) ?? fallback.contractor_name ?? fallback.contractorName ?? "",
+		contractorEmail: contractData.contractor_email ?? contractData.contractorEmail ?? contractor.email ?? fallback.contractor_email ?? fallback.contractorEmail ?? "",
+		contractorSignedAt: contractData.contractor_signed_at ?? contractData.contractorSignedAt ?? null,
+		contractorSignatureUrl: contractData.contractor_signature_url ?? contractData.contractorSignatureUrl ?? null,
 
-		jobId: contractData.jobId ?? contractData.job_id,
-		jobTitle: contractData.jobTitle ?? contractData.job_title ?? "",
-		jobDescription: contractData.jobDescription ?? contractData.job_description ?? "",
+		jobId: contractData.job_id ?? contractData.jobId ?? job.id ?? fallback.id ?? null,
+		jobTitle: contractData.job_title ?? contractData.jobTitle ?? job.title ?? fallback.title ?? "",
+		jobDescription: contractData.job_description ?? contractData.jobDescription ?? job.description ?? fallback.description ?? "",
 
-		budgetAmount: contractData.budgetAmount ?? contractData.budget_amount ?? "",
-		budgetType: contractData.budgetType ?? contractData.budget_type ?? "",
-		currency: contractData.currency ?? "EUR",
-		duration: contractData.duration ?? "",
-		hoursPerWeek: contractData.hoursPerWeek ?? contractData.hours_per_week ?? "",
-		deliverables: contractData.deliverables ?? "",
+		budgetAmount: contractData.budget_amount ?? contractData.budgetAmount ?? job.budget_amount ?? job.budgetAmount ?? fallback.budget_amount ?? fallback.budgetAmount ?? "",
+		budgetType: contractData.budget_type ?? contractData.budgetType ?? job.budget_type ?? job.budgetType ?? fallback.budget_type ?? fallback.budgetType ?? "",
+		currency: contractData.currency ?? job.currency ?? fallback.currency ?? "EUR",
+		duration: contractData.duration ?? contractData.duration_days ?? contractData.durationDays ?? job.duration ?? job.duration_days ?? job.durationDays ?? fallback.duration ?? fallback.duration_days ?? fallback.durationDays ?? "",
+		hoursPerWeek: contractData.hours_per_week ?? contractData.hoursPerWeek ?? job.hours_per_week ?? job.hoursPerWeek ?? fallback.hours_per_week ?? fallback.hoursPerWeek ?? "",
+		deliverables: contractData.deliverables ?? job.deliverables ?? fallback.deliverables ?? "",
 
 		status: mapStatusFromAPI(contractData.status),
-		startsAt: contractData.startsAt ?? contractData.starts_at ?? null,
-		endsAt: contractData.endsAt ?? contractData.ends_at ?? null,
-		createdAt: contractData.createdAt ?? contractData.created_at ?? null,
-		updatedAt: contractData.updatedAt ?? contractData.updated_at ?? null,
+		startsAt: contractData.starts_at ?? contractData.startsAt ?? null,
+		endsAt: contractData.ends_at ?? contractData.endsAt ?? null,
+		createdAt: contractData.created_at ?? contractData.createdAt ?? null,
+		updatedAt: contractData.updated_at ?? contractData.updatedAt ?? null,
 	};
 }
 
 function getContractFromDetails(data = {}) {
 	const contract = data.contract ?? data.contracts;
-	if (contract) return mapContractFromAPI(contract);
+	const fallbackJob = data.job ?? null;
+	if (contract) return mapContractFromAPI(contract, fallbackJob);
 
 	const id = data.contractId ?? data.contract_id;
 	const status = data.contractStatus ?? data.contract_status;
-	return id || status ? mapContractFromAPI({ id, status }) : null;
+	return id || status ? mapContractFromAPI({ id, status }, fallbackJob) : null;
 }
 
 function mapPaymentFromAPI(payment = null) {
 	if (!payment) return null;
 
+	const amountMinor = payment.amountMinor ?? payment.amount_minor ?? null;
+
 	return {
-		...payment,
+		id: payment.id,
+		contractId: payment.contractId ?? payment.contract_id,
+		amountMinor,
+		amount: amountMinor != null ? amountMinor / 100 : null,
+		currency: payment.currency ?? "EUR",
 		status: mapStatusFromAPI(payment.status),
+		checkoutAttempt: payment.checkoutAttempt ?? payment.checkout_attempt ?? 0,
+		createdAt: payment.createdAt ?? payment.created_at ?? null,
+		updatedAt: payment.updatedAt ?? payment.updated_at ?? null,
+		checkoutUrl: payment.checkoutUrl ?? payment.checkout_url ?? payment.payment_url ?? "",
 	};
 }
 

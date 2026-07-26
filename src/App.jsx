@@ -36,6 +36,8 @@ const ClientProfilePage = lazy(() => import("./pages/Profiles/ClientProfilePage"
 const ContractorProfilePage = lazy(() => import("./pages/Profiles/ContractorProfilePage"));
 const ClientPublicProfilePage = lazy(() => import("./pages/Profiles/ClientPublicProfilePage"));
 const ContractorPublicProfilePage = lazy(() => import("./pages/Profiles/ContractorPublicProfilePage"));
+const ClientPaymentSettingsPage = lazy(() => import("./pages/Settings/ClientPaymentSettingsPage"));
+const ContractorStripeSettingsPage = lazy(() => import("./pages/Settings/ContractorStripeSettingsPage"));
 
 function App() {
 	return (
@@ -67,6 +69,7 @@ function App() {
 							<Route path="jobs/:jobId/applications" element={<JobApplicationsPage />} />
 							<Route path="jobs/:jobId/applications/:applicationId" element={<ApplicationDetailsPage />} />
 							<Route path="profile" element={<ClientProfilePage />} />
+							<Route path="settings/stripe" element={<ClientPaymentSettingsPage />} />
 							<Route path="contractors/:contractorId" element={<ContractorPublicProfilePage />} />
 						</Route>
 						<Route path="/contractor" element={<RequireRole role={ROLES.CONTRACTOR} />}>
@@ -77,6 +80,7 @@ function App() {
 							<Route path="applications" element={<ContractorApplicationsPage />} />
 							<Route path="applications/:applicationId" element={<ContractorApplicationDetailsPage />} />
 							<Route path="profile" element={<ContractorProfilePage />} />
+							<Route path="settings/stripe" element={<ContractorStripeSettingsPage />} />
 							<Route path="clients/:clientId" element={<ClientPublicProfilePage />} />
 						</Route>
 					</Route>

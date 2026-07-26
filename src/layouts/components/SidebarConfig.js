@@ -7,13 +7,13 @@ import ScreenSearchDesktopRoundedIcon from '@mui/icons-material/ScreenSearchDesk
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const clientSettingsItems = [
-	{ label: "Payments", path: "/client/settings/payments" },
+	{ label: "Stripe", path: "/client/settings/stripe" },
 	{ label: "Password & security", path: "/client/settings/security" },
 
 ];
 
 const contractorSettingsItems = [
-	{ label: "Payouts", path: "/contractor/settings/payouts" },
+	{ label: "Stripe", path: "/contractor/settings/stripe" },
 	{ label: "Password & security", path: "/contractor/settings/security" },
 
 ];

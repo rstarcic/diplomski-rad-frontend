@@ -8,20 +8,33 @@ const tabsSx = {
 	mb: 3,
 };
 
-const tabSx = {
+const tabLabelSx = {
+	display: "flex",
+	alignItems: "center",
+	gap: 0.5,
+};
+
+const getTabSx = (locked) => ({
 	textTransform: "none",
 	fontWeight: 700,
 	minHeight: 52,
 	minWidth: { xs: "auto", sm: 120 },
-	
 	fontSize: { xs: "0.75rem", sm: "0.875rem" },
-};
+	opacity: locked ? 0.4 : 1,
+});
+
+function findAvailableTab(tabs, preferredIndex) {
+	if (!tabs[preferredIndex]?.locked) return preferredIndex;
+
+	const firstAvailableIndex = tabs.findIndex((tab) => !tab.locked);
+	return firstAvailableIndex >= 0 ? firstAvailableIndex : false;
+}
 
 function TabLabel({ label, locked, lockReason }) {
 	if (!locked) return label;
 
 	const content = (
-		<Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+		<Box sx={tabLabelSx}>
 			{label}
 			<LockRoundedIcon sx={{ fontSize: 13 }} />
 		</Box>
@@ -36,12 +49,17 @@ function TabLabel({ label, locked, lockReason }) {
 	);
 }
 
-export default function StepTabs({ tabs, initialTab = 0 }) {
-	const [active, setActive] = useState(initialTab);
+export default function StepTabs({ tabs, initialTab = 0, selectedTab }) {
+	const [active, setActive] = useState(() => findAvailableTab(tabs, initialTab));
+	const visibleActive = tabs[active]?.locked ? findAvailableTab(tabs, initialTab) : active;
+	const activeTab = tabs[visibleActive];
 
 	useEffect(() => {
-		if (!tabs[initialTab]?.locked) setActive(initialTab);
-	}, [initialTab, tabs]);
+		if (!selectedTab) return;
+
+		const requestedIndex = tabs.findIndex((tab) => tab.label === selectedTab && !tab.locked);
+		if (requestedIndex >= 0) setActive(requestedIndex);
+	}, [selectedTab, tabs]);
 
 	const handleChange = (_, newValue) => {
 		if (!tabs[newValue]?.locked) setActive(newValue);
@@ -50,7 +68,7 @@ export default function StepTabs({ tabs, initialTab = 0 }) {
 	return (
 		<Box>
 			<Tabs
-				value={active}
+				value={visibleActive}
 				onChange={handleChange}
 				sx={tabsSx}
 				variant="scrollable"
@@ -64,17 +82,12 @@ export default function StepTabs({ tabs, initialTab = 0 }) {
 						iconPosition="start"
 						label={<TabLabel label={tab.label} locked={tab.locked} lockReason={tab.lockReason} />}
 						aria-disabled={tab.locked}
-						sx={{
-							...tabSx,
-							opacity: tab.locked ? 0.4 : 1,
-						}}
+						sx={getTabSx(tab.locked)}
 					/>
 				))}
 			</Tabs>
 
-			{tabs.map((tab, index) =>
-				active === index ? <Box key={tab.label}>{tab.content}</Box> : null
-			)}
+			{activeTab ? <Box key={activeTab.label}>{activeTab.content}</Box> : null}
 		</Box>
 	);
 }

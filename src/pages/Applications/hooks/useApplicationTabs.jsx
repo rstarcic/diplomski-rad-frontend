@@ -14,15 +14,25 @@ export function useApplicationTabs({
 	negotiation,
 	negotiationUpdates = [],
 	contract,
-	payments = [],
+	payment = null,
 	role = "client",
 	onAcceptNegotiation,
 	onRejectNegotiation,
 	onSubmitCounterOffer,
 	onSignContract,
+	canPay = false,
+	paymentLoading = false,
+	onPay,
 }) {
 	const reviewTarget = role === "client" ? "contractor" : "client";
-	const applicationIsSelected = String(application?.status).toLowerCase() === "selected";
+	const applicationStatus = String(application?.status ?? "").trim().toLowerCase();
+	const contractStatus = String(contract?.status ?? "").trim().toLowerCase();
+	const paymentStatus = String(payment?.status ?? "").trim().toLowerCase();
+	const applicationIsSelected = applicationStatus === "selected";
+	const applicationAccepted = applicationStatus === "accepted";
+	const hasContract = Boolean(contract);
+	const contractCompleted = contractStatus === "completed";
+	const paymentPaid = paymentStatus === "paid";
 	const showNegotiation = applicationIsSelected || Boolean(negotiation);
 	const negotiationStatus = negotiation?.status ?? (applicationIsSelected ? "pendingContractor" : "");
 	const initialOffer = job
@@ -41,7 +51,8 @@ export function useApplicationTabs({
 		{
 			label: "Negotiation",
 			icon: <HandshakeRoundedIcon fontSize="small" />,
-			locked: false,
+			locked: applicationAccepted,
+			lockReason: applicationAccepted ? "Negotiation is no longer available after the terms are accepted." : undefined,
 			content: (
 				<NegotiationSection
 					initialOffer={initialOffer}
@@ -58,7 +69,8 @@ export function useApplicationTabs({
 		{
 			label: "Contract",
 			icon: <GavelRoundedIcon fontSize="small" />,
-			locked: false,
+			locked: !hasContract,
+			lockReason: !hasContract ? "The contract becomes available after the terms are accepted." : undefined,
 			content: (
 				<ContractDetailsSection
 					contract={contract}
@@ -71,13 +83,24 @@ export function useApplicationTabs({
 		{
 			label: "Payment",
 			icon: <PaymentsOutlinedIcon fontSize="small" />,
-			locked: false,
-			content: <PaymentsSection payments={payments} />,
+			locked: !contractCompleted,
+			lockReason: !contractCompleted ? "Payment becomes available after the contract is completed." : undefined,
+			content: (
+				<PaymentsSection
+					payment={payment}
+					contract={contract}
+					role={role}
+					canPay={role === "client" && canPay}
+					paymentLoading={paymentLoading}
+					onPay={onPay}
+				/>
+			),
 		},
 		{
 			label: "Review",
 			icon: <RateReviewOutlinedIcon fontSize="small" />,
-			locked: false,
+			locked: !paymentPaid,
+			lockReason: !paymentPaid ? "A review becomes available after the payment is completed." : undefined,
 			content: (
 				<ReviewForm
 					type={reviewTarget}

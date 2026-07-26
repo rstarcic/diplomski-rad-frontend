@@ -20,11 +20,14 @@ import {
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
 import { useTimedAlert } from "../../hooks/useTimedAlert";
+import { findStatusKey } from "../../utils/jobs";
+import { PAYMENT_STATUSES } from "../../constants/statuses";
 
 import StepTabs from "./components/StepTabs";
 import ApplicationSection from "./components/ApplicationSection";
 import ContractorProfileSection from "./components/profile/ContractorProfileSection";
 import { useApplicationTabs } from "./hooks/useApplicationTabs";
+import { createContractCheckoutSession } from "../../api/paymentAPI";
 
 function getInitialTab({ contract, tabs }) {
 	if (!contract) return 0;
@@ -50,6 +53,8 @@ export default function ApplicationDetailsPage() {
 	const [jobCompletedSuccess, setJobCompletedSuccess] = useTimedAlert();
 	const [jobIncompleteLoading, setJobIncompleteLoading] = useState(false);
 	const [jobIncompleteSuccess, setJobIncompleteSuccess] = useTimedAlert();
+	const [paymentError, setPaymentError] = useTimedAlert();
+	const [paymentLoading, setPaymentLoading] = useState(false);
 
 	useEffect(() => {
 		async function loadApplicationDetails() {
@@ -115,7 +120,7 @@ export default function ApplicationDetailsPage() {
 			negotiation: applicationDetails?.negotiation ?? null,
 			negotiationUpdates: applicationDetails?.negotiationUpdates ?? [],
 			contract: applicationDetails?.contract ?? null,
-			payments: applicationDetails?.payment ? [applicationDetails.payment] : [],
+			payment: applicationDetails?.payment ?? null,
 		}),
 		[applicationDetails],
 	);
@@ -258,18 +263,47 @@ export default function ApplicationDetailsPage() {
 		setApplicationDetails(updatedDetails);
 	};
 
+	const canPay = findStatusKey(details.payment?.status, PAYMENT_STATUSES) === "pending";
+
+	const handlePay = async (selectedPayment = details.payment) => {
+		const contractId = selectedPayment?.contractId ?? details.contract?.id;
+		if (!contractId) {
+			setPaymentError("The contract for this payment could not be found.");
+			return;
+		}
+
+		try {
+			setPaymentLoading(true);
+			setPaymentError("");
+			const { checkoutUrl } = await createContractCheckoutSession(contractId);
+
+			if (!checkoutUrl) {
+				throw new Error("Stripe checkout URL is missing.");
+			}
+
+			window.location.assign(checkoutUrl);
+		} catch (error) {
+			const apiError = parseApiError(error, {}, "Payment checkout could not be started. Please try again.");
+			setPaymentError(apiError.message);
+			setPaymentLoading(false);
+		}
+	};
+
 	const tabs = useApplicationTabs({
 		application: details.application,
 		job: details.job,
 		negotiation: details.negotiation,
 		negotiationUpdates: details.negotiationUpdates,
 		contract: details.contract,
-		payments: details.payments,
+		payment: details.payment,
 		role: "client",
 		onAcceptNegotiation: handleAcceptNegotiation,
 		onRejectNegotiation: handleRejectNegotiation,
 		onSubmitCounterOffer: handleSubmitCounterOffer,
 		onSignContract: handleSignContract,
+		canPay,
+		paymentLoading,
+		onPay: handlePay,
 	});
 
 	const initialTab = getInitialTab({
@@ -330,6 +364,12 @@ export default function ApplicationDetailsPage() {
 							</AppAlert>
 						)}
 
+						{paymentError && (
+							<AppAlert severity="error" title="Payment could not be started">
+								{paymentError}
+							</AppAlert>
+						)}
+
 						<ApplicationSection
 							application={details.application}
 							contract={details.contract}
@@ -348,7 +388,14 @@ export default function ApplicationDetailsPage() {
 					</Stack>
 				</Grid>
 
-				<Grid size={{ xs: 12, md: 4 }}>
+				<Grid
+					size={{ xs: 12, md: 4 }}
+					sx={{
+						position: { xs: "static", md: "sticky" },
+						top: { md: 24 },
+						alignSelf: "flex-start",
+					}}
+				>
 					<Stack spacing={2}>
 						<ContractorProfileSection contractor={details.contractor} />
 

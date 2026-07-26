@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import DrawRoundedIcon from "@mui/icons-material/DrawRounded";
 import FileDownloadRoundedIcon from "@mui/icons-material/FileDownloadRounded";
 import MarkEmailReadRoundedIcon from "@mui/icons-material/MarkEmailReadRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import { Button, Card, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, Divider, Stack, Typography } from "@mui/material";
 
 import SignContractDialog from "./SignContractDialog";
 import { isSignatureTooLarge } from "./signatureValidation";
@@ -16,17 +16,32 @@ import { findStatusKey } from "../../../../utils/jobs";
 import { parseApiError, parseBlobApiError } from "../../../../utils/parseApiError";
 import { downloadContractPdf, emailContractPdf } from "../../../../api/coreAPI";
 import { useTimedAlert } from "../../../../hooks/useTimedAlert";
+import { formatDate } from "../../../../utils/formatters";
+import {
+	actionBtnSx,
+	descriptionSx,
+	detailItemSx,
+	detailLabelSx,
+	fullWidthItemSx,
+	headerSx,
+	signatureGridSx,
+	signatureItemSx,
+	signBtnSx,
+	summaryGridSx,
+} from "./ContractDetailsSection.styles";
 
-const actionBtnSx = {
-	textTransform: "none",
-	fontWeight: 700,
-	borderRadius: 2,
-};
-
-const signBtnSx = {
-	...actionBtnSx,
-	fontWeight: 800,
-};
+function ContractDetail({ label, children, fullWidth = false }) {
+	return (
+		<Box sx={[detailItemSx, fullWidth && fullWidthItemSx]}>
+			<Typography variant="caption" color="text.secondary" sx={detailLabelSx}>
+				{label}
+			</Typography>
+			<Typography variant="body2" fontWeight={700}>
+				{children || "Not provided"}
+			</Typography>
+		</Box>
+	);
+}
 
 export default function ContractDetailsSection({ contract, job, role = "client", onSignContract }) {
 	const [signDialogOpen, setSignDialogOpen] = useState(false);
@@ -34,11 +49,12 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 	const [signFeedback, setSignFeedback] = useTimedAlert();
 	const [downloading, setDownloading] = useState(false);
 	const [sendingEmail, setSendingEmail] = useState(false);
+	const sendingEmailRef = useRef(false);
 
 	const statusKey = contract ? findStatusKey(contract.status, CONTRACT_STATUSES) : null;
 	const jobStatusKey = job ? findStatusKey(job.status, JOB_STATUSES) : null;
 	const contractIsActive = statusKey === "active";
-	const jobIsAwaitingReview = jobStatusKey === "completedByClient";
+	const jobIsAwaitingReview = jobStatusKey === "doneByContractor";
 	const jobIsCompleted = jobStatusKey === "completedByClient";
 	const contractCanBeShared =
 		statusKey !== "cancelled" && (contractIsActive || jobIsCompleted || statusKey === "completed");
@@ -105,7 +121,12 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 	};
 
 	const handleSendEmail = async () => {
+		if (!contract?.id || sendingEmailRef.current) {
+			return;
+		}
+
 		try {
+			sendingEmailRef.current = true;
 			setSendingEmail(true);
 			setSignFeedback(null);
 			const result = await emailContractPdf(contract.id);
@@ -116,8 +137,16 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 			});
 		} catch (error) {
 			const apiError = parseApiError(error, {}, "The contract could not be sent to your email. Please try again.");
-			setSignFeedback({ severity: "error", title: "Email could not be sent", message: apiError.message });
+			const isConflict = error?.response?.status === 409;
+			setSignFeedback({
+				severity: "error",
+				title: isConflict ? "Email already sent" : "Email could not be sent",
+				message: isConflict
+					? "This contract was already sent to your email."
+					: apiError.message,
+			});
 		} finally {
+			sendingEmailRef.current = false;
 			setSendingEmail(false);
 		}
 	};
@@ -166,14 +195,7 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 						{signFeedback.message}
 					</AppAlert>
 				)}
-				<Stack
-					direction="row"
-					spacing={2}
-					sx={{
-						justifyContent: "space-between",
-						alignItems: "center",
-					}}
-				>
+				<Stack direction="row" spacing={2} sx={headerSx}>
 					<Typography variant="h6" sx={sectionTitleSx}>
 						Contract
 					</Typography>
@@ -181,9 +203,36 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 					{statusKey && <StatusChip status={statusKey} config={CONTRACT_STATUSES} />}
 				</Stack>
 
-				<Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+				<Typography variant="body2" color="text.secondary" sx={descriptionSx}>
 					{contractDescription}
 				</Typography>
+
+				<Divider />
+
+				<Box sx={summaryGridSx}>
+					<ContractDetail label="Contract number">{contract.contractNumber}</ContractDetail>
+					<ContractDetail label="Job">{contract.jobTitle || job?.title}</ContractDetail>
+					<ContractDetail label="Budget">
+						{contract.budgetAmount !== "" && contract.budgetAmount != null
+							? `${contract.budgetAmount} ${contract.currency || "EUR"} · ${contract.budgetType || "fixed"}`
+							: ""}
+					</ContractDetail>
+					<ContractDetail label="Duration">
+						{contract.duration ? `${contract.duration} days` : ""}
+					</ContractDetail>
+					<ContractDetail label="Workload">
+						{contract.hoursPerWeek ? `${contract.hoursPerWeek} hours per week` : ""}
+					</ContractDetail>
+					<ContractDetail label="Starts">
+						{contract.startsAt ? formatDate(contract.startsAt) : ""}
+					</ContractDetail>
+					<ContractDetail label="Ends">
+						{contract.endsAt ? formatDate(contract.endsAt) : ""}
+					</ContractDetail>
+					<ContractDetail label="Deliverables" fullWidth>
+						{contract.deliverables}
+					</ContractDetail>
+				</Box>
 
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
 					{needsSignature && (

@@ -102,7 +102,7 @@ export default function ContractorApplicationDetailsPage() {
 	const negotiation = details?.negotiation ?? null;
 	const negotiationUpdates = details?.negotiationUpdates ?? [];
 	const contract = details?.contract ?? null;
-	const payments = details?.payment ? [details.payment] : [];
+	const payment = details?.payment ?? null;
 
 	useEffect(() => {
 		if (details?.payment?.status !== "pending") return undefined;
@@ -216,7 +216,7 @@ export default function ContractorApplicationDetailsPage() {
 		negotiation,
 		negotiationUpdates,
 		contract,
-		payments,
+		payment,
 		role: "contractor",
 		onAcceptNegotiation: handleAcceptNegotiation,
 		onRejectNegotiation: handleRejectNegotiation,
