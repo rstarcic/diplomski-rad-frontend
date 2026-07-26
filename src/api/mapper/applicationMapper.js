@@ -73,6 +73,17 @@ function mapNegotiationUpdateFromAPI(update = {}) {
 	};
 }
 
+export function mapCounterOfferToAPI(counterOffer = {}) {
+	return {
+		budget_type: counterOffer.budgetType,
+		budget_amount: Number(counterOffer.budgetAmount),
+		hours_per_week: Number(counterOffer.hoursPerWeek),
+		duration: Number(counterOffer.duration),
+		deliverables: counterOffer.deliverables?.trim() ?? "",
+		message: counterOffer.message?.trim() ?? "",
+	};
+}
+
 export function mapContractFromAPI(contract = null, fallbackJob = null) {
 	if (!contract) return null;
 	const contractData = contract?.contract ?? contract;

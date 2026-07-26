@@ -9,7 +9,8 @@ import {
 	mapProfileStatsFromAPI,
 } from "./mapper/profileMapper.js";
 import { mapJobToAPI, mapJobFromAPI, mapJobSummaryFromAPI, mapJobListItemFromAPI, mapJobDetailsPageFromAPI, mapPaginationFromAPI } from "./mapper/jobMapper.js";
-import { mapApplicationStatusFromAPI, mapJobApplicationFromAPI, mapJobApplicationDetailsFromAPI, mapMyApplicationFromAPI, mapMyApplicationDetailsFromAPI, mapContractFromAPI, mapContractStatusFromAPI } from "./mapper/applicationMapper.js"
+import { mapApplicationStatusFromAPI, mapJobApplicationFromAPI, mapJobApplicationDetailsFromAPI, mapMyApplicationFromAPI, mapMyApplicationDetailsFromAPI, mapContractFromAPI, mapContractStatusFromAPI, mapCounterOfferToAPI } from "./mapper/applicationMapper.js"
+import { mapReviewToAPI, mapSubmittedReviewFromAPI } from "./mapper/reviewMapper.js";
 
 // _______________PROFILES _______________
 
@@ -352,15 +353,20 @@ export async function rejectNegotiationTerms(jobId, applicationId) {
 export async function submitCounterOffer(jobId, applicationId, counterOffer) {
 	const { data } = await api.post(
 		`/jobs/${jobId}/applications/${applicationId}/counter-offer`,
-		{
-			budget_type: counterOffer.budgetType,
-			budget_amount: Number(counterOffer.budgetAmount),
-			hours_per_week: Number(counterOffer.hoursPerWeek),
-			duration: Number(counterOffer.duration),
-			deliverables: counterOffer.deliverables.trim(),
-			message: counterOffer.message.trim(),
-		},
+		mapCounterOfferToAPI(counterOffer),
 	);
 
 	return data;
+}
+
+
+// _______________REVIEWS_______________
+
+export async function submitReview(jobId, review) {
+	const { data } = await api.post(
+		`/jobs/${jobId}/review`,
+		mapReviewToAPI(review),
+	);
+
+	return mapSubmittedReviewFromAPI(data);
 }

@@ -22,6 +22,10 @@ export default defineConfig({
         target: "http://localhost:8001",
         changeOrigin: true,
       },
+       "/reviews": {
+        target: "http://localhost:8001",
+        changeOrigin: true,
+      },
       // Sve contract operacije idu direktno contract servisu.
       "/contracts": {
         target: "http://localhost:8002",

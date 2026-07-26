@@ -7,6 +7,7 @@ import ReviewForm from "../../../components/reviews/ReviewForm";
 import ContractDetailsSection from "../components/contract/ContractDetailsSection";
 import NegotiationSection from "../components/negotiation/NegotiationSection";
 import PaymentsSection from "../components/payment/PaymentsSection";
+import { submitReview } from "../../../api/coreAPI";
 
 export function useApplicationTabs({
 	application,
@@ -106,6 +107,7 @@ export function useApplicationTabs({
 					type={reviewTarget}
 					title="Leave a review"
 					subtitle={`Share your experience working with this ${reviewTarget}.`}
+					onSubmit={(review) => submitReview(job.id, review)}
 				/>
 			),
 		},

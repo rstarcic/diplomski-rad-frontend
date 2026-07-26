@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Card, Box, Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import ReviewRatingRow from "./ReviewRatingRow";
 import { reviewCriteria } from "./reviewCriteria";
+import AppAlert from "../ui/Alert";
 import { surfaceSectionSx } from "../../theme/layout";
+import { parseApiError } from "../../utils/parseApiError";
 
 function createInitialRatings(criteria, initialValues = {}) {
 	return criteria.reduce((acc, item) => {
@@ -22,8 +24,14 @@ export default function ReviewForm({
 	const criteria = reviewCriteria[type] || [];
 	const [ratings, setRatings] = useState(() => createInitialRatings(criteria, initialValues));
 	const [comment, setComment] = useState(initialValues.comment || "");
+	const [submitting, setSubmitting] = useState(false);
+	const [feedback, setFeedback] = useState(null);
 
-	const isValid = criteria.every((item) => ratings[item.key] > 0) && comment.trim().length > 0;
+	const normalizedComment = comment.trim();
+	const isValid =
+		criteria.every((item) => ratings[item.key] > 0) &&
+		normalizedComment.length >= 10 &&
+		normalizedComment.length <= 1000;
 
 	function handleRatingChange(key, value) {
 		setRatings((prev) => ({
@@ -32,22 +40,55 @@ export default function ReviewForm({
 		}));
 	}
 
-	function handleSubmit(event) {
+	async function handleSubmit(event) {
 		event.preventDefault();
 
-		if (!isValid) return;
+		if (!isValid || submitting) return;
 
-		onSubmit?.({
-			type,
-			ratings,
-			comment: comment.trim(),
-		});
+		try {
+			setSubmitting(true);
+			setFeedback(null);
+
+			await onSubmit?.({
+				type,
+				ratings,
+				comment: normalizedComment,
+			});
+
+			setFeedback({
+				severity: "success",
+				title: "Review submitted",
+				message: "Your review was submitted successfully.",
+			});
+			setRatings(createInitialRatings(criteria));
+			setComment("");
+		} catch (error) {
+			const apiError = parseApiError(
+				error,
+				{},
+				"Your review could not be submitted. Please try again.",
+			);
+
+			setFeedback({
+				severity: "error",
+				title: "Review could not be submitted",
+				message: apiError.message,
+			});
+		} finally {
+			setSubmitting(false);
+		}
 	}
 
 	return (
 		<Card sx={{ ...surfaceSectionSx }}>
 			<Box component="form" noValidate onSubmit={handleSubmit}>
 				<Stack spacing={2}>
+					{feedback && (
+						<AppAlert severity={feedback.severity} title={feedback.title}>
+							{feedback.message}
+						</AppAlert>
+					)}
+
 					<Box>
 						<Typography variant="h6" sx={{ fontWeight: 800 }}>
 							{title}
@@ -80,11 +121,19 @@ export default function ReviewForm({
 						onChange={(event) => setComment(event.target.value)}
 						multiline
 						minRows={4}
+						error={comment.length > 0 && !isValid && normalizedComment.length < 10}
+						helperText={`${normalizedComment.length}/1000 characters (minimum 10)`}
+						slotProps={{ htmlInput: { maxLength: 1000 } }}
 						fullWidth
 					/>
 
-					<Button type="submit" variant="contained" disabled={!isValid} sx={{ alignSelf: "flex-end" }}>
-						{submitLabel}
+					<Button
+						type="submit"
+						variant="contained"
+						disabled={!isValid || submitting}
+						sx={{ alignSelf: "flex-end" }}
+					>
+						{submitting ? "Submitting..." : submitLabel}
 					</Button>
 				</Stack>
 			</Box>
