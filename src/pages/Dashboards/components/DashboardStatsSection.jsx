@@ -25,7 +25,7 @@ export default function DashboardStatsSection({ stats = [], config = {} }) {
 							label={statConfig?.label ?? stat.title}
 							value={stat.value}
 							subtitle={stat.subtitle}
-							icon={statConfig?.icon}
+							icon={statConfig?.Icon ? <statConfig.Icon /> : null}
 							accent={statConfig?.accent}
 						/>
 					</Box>

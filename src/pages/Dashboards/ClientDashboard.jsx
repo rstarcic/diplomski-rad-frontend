@@ -1,14 +1,16 @@
 import { Box, Stack } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import { Link as RouterLink } from "react-router-dom";
 import PageHeader from "../../components/ui/PageHeader";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import SecondaryButton from "../../components/ui/SecondaryButton";
 import NextStepsCard from "./components/NextStepsCard";
 import RecentActivity from "./components/RecentActivity";
 import DashboardStatsSection from "./components/DashboardStatsSection";
+import AppAlert from "../../components/ui/Alert";
 
 import { dashboardStatCardConfig } from "./dashboardStats";
-import { clientDashboardData } from "../../mock/Dashboard";
+import { useDashboard } from "./useDashboard";
 
 const contentGridSx = {
 	mt: { xs: 2, md: 3.5 },
@@ -18,7 +20,7 @@ const contentGridSx = {
 };
 
 export default function ClientDashboardPage() {
-	const dashboardData = clientDashboardData;
+	const { data: dashboardData, loading, error } = useDashboard();
 
 	return (
 		<Box>
@@ -28,10 +30,18 @@ export default function ClientDashboardPage() {
 				subtitle="Track your active job ads, monitor contracts, and keep hiring moving from one focused workspace."
 			>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} sx={{ width: { xs: "100%", sm: "auto" } }}>
-					<PrimaryButton variant="contained" color="primary" sx={{ width: { xs: "100%", sm: "auto" } }}>
+					<PrimaryButton
+						component={RouterLink}
+						to="/client/jobs"
+						variant="contained"
+						color="primary"
+						sx={{ width: { xs: "100%", sm: "auto" } }}
+					>
 						View My Jobs
 					</PrimaryButton>
 					<SecondaryButton
+						component={RouterLink}
+						to="/client/jobs/create"
 						variant="contained"
 						color="secondary"
 						startIcon={<AddCircleOutlineIcon />}
@@ -41,6 +51,17 @@ export default function ClientDashboardPage() {
 					</SecondaryButton>
 				</Stack>
 			</PageHeader>
+
+			{loading && (
+				<AppAlert title="Loading dashboard" sx={{ mt: 3 }}>
+					Please wait while we load your latest activity.
+				</AppAlert>
+			)}
+			{error && (
+				<AppAlert severity="error" title="Dashboard could not be loaded" sx={{ mt: 3 }}>
+					{error}
+				</AppAlert>
+			)}
 
 			<DashboardStatsSection stats={dashboardData.stats_cards} config={dashboardStatCardConfig.client} />
 

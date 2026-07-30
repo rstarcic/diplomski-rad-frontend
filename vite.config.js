@@ -22,7 +22,11 @@ export default defineConfig({
         target: "http://localhost:8001",
         changeOrigin: true,
       },
-       "/reviews": {
+      "/reviews": {
+        target: "http://localhost:8001",
+        changeOrigin: true,
+      },
+      "/dashboard": {
         target: "http://localhost:8001",
         changeOrigin: true,
       },
