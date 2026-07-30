@@ -13,6 +13,7 @@ import JobDetailsSection from "./components/details/JobDetailsSection";
 import { createJobApplication, getJobDetails } from "../../api/coreAPI";
 import { APPLICATION_ERRORS, JOB_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
+import { useAuth } from "../../hooks/useAuth";
 
 const loadingContainerSx = {
 	minHeight: "50vh",
@@ -35,6 +36,7 @@ const sidebarSx = {
 
 export default function JobDetailsPage() {
 	const { jobId } = useParams();
+	const { accountSetup, accountIsComplete } = useAuth();
 	const [details, setDetails] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
@@ -117,6 +119,8 @@ export default function JobDetailsPage() {
 							alreadyApplied={alreadyApplied}
 							applicationStatus={applicationStatus}
 							onApply={handleApply}
+							accountSetup={accountSetup}
+							accountIsComplete={accountIsComplete}
 						/>
 					</Stack>
 				</Grid>

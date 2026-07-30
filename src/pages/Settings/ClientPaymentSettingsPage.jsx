@@ -10,6 +10,7 @@ import PageHeader from "../../components/ui/PageHeader";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../components/ui/PrimaryTextField";
 import { parseApiError } from "../../utils/parseApiError";
+import TransactionHistory from "./components/TransactionHistory";
 import {
 	cardIconSx,
 	cardFooterSx,
@@ -206,6 +207,8 @@ export default function ClientPaymentSettingsPage() {
 					</Stack>
 				)}
 			</Card>
+
+			<TransactionHistory />
 		</Box>
 	);
 }

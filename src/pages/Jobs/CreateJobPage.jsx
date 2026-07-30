@@ -35,7 +35,7 @@ const initialJobData = {
 };
 
 export default function CreateJobPage() {
-	const { accountSetup, role } = useAuth();
+	const { accountSetup, accountIsComplete, role } = useAuth();
 	const [searchParams] = useSearchParams();
 
 	const duplicateFrom = searchParams.get("duplicateFrom");
@@ -99,7 +99,6 @@ export default function CreateJobPage() {
 
 	const missingFields = getMissingFields(jobData);
 	const formIsComplete = missingFields.length === 0;
-	const accountIsComplete = setup.profileCompleted;
 
 	const canPublish = formIsComplete && accountIsComplete && !publishing && !loadingSourceJob;
 
@@ -192,7 +191,7 @@ export default function CreateJobPage() {
 				<AccountSetupAlert
 					accountSetup={setup}
 					actionName="publish a job"
-					settingsPath="/client/profile"
+					settingsPath={setup.profileCompleted ? "/client/settings/stripe" : "/client/profile"}
 					sx={{ mt: 3 }}
 				/>
 			)}

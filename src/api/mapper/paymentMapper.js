@@ -30,3 +30,20 @@ export function mapCheckoutSessionFromAPI(data = {}) {
 		checkoutUrl: data.checkout_url ?? data.setup_url ?? data.url ?? "",
 	};
 }
+
+export function mapTransactionFromAPI(data = {}) {
+	return {
+		id: data.id,
+		jobId: data.job_id,
+		jobTitle: data.job_title ?? "",
+		contractId: data.contract_id,
+		applicationId: data.application_id,
+		amountMinor: data.amount_minor ?? 0,
+		currency: data.currency ?? "eur",
+		status: data.status ?? "pending",
+		type: data.transaction_type ?? "payment",
+		stripePaymentIntentId: data.stripe_payment_intent_id ?? null,
+		createdAt: data.created_at ?? null,
+		updatedAt: data.updated_at ?? null,
+	};
+}

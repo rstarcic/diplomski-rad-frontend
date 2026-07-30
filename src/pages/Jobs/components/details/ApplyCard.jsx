@@ -33,14 +33,19 @@ const applicationMessageSx = {
 	mx: "auto",
 };
 
-export default function ApplyCard({ job, alreadyApplied = false, applicationStatus = "", onApply }) {
+export default function ApplyCard({
+	job,
+	alreadyApplied = false,
+	applicationStatus = "",
+	onApply,
+	accountSetup,
+	accountIsComplete,
+}) {
 	const [coverLetter, setCoverLetter] = useState("");
 	const [submitted, setSubmitted] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
 
-	const accountSetup = { role: "contractor", profileCompleted: true, payoutCompleted: true };
-	const accountIsComplete = accountSetup.profileCompleted && accountSetup.payoutCompleted;
 	const trimmedLength = coverLetter.trim().length;
 	const canApply = accountIsComplete && trimmedLength >= COVER_LETTER_MIN && !isSubmitting;
 	const clientName = job?.client?.fullName || "the client";
@@ -132,7 +137,11 @@ export default function ApplyCard({ job, alreadyApplied = false, applicationStat
 					<AccountSetupAlert
 						accountSetup={accountSetup}
 						actionName="apply for this job"
-						settingsPath="/contractor/settings/stripe"
+						settingsPath={
+							accountSetup.profileCompleted
+								? "/contractor/settings/stripe"
+								: "/contractor/profile"
+						}
 					/>
 				)}
 

@@ -1,22 +1,11 @@
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
+import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
 import StickyNote2RoundedIcon from "@mui/icons-material/StickyNote2Rounded";
 import WorkHistoryRoundedIcon from "@mui/icons-material/WorkHistoryRounded";
 import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
 import ScreenSearchDesktopRoundedIcon from '@mui/icons-material/ScreenSearchDesktopRounded';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
-const clientSettingsItems = [
-	{ label: "Stripe", path: "/client/settings/stripe" },
-	{ label: "Password & security", path: "/client/settings/security" },
-
-];
-
-const contractorSettingsItems = [
-	{ label: "Stripe", path: "/contractor/settings/stripe" },
-	{ label: "Password & security", path: "/contractor/settings/security" },
-
-];
 
 export const sidebarItems = {
 	client: [
@@ -25,10 +14,9 @@ export const sidebarItems = {
 		{ label: "My jobs", path: "/client/jobs", icon: WorkHistoryRoundedIcon },
 		{ label: "Profile", path: "/client/profile", icon: AccountCircleIcon },
 		{
-			label: "Settings",
-			path: "/client/settings",
-			icon: SettingsRoundedIcon,
-			children: clientSettingsItems,
+			label: "Payments",
+			path: "/client/settings/stripe",
+			icon: PaymentsRoundedIcon,
 		},
 	],
 	contractor: [
@@ -37,10 +25,9 @@ export const sidebarItems = {
 		{ label: "Applications", path: "/contractor/applications", icon: StickyNote2RoundedIcon },
 		{ label: "Profile", path: "/contractor/profile", icon: AccountCircleIcon },
 		{
-			label: "Settings",
-			path: "/contractor/settings",
-			icon: SettingsRoundedIcon,
-			children: contractorSettingsItems,
+			label: "Payouts",
+			path: "/contractor/settings/stripe",
+			icon: AccountBalanceWalletRoundedIcon,
 		},
 	],
 };

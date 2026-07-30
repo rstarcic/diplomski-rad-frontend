@@ -1,13 +1,21 @@
 import { Card, Divider, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 import AppAlert from "../../../../components/ui/Alert";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
+import SecondaryButton from "../../../../components/ui/SecondaryButton";
 import StatusChip from "../../../../components/ui/StatusChip";
 import { PAYMENT_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { formatCurrency, formatDate } from "../../../../utils/formatters";
 import { findStatusKey } from "../../../../utils/jobs";
-import { detailsGridSx, headerSx, payButtonSx } from "./PaymentsSection.styles";
+import {
+	actionsSx,
+	detailsGridSx,
+	headerSx,
+	historyButtonSx,
+	payButtonSx,
+} from "./PaymentsSection.styles";
 
 export default function PaymentsSection({
 	payment,
@@ -17,6 +25,9 @@ export default function PaymentsSection({
 	paymentLoading = false,
 	onPay,
 }) {
+	const transactionHistoryPath =
+		role === "contractor" ? "/contractor/settings/stripe" : "/client/settings/stripe";
+
 	if (!payment) {
 		return (
 			<Card elevation={0} sx={surfaceSectionSx}>
@@ -36,6 +47,13 @@ export default function PaymentsSection({
 							? "Payment will become available when the work is ready for client payment."
 							: "No payment has been recorded yet. The client will complete payment after approving the work."}
 					</Typography>
+					<SecondaryButton
+						component={RouterLink}
+						to={transactionHistoryPath}
+						sx={historyButtonSx}
+					>
+						View transaction history
+					</SecondaryButton>
 				</Stack>
 			</Card>
 		);
@@ -95,16 +113,26 @@ export default function PaymentsSection({
 						)}
 					</Stack>
 
-					{canPay && statusKey === "pending" && (
-						<PrimaryButton
-							onClick={() => onPay?.(payment)}
-							loading={paymentLoading}
-							disabled={paymentLoading}
-							sx={payButtonSx}
+					<Stack direction={{ xs: "column", sm: "row" }} sx={actionsSx}>
+						<SecondaryButton
+							component={RouterLink}
+							to={transactionHistoryPath}
+							sx={historyButtonSx}
 						>
-							{paymentLoading ? "Opening Stripe..." : "Pay"}
-						</PrimaryButton>
-					)}
+							View transaction history
+						</SecondaryButton>
+
+						{canPay && statusKey === "pending" && (
+							<PrimaryButton
+								onClick={() => onPay?.(payment)}
+								loading={paymentLoading}
+								disabled={paymentLoading}
+								sx={payButtonSx}
+							>
+								{paymentLoading ? "Opening Stripe..." : "Pay"}
+							</PrimaryButton>
+						)}
+					</Stack>
 				</Stack>
 			</Card>
 		</Stack>

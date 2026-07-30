@@ -10,10 +10,19 @@ const getRequirementMessage = (accountSetup) => {
 	}
 	const isContractor = accountSetup.role === "contractor";
 	const needsProfile = !accountSetup.profileCompleted;
+	const needsPayment = !isContractor && !accountSetup.paymentCompleted;
 	const needsPayout = isContractor && !accountSetup.payoutCompleted;
+
+	if (needsProfile && needsPayment) {
+		return messages.missingProfileAndPayment;
+	}
 
 	if (needsProfile && needsPayout) {
 		return messages.missingProfileAndPayout;
+	}
+
+	if (needsPayment) {
+		return messages.missingPayment;
 	}
 
 	if (needsProfile) {

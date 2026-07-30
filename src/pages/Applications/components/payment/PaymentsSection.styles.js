@@ -10,6 +10,15 @@ export const detailsGridSx = {
 };
 
 export const payButtonSx = {
-	alignSelf: "flex-end",
 	minWidth: 120,
+};
+
+export const actionsSx = {
+	justifyContent: "flex-end",
+	alignItems: { xs: "stretch", sm: "center" },
+	gap: 1.5,
+};
+
+export const historyButtonSx = {
+	minWidth: 210,
 };
