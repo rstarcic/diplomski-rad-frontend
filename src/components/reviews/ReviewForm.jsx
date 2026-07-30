@@ -29,9 +29,9 @@ export default function ReviewForm({
 
 	const normalizedComment = comment.trim();
 	const isValid =
-		criteria.every((item) => ratings[item.key] > 0) &&
 		normalizedComment.length >= 10 &&
-		normalizedComment.length <= 1000;
+		normalizedComment.length <= 1000 &&
+		Object.values(ratings).every((rating) => rating >= 1 && rating <= 5);
 
 	function handleRatingChange(key, value) {
 		setRatings((prev) => ({

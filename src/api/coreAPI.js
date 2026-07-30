@@ -10,7 +10,7 @@ import {
 } from "./mapper/profileMapper.js";
 import { mapJobToAPI, mapJobFromAPI, mapJobSummaryFromAPI, mapJobListItemFromAPI, mapJobDetailsPageFromAPI, mapPaginationFromAPI } from "./mapper/jobMapper.js";
 import { mapApplicationStatusFromAPI, mapJobApplicationFromAPI, mapJobApplicationDetailsFromAPI, mapMyApplicationFromAPI, mapMyApplicationDetailsFromAPI, mapContractFromAPI, mapContractStatusFromAPI, mapCounterOfferToAPI } from "./mapper/applicationMapper.js"
-import { mapReviewToAPI, mapSubmittedReviewFromAPI } from "./mapper/reviewMapper.js";
+import { mapReviewToAPI } from "./mapper/reviewMapper.js";
 
 // _______________PROFILES _______________
 
@@ -368,5 +368,5 @@ export async function submitReview(jobId, review) {
 		mapReviewToAPI(review),
 	);
 
-	return mapSubmittedReviewFromAPI(data);
+	return data;
 }
