@@ -45,7 +45,22 @@ function InfoRow({ icon, label, value }) {
 	);
 }
 
-export default function ProfileInfoCard({ firstName, lastName, title, image, email, phone, city, country, createdAt, about }) {
+function CompactInfo({ icon, value }) {
+	if (!value) return null;
+
+	return (
+		<Stack direction="row" spacing={1.25} sx={{ alignItems: "center", minWidth: 0 }}>
+			<Box component="span" sx={{ ...iconWrapSx, mt: 0 }}>
+				{icon}
+			</Box>
+			<Typography variant="body2" color="text.secondary" noWrap sx={{ minWidth: 0 }}>
+				{value}
+			</Typography>
+		</Stack>
+	);
+}
+
+export default function ProfileInfoCard({ firstName, lastName, title, image, email, phone, city, country, createdAt, about, featured = false }) {
 	const [previewOpen, setPreviewOpen] = useState(false);
 	const fullName = [firstName, lastName].filter(Boolean).join(" ");
 	const location = [city, country].filter(Boolean).join(", ");
@@ -55,7 +70,7 @@ export default function ProfileInfoCard({ firstName, lastName, title, image, ema
 	const hasImage = Boolean(image);
 
 	return (
-		<Paper elevation={0} sx={cardSx}>
+		<Paper elevation={0} sx={featured ? { ...cardSx, p: { xs: 2.5, sm: 3 } } : cardSx}>
 			<Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 2.5, sm: 3.5 }} sx={headerSx}>
 				<Avatar
 					src={image}
@@ -67,9 +82,17 @@ export default function ProfileInfoCard({ firstName, lastName, title, image, ema
 				</Avatar>
 
 				<Box sx={{ flex: 1, minWidth: 0 }}>
-					<Typography variant="h5" sx={nameSx}>
-						{fullName || "Unknown"}
-					</Typography>
+					<Stack direction={{ xs: "column", md: "row" }} spacing={1.5} sx={{ alignItems: { xs: "center", sm: "flex-start", md: "center" }, mb: 2 }}>
+						<Typography variant="h5" sx={{ ...nameSx, mb: 0 }}>
+							{fullName || "Unknown"}
+						</Typography>
+						{featured && memberSince && (
+							<Stack direction="row" spacing={0.75} sx={{ px: 1.25, py: 0.65, borderRadius: 99, bgcolor: "rgba(91, 63, 214, 0.08)", color: "primary.main", alignItems: "center" }}>
+								<CalendarTodayOutlinedIcon sx={iconSx} />
+								<Typography variant="caption" sx={{ fontWeight: 700, color: "text.primary" }}>Member since {memberSince}</Typography>
+							</Stack>
+						)}
+					</Stack>
 
 					{title && (
 						<Typography variant="body2" color="text.secondary" fontWeight={500} sx={{ mb: 2 }}>
@@ -77,28 +100,27 @@ export default function ProfileInfoCard({ firstName, lastName, title, image, ema
 						</Typography>
 					)}
 
-					<Stack spacing={1.25}>
-						<InfoRow
-							icon={<CalendarTodayOutlinedIcon sx={iconSx} />}
-							label="Member since"
-							value={memberSince}
-						/>
-						<InfoRow
-							icon={<LocationOnOutlinedIcon sx={iconSx} />}
-							label="Location"
-							value={location}
-						/>
-						<InfoRow
-							icon={<EmailOutlinedIcon sx={iconSx} />}
-							label="Email"
-							value={email}
-						/>
-						<InfoRow
-							icon={<PhoneOutlinedIcon sx={iconSx} />}
-							label="Phone"
-							value={phone}
-						/>
-					</Stack>
+					{featured ? (
+						<Box
+							sx={{
+								display: "grid",
+								gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
+								columnGap: 4,
+								rowGap: 1.75,
+							}}
+						>
+							<CompactInfo icon={<LocationOnOutlinedIcon sx={iconSx} />} value={location} />
+							<CompactInfo icon={<EmailOutlinedIcon sx={iconSx} />} value={email} />
+							<CompactInfo icon={<PhoneOutlinedIcon sx={iconSx} />} value={phone} />
+						</Box>
+					) : (
+						<Stack spacing={1.25}>
+							<InfoRow icon={<CalendarTodayOutlinedIcon sx={iconSx} />} label="Member since" value={memberSince} />
+							<InfoRow icon={<LocationOnOutlinedIcon sx={iconSx} />} label="Location" value={location} />
+							<InfoRow icon={<EmailOutlinedIcon sx={iconSx} />} label="Email" value={email} />
+							<InfoRow icon={<PhoneOutlinedIcon sx={iconSx} />} label="Phone" value={phone} />
+						</Stack>
+					)}
 				</Box>
 			</Stack>
 

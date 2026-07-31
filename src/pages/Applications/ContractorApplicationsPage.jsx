@@ -1,20 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 
-import AppAlert from "../../components/ui/Alert";
+import { getMyApplications } from "../../api/core.api";
+
+import AppAlert from "../../components/ui/AppAlert";
 import PageHeader from "../../components/ui/PageHeader";
 import StatusFilter from "../../components/ui/StatusFilter";
-import ContractorApplicationCard from "./components/ContractorApplicationCard";
 
-import { getMyApplications } from "../../api/coreAPI";
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
 import { APPLICATION_STATUSES } from "../../constants/statuses";
-import { parseApiError } from "../../utils/parseApiError";
 import { findStatusKey } from "../../utils/jobs";
+import { parseApiError } from "../../utils/parseApiError";
 
-const contentSx = {
-	mt: 3,
-};
+import ContractorApplicationCard from "./components/ContractorApplicationCard";
 
 export default function ContractorApplicationsPage() {
 	const [applications, setApplications] = useState([]);
@@ -69,7 +67,7 @@ export default function ContractorApplicationsPage() {
 				subtitle="Track your submitted applications, negotiations, contracts, and payments."
 			/>
 
-			<Stack spacing={2} sx={contentSx}>
+			<Stack spacing={2} sx={{ mt: 3 }}>
 				<StatusFilter statuses={APPLICATION_STATUSES} value={selectedStatus} onChange={setSelectedStatus} />
 
 				{loading ? (

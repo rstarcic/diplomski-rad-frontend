@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Card, Box, Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import ReviewRatingRow from "./ReviewRatingRow";
-import { reviewCriteria } from "./reviewCriteria";
-import AppAlert from "../ui/Alert";
+import { reviewCriteria } from "./reviewCriteria.config";
+import AppAlert from "../ui/AppAlert";
 import { surfaceSectionSx } from "../../theme/layout";
 import { parseApiError } from "../../utils/parseApiError";
 

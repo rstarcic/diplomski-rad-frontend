@@ -1,10 +1,10 @@
-import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
+import { Box, Grid, MenuItem, Stack } from "@mui/material";
+import PaidRoundedIcon from "@mui/icons-material/PaidRounded";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import { surfaceSectionSx } from "../../../../theme/layout";
 import { BUDGET_TYPES } from "../../../../constants/jobFilters";
-
-const titleSx = { mb: 2, ...sectionTitleSx };
+import SectionHeading from "./SectionHeading";
 
 const positiveNumberInputProps = {
 	htmlInput: {
@@ -24,9 +24,9 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={titleSx}>
+			<SectionHeading icon={<PaidRoundedIcon />} subtitle="Set your budget and estimated workload.">
 				Budget and workload
-			</Typography>
+			</SectionHeading>
 
 			<Stack spacing={2}>
 				<PrimaryTextField

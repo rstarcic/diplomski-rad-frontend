@@ -1,8 +1,8 @@
 import axios from "axios";
-import { refreshToken } from "./authAPI.js";
+import { refreshToken } from "./auth.api.js";
 
 export const api = axios.create({
-	baseURL: "/",
+    baseURL: "/",
     withCredentials: true,
     headers: { "Content-Type": "application/json" },
 });

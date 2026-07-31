@@ -4,6 +4,9 @@ const colors = {
 	primary: "#5b3fd6",
 	primaryDark: "#46309f",
 	primaryLight: "#7c63f0",
+	secondary: "#8b6fe8",
+	secondaryDark: "#7456d8",
+	secondaryLight: "#aa96f1",
 	text: "#253052",
 	textSecondary: "#6b7280",
 	textMuted: "#9ca3af",
@@ -58,6 +61,19 @@ const pageHeader = {
 	minHeight: { xs: "auto", md: 180 },
 };
 
+const profileProgress = {
+	width: { xs: "100%", md: 280 },
+	padding: 1.5,
+	border: "1px solid rgba(255, 255, 255, 0.22)",
+	borderRadius: 3,
+	background: "rgba(255, 255, 255, 0.11)",
+	shadow: "0 8px 22px rgba(37, 25, 105, 0.16)",
+	mutedText: "rgba(255, 255, 255, 0.78)",
+	progressTrack: "rgba(255, 255, 255, 0.24)",
+	progressBar: colors.white,
+	progressHeight: 6,
+};
+
 const dashboardList = {
 	cardBackground: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75))",
 	cardBorder: "1px solid rgba(255,255,255,0.2)",
@@ -65,6 +81,111 @@ const dashboardList = {
 	accent: colors.primaryLight,
 	chipBackground: "rgba(124, 99, 240, 0.14)",
 	chipColor: colors.primaryDark,
+};
+
+const dashboardStats = {
+	card: {
+		minHeight: 164,
+		padding: { xs: 2, sm: 2.25 },
+		borderRadius: 4,
+		border: colors.border,
+		background: colors.paper,
+		shadow: "0 12px 32px rgba(37, 48, 82, 0.08)",
+		hoverShadow: "0 16px 38px rgba(37, 48, 82, 0.12)",
+	},
+	tones: {
+		green: {
+			accent: "#10b981",
+			value: "#059669",
+			soft: "rgba(16, 185, 129, 0.1)",
+			iconBackground: "linear-gradient(145deg, #ecfdf5, #d9f7eb)",
+			iconColor: "#059669",
+		},
+		orange: {
+			accent: "#f97316",
+			value: "#ea580c",
+			soft: "rgba(249, 115, 22, 0.1)",
+			iconBackground: "linear-gradient(145deg, #fff7ed, #ffead7)",
+			iconColor: "#f97316",
+		},
+		violet: {
+			accent: "#7c3aed",
+			value: "#6d28d9",
+			soft: "rgba(124, 58, 237, 0.1)",
+			iconBackground: "linear-gradient(145deg, #f5f3ff, #ede9fe)",
+			iconColor: "#7c3aed",
+		},
+		rating: {
+			accent: "#7c3aed",
+			value: "#6d28d9",
+			soft: "rgba(124, 58, 237, 0.1)",
+			iconBackground: "linear-gradient(145deg, #fffbeb, #fef3c7)",
+			iconColor: "#f59e0b",
+		},
+		blue: {
+			accent: "#2563eb",
+			value: "#1d4ed8",
+			soft: "rgba(37, 99, 235, 0.1)",
+			iconBackground: "linear-gradient(145deg, #eff6ff, #e0e7ff)",
+			iconColor: "#1d4ed8",
+		},
+	},
+};
+
+const dashboardActivity = {
+	item: {
+		padding: { xs: 1.5, sm: 1.75 },
+		borderRadius: 3,
+		border: colors.border,
+		background: colors.paper,
+		shadow: "0 7px 20px rgba(37, 48, 82, 0.06)",
+		hoverShadow: "0 10px 26px rgba(37, 48, 82, 0.1)",
+	},
+	icon: {
+		size: 42,
+		borderRadius: 2.5,
+	},
+	meta: {
+		background: "rgba(91, 63, 214, 0.08)",
+		color: colors.primaryDark,
+	},
+};
+
+const dashboardAction = {
+	border: "rgba(91, 63, 214, 0.24)",
+	background:
+		"linear-gradient(135deg, rgba(243, 240, 255, 0.96), rgba(255, 255, 255, 1) 52%)",
+	accent: colors.primaryLight,
+	eyebrow: colors.primaryDark,
+	shadow: "0 10px 28px rgba(70, 48, 159, 0.09)",
+	hoverShadow: "0 14px 34px rgba(70, 48, 159, 0.14)",
+	badgeBackground: "rgba(91, 63, 214, 0.1)",
+	badgeColor: colors.primaryDark,
+};
+
+const searchJobCard = {
+	borderRadius: 3.5,
+	border: colors.border,
+	background: colors.paper,
+	shadow: "0 10px 28px rgba(37, 48, 82, 0.07)",
+	hoverShadow: "0 16px 36px rgba(37, 48, 82, 0.12)",
+	categoryColor: colors.primary,
+	metaDivider: colors.border,
+};
+
+const jobForm = {
+	sectionIconBackground: "rgba(91, 63, 214, 0.1)",
+	sectionIconColor: colors.primary,
+	previewBackground: "linear-gradient(145deg, rgba(246, 243, 255, 0.96), rgba(250, 249, 255, 0.98))",
+	previewBorder: "rgba(91, 63, 214, 0.16)",
+	estimateBackground: "linear-gradient(90deg, rgba(91, 63, 214, 0.08), rgba(124, 99, 240, 0.13))",
+	estimateBorder: "rgba(91, 63, 214, 0.14)",
+	estimateLabel: colors.primary,
+};
+
+const jobCardAccent = {
+	green:
+		"linear-gradient(180deg, #16b879 0%, rgba(22, 184, 121, 0.32) 100%)",
 };
 
 const home = {
@@ -90,9 +211,7 @@ const home = {
 			minWidth: { xs: 0, sm: 108 },
 			minHeight: { xs: 46, sm: 50 },
 			borderRadius: 99,
-			fontWeight: 900,
 			whiteSpace: "nowrap",
-			fontSize: { xs: "0.82rem", sm: "0.875rem" },
 			gap: 0.5,
 		},
 		secondaryButton: {
@@ -147,22 +266,14 @@ const home = {
 			px: 1.45,
 			py: 0.75,
 			borderRadius: 999,
-			fontSize: "0.76rem",
-			fontWeight: 950,
 		},
 		title: {
 			mt: { xs: 3, md: 4 },
-			color: "#111733",
-			fontSize: { xs: "2.45rem", sm: "3.15rem", xl: "3.65rem" },
-			fontWeight: 950,
-			lineHeight: 1.12,
-			letterSpacing: 0,
+			color: colors.text,
 		},
 		subtitle: {
 			maxWidth: 430,
-			color: "#293252",
-			fontSize: "0.99rem",
-			lineHeight: 1.75,
+			color: colors.textSecondary,
 		},
 		steps: {
 			spacing: 2.4,
@@ -186,8 +297,13 @@ const home = {
 			width: { xs: "100%", sm: 280 },
 			minHeight: 64,
 			borderRadius: 3,
-			fontWeight: 950,
-			fontSize: "1rem",
+		},
+		step: {
+			iconSize: 50,
+			iconRadius: 3,
+			iconGlyphSize: 25,
+			titleColor: colors.text,
+			textColor: colors.textSecondary,
 		},
 		tones: {
 			client: {
@@ -216,6 +332,12 @@ const theme = createTheme({
 			light: colors.primaryLight,
 			contrastText: colors.white,
 		},
+		secondary: {
+			main: colors.secondary,
+			dark: colors.secondaryDark,
+			light: colors.secondaryLight,
+			contrastText: colors.white,
+		},
 		success: {
 			main: colors.success,
 		},
@@ -242,9 +364,84 @@ const theme = createTheme({
 
 	typography: {
 		fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+		h1: {
+			fontFamily: '"Poppins", "Roboto", sans-serif',
+			fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+			fontWeight: 800,
+			lineHeight: 1.08,
+			letterSpacing: "-0.035em",
+		},
+		h2: {
+			fontFamily: '"Poppins", "Roboto", sans-serif',
+			fontSize: "clamp(2.125rem, 4vw, 3.5rem)",
+			fontWeight: 800,
+			lineHeight: 1.1,
+			letterSpacing: "-0.03em",
+		},
+		h3: {
+			fontFamily: '"Poppins", "Roboto", sans-serif',
+			fontSize: "clamp(1.875rem, 3vw, 3rem)",
+			fontWeight: 800,
+			lineHeight: 1.1,
+			letterSpacing: "-0.025em",
+		},
+		h4: {
+			fontFamily: '"Poppins", "Roboto", sans-serif',
+			fontSize: "clamp(1.625rem, 2.4vw, 2.125rem)",
+			fontWeight: 800,
+			lineHeight: 1.2,
+			letterSpacing: "-0.02em",
+		},
+		h5: {
+			fontFamily: '"Poppins", "Roboto", sans-serif',
+			fontSize: "clamp(1.375rem, 2vw, 1.5rem)",
+			fontWeight: 800,
+			lineHeight: 1.25,
+			letterSpacing: "-0.015em",
+		},
+		h6: {
+			fontFamily: '"Poppins", "Roboto", sans-serif',
+			fontSize: "clamp(1.125rem, 1.6vw, 1.25rem)",
+			fontWeight: 800,
+			lineHeight: 1.3,
+			letterSpacing: "-0.01em",
+		},
+		subtitle1: {
+			fontSize: "1rem",
+			fontWeight: 600,
+			lineHeight: 1.5,
+		},
+		subtitle2: {
+			fontSize: "0.875rem",
+			fontWeight: 800,
+			lineHeight: 1.5,
+		},
+		body1: {
+			fontSize: "1rem",
+			fontWeight: 400,
+			lineHeight: 1.6,
+		},
+		body2: {
+			fontSize: "0.875rem",
+			fontWeight: 400,
+			lineHeight: 1.6,
+		},
+		caption: {
+			fontSize: "0.75rem",
+			fontWeight: 400,
+			lineHeight: 1.5,
+		},
+		overline: {
+			fontSize: "0.75rem",
+			fontWeight: 800,
+			lineHeight: 1.5,
+			letterSpacing: "0.08em",
+		},
 		button: {
+			fontSize: "0.875rem",
 			textTransform: "none",
 			fontWeight: 700,
+			lineHeight: 1.4,
 		},
 	},
 
@@ -259,7 +456,67 @@ const theme = createTheme({
 			},
 			styleOverrides: {
 				root: {
+					minHeight: 40,
+					borderRadius: 8,
+					fontSize: "0.875rem",
+					fontWeight: 700,
 					textTransform: "none",
+				},
+				sizeSmall: {
+					minHeight: 36,
+					paddingInline: 14,
+				},
+				sizeLarge: {
+					minHeight: 46,
+					paddingInline: 22,
+				},
+				containedPrimary: {
+					boxShadow: "0 7px 18px rgba(91, 63, 214, 0.2)",
+					"&:hover": {
+						boxShadow: "0 9px 22px rgba(91, 63, 214, 0.28)",
+					},
+				},
+				outlinedPrimary: {
+					borderWidth: 1.5,
+					borderColor: colors.primary,
+					backgroundColor: colors.paper,
+					"&:hover": {
+						borderWidth: 1.5,
+						borderColor: colors.primaryDark,
+						backgroundColor: tint.primarySubtle,
+					},
+				},
+				textPrimary: {
+					"&:hover": {
+						backgroundColor: tint.primarySubtle,
+					},
+				},
+			},
+		},
+		MuiInputBase: {
+			styleOverrides: {
+				input: {
+					fontSize: "0.9375rem",
+					lineHeight: 1.5,
+					"@media (max-width:599.95px)": {
+						fontSize: "1rem",
+					},
+				},
+			},
+		},
+		MuiInputLabel: {
+			styleOverrides: {
+				root: {
+					fontSize: "0.875rem",
+					fontWeight: 500,
+				},
+			},
+		},
+		MuiFormHelperText: {
+			styleOverrides: {
+				root: {
+					fontSize: "0.75rem",
+					lineHeight: 1.5,
 				},
 			},
 		},
@@ -289,15 +546,46 @@ const theme = createTheme({
 		},
 		MuiChip: {
 			styleOverrides: {
-				root: { fontWeight: 600 },
+				root: {
+					fontSize: "0.75rem",
+					fontWeight: 700,
+				},
+			},
+		},
+		MuiTab: {
+			styleOverrides: {
+				root: {
+					fontSize: "0.875rem",
+					fontWeight: 700,
+					textTransform: "none",
+				},
+			},
+		},
+		MuiTableCell: {
+			styleOverrides: {
+				root: {
+					fontSize: "0.875rem",
+					lineHeight: 1.5,
+				},
+				head: {
+					fontWeight: 800,
+					color: colors.text,
+				},
 			},
 		},
 	},
 	custom: {
 		pageHeader,
+		profileProgress,
 		tint,
 		alerts,
 		dashboardList,
+		dashboardStats,
+		dashboardActivity,
+		dashboardAction,
+		searchJobCard,
+		jobForm,
+		jobCardAccent,
 		home,
 		iconPalette: {
 			applications: {
@@ -319,17 +607,6 @@ const theme = createTheme({
 				md: 46,
 				lg: 52,
 				height: 42,
-			},
-		},
-		buttons: {
-			secondary: {
-				height: 42,
-				borderRadius: 999,
-				border: colors.border,
-				background: colors.paper,
-				color: colors.text,
-				fontSize: "0.9rem",
-				fontWeight: 700,
 			},
 		},
 		auth: {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { loginApi, logoutApi, meApi, registerApi } from "../api/authAPI.js";
-import { getMyProfile } from "../api/coreAPI.js";
-import { getMyPaymentStatus } from "../api/paymentAPI.js";
+import { loginApi, logoutApi, meApi, registerApi } from "../api/auth.api.js";
+import { getMyProfile } from "../api/core.api.js";
+import { getMyPaymentStatus } from "../api/payment.api.js";
 import { AuthContext } from "./authContext";
 
 const initialAccountSetup = {
@@ -28,10 +28,7 @@ async function loadProfileCompleted() {
 }
 
 async function loadAccountSetup() {
-	const [profileCompleted, paymentStatus] = await Promise.all([
-		loadProfileCompleted(),
-		getMyPaymentStatus(),
-	]);
+	const [profileCompleted, paymentStatus] = await Promise.all([loadProfileCompleted(), getMyPaymentStatus()]);
 
 	return { profileCompleted, ...paymentStatus };
 }
@@ -63,12 +60,15 @@ export function AuthProvider({ children }) {
 			.finally(() => setLoading(false));
 	}, [setAuthenticatedUser]);
 
-	const login = useCallback(async (email, password) => {
-		await loginApi(email, password);
-		const authUser = await meApi();
-		await setAuthenticatedUser(authUser);
-		return authUser;
-	}, [setAuthenticatedUser]);
+	const login = useCallback(
+		async (email, password) => {
+			await loginApi(email, password);
+			const authUser = await meApi();
+			await setAuthenticatedUser(authUser);
+			return authUser;
+		},
+		[setAuthenticatedUser],
+	);
 
 	const register = useCallback(async (role, userData) => {
 		await registerApi(role, userData);
@@ -105,17 +105,10 @@ export function AuthProvider({ children }) {
 	}, []);
 
 	const isContractor = accountSetup.role === "contractor";
-	const requiredPaymentStatus = isContractor
-		? accountSetup.payoutCompleted
-		: accountSetup.paymentCompleted;
-	const accountSetupLoaded =
-		accountSetup.profileCompleted !== null &&
-		requiredPaymentStatus !== null;
+	const requiredPaymentStatus = isContractor ? accountSetup.payoutCompleted : accountSetup.paymentCompleted;
+	const accountSetupLoaded = accountSetup.profileCompleted !== null && requiredPaymentStatus !== null;
 
-	const accountIsComplete =
-		accountSetupLoaded &&
-		accountSetup.profileCompleted &&
-		requiredPaymentStatus;
+	const accountIsComplete = accountSetupLoaded && accountSetup.profileCompleted && requiredPaymentStatus;
 
 	const value = useMemo(
 		() => ({

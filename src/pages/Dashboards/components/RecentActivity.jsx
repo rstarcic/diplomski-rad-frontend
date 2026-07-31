@@ -1,71 +1,87 @@
-import { Box, Card, Chip, Paper, Stack, Typography } from "@mui/material";
-import { sectionTitleSx, sectionSx } from "../../../theme/layout";
+import { useState } from "react";
+import { Box, Button, Card, Chip, Paper, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
-const itemSx = (theme) => ({
-	position: "relative",
-	overflow: "hidden",
-	borderRadius: 3,
-	p: { xs: 1.75, sm: 2.2 },
-	background: theme.custom.dashboardList.cardBackground,
-	backdropFilter: "blur(14px)",
-	border: theme.custom.dashboardList.cardBorder,
-	boxShadow: theme.custom.dashboardList.cardShadow,
-	cursor: "pointer",
-	"&::before": {
-		content: '""',
-		position: "absolute",
-		top: 0,
-		left: 0,
-		width: 7,
-		height: "100%",
-		background: theme.custom.dashboardList.accent,
-	},
-});
+import { useAuth } from "../../../hooks/useAuth";
+import { sectionSx, sectionTitleSx } from "../../../theme/layout";
 
-const itemContentSx = {
-	display: "grid",
-	gridTemplateColumns: { xs: "1fr", sm: "minmax(0, 1fr) auto" },
-	gap: { xs: 1, sm: 2 },
-	alignItems: "start",
-};
+import { getActivityVisual } from "../dashboardActivity";
+import { getDashboardItemPath } from "../dashboardRoutes";
+import {
+	activityTextSx,
+	iconWrapSx,
+	itemContentSx,
+	itemSx,
+	metaChipSx,
+	sectionHeaderSx,
+	subtitleSx,
+	titleSx,
+	viewAllButtonSx,
+} from "./RecentActivity.styles";
 
-const chipSx = (theme) => ({
-	width: "fit-content",
-	fontWeight: 700,
-	borderRadius: "10px",
-	backgroundColor: theme.custom.dashboardList.chipBackground,
-	color: theme.custom.dashboardList.chipColor,
-});
+const DEFAULT_VISIBLE_COUNT = 3;
 
-export default function RecentActivity({ activities }) {
+export default function RecentActivity({ activities = [] }) {
+	const { role } = useAuth();
+	const [showAll, setShowAll] = useState(false);
+
+	const hasMore = activities.length > DEFAULT_VISIBLE_COUNT;
+
+	const visibleActivities = showAll ? activities : activities.slice(0, DEFAULT_VISIBLE_COUNT);
+
 	return (
 		<Paper elevation={0} sx={sectionSx}>
-			<Typography variant="h6" sx={sectionTitleSx}>
-				Recent activity
-			</Typography>
+			<Box sx={sectionHeaderSx}>
+				<Typography variant="h6" sx={sectionTitleSx}>
+					Recent activity
+				</Typography>
+
+				{hasMore && (
+					<Button
+						variant="text"
+						size="small"
+						aria-expanded={showAll}
+						onClick={() => setShowAll((current) => !current)}
+						sx={viewAllButtonSx}
+					>
+						{showAll ? "Show less" : "View all"}
+					</Button>
+				)}
+			</Box>
 
 			<Stack spacing={{ xs: 1.25, sm: 2 }} sx={{ mt: { xs: 2, sm: 3 } }}>
-				{activities.map((activity) => (
-					<Card key={activity.id} sx={itemSx}>
-						<Box sx={itemContentSx}>
-							<Box sx={{ minWidth: 0 }}>
-								<Typography
-									variant="subtitle1"
-									noWrap
-									sx={{ fontWeight: 800, color: "text.primary", letterSpacing: "-0.2px" }}
-								>
-									{activity.title}
-								</Typography>
+				{visibleActivities.map((activity) => {
+					const path = getDashboardItemPath(activity, role);
+					const { Icon, tone } = getActivityVisual(activity.type);
 
-								<Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
-									{activity.subtitle}
-								</Typography>
+					return (
+						<Card
+							key={activity.id}
+							component={path ? RouterLink : "div"}
+							to={path || undefined}
+							aria-label={path ? `Open ${activity.title}` : undefined}
+							sx={itemSx(Boolean(path))}
+						>
+							<Box sx={itemContentSx}>
+								<Box sx={iconWrapSx(tone)}>
+									<Icon />
+								</Box>
+
+								<Box sx={activityTextSx}>
+									<Typography variant="subtitle1" sx={titleSx}>
+										{activity.title}
+									</Typography>
+
+									<Typography variant="body2" sx={subtitleSx}>
+										{activity.subtitle}
+									</Typography>
+								</Box>
+
+								<Chip label={activity.meta} size="small" sx={metaChipSx} />
 							</Box>
-
-							<Chip label={activity.meta} size="small" sx={chipSx} />
-						</Box>
-					</Card>
-				))}
+						</Card>
+					);
+				})}
 			</Stack>
 		</Paper>
 	);

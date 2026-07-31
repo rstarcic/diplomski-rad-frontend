@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import StatsCard from "./StatsCard";
 
 const statsGridSx = {
-	mt: { xs: 2, md: 3.5 },
+	mt: { xs: 3.5, md: 5 },
 	display: "grid",
 	gridTemplateColumns: {
 		xs: "1fr",
@@ -20,15 +20,14 @@ export default function DashboardStatsSection({ stats = [], config = {} }) {
 				const statConfig = config[stat.id];
 
 				return (
-					<Box key={stat.id}>
-						<StatsCard
-							label={statConfig?.label ?? stat.title}
-							value={stat.value}
-							subtitle={stat.subtitle}
-							icon={statConfig?.Icon ? <statConfig.Icon /> : null}
-							accent={statConfig?.accent}
-						/>
-					</Box>
+					<StatsCard
+						key={stat.id}
+						label={statConfig?.label ?? stat.title}
+						value={stat.value}
+						subtitle={stat.subtitle}
+						Icon={statConfig?.Icon}
+						tone={statConfig?.tone}
+					/>
 				);
 			})}
 		</Box>

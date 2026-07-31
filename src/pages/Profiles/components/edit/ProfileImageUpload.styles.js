@@ -1,19 +1,15 @@
 import { surfaceSectionSx } from "../../../../theme/layout";
 
 export const avatarSx = {
-	width: 98,
-	height: 98,
-	mx: "auto",
-	mb: 2,
+	width: 128,
+	height: 128,
 	bgcolor: "primary.light",
 	color: "primary.contrastText",
 };
 
 export const imagePreviewSx = {
-	width: 98,
-	height: 98,
-	mx: "auto",
-	mb: 2,
+	width: 128,
+	height: 128,
 	borderRadius: "50%",
 	objectFit: "cover",
 	display: "block",
@@ -22,7 +18,7 @@ export const imagePreviewSx = {
 
 export const centeredSectionSx = {
 	...surfaceSectionSx,
-	textAlign: "center",
+	boxShadow: "0 10px 28px rgba(37, 48, 82, 0.06)",
 };
 
 export const dialogPaperSx = {

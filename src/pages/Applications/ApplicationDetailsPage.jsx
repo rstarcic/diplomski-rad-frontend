@@ -1,51 +1,46 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
+import { useParams } from "react-router-dom";
 
-import AppAlert from "../../components/ui/Alert";
-import { BackButton } from "../../components/ui/BackButton";
-import PageHeader from "../../components/ui/PageHeader";
-import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
-import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
 import {
-	decideJobApplication,
-	getJobApplicationDetails,
 	acceptNegotiationTerms,
-	rejectNegotiationTerms,
-	submitCounterOffer,
-	signContract,
+	decideJobApplication,
 	markJobCompleted,
 	markJobIncomplete,
-} from "../../api/coreAPI";
-import { APPLICATION_ERRORS } from "../../constants/apiErrors";
-import { parseApiError } from "../../utils/parseApiError";
+	rejectNegotiationTerms,
+	signContract,
+	submitCounterOffer,
+} from "../../api/core.api";
+import { createContractCheckoutSession } from "../../api/payment.api";
+
+import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
+import AppAlert from "../../components/ui/AppAlert";
+import { BackButton } from "../../components/ui/BackButton";
+import PageHeader from "../../components/ui/PageHeader";
+
+import { APPLICATION_ERRORS, PAYMENT_ERRORS } from "../../constants/apiErrors";
+import { PAYMENT_STATUSES } from "../../constants/statuses";
 import { useTimedAlert } from "../../hooks/useTimedAlert";
 import { findStatusKey } from "../../utils/jobs";
-import { PAYMENT_STATUSES } from "../../constants/statuses";
+import { parseApiError } from "../../utils/parseApiError";
 
-import StepTabs from "./components/StepTabs";
+import { getInitialApplicationTab, normalizeApplicationDetails } from "./applicationDetails.utils";
 import ApplicationSection from "./components/ApplicationSection";
+import StepTabs from "./components/StepTabs";
+import { createApplicationTabs } from "./components/applicationTabs.config";
 import ContractorProfileSection from "./components/profile/ContractorProfileSection";
-import { useApplicationTabs } from "./hooks/useApplicationTabs";
-import { createContractCheckoutSession } from "../../api/paymentAPI";
-
-function getInitialTab({ contract, tabs }) {
-	if (!contract) return 0;
-	const contractTab = tabs.findIndex((tab) => tab.label === "Contract");
-	return contractTab >= 0 ? contractTab : 0;
-}
-
-const emptyReviews = {
-	summary: {},
-	reviews: [],
-};
+import { useApplicationDetails } from "./hooks/useApplicationDetails";
+import { usePaymentPolling } from "./hooks/usePaymentPolling";
 
 export default function ApplicationDetailsPage() {
 	const { jobId, applicationId } = useParams();
 
-	const [applicationDetails, setApplicationDetails] = useState(null);
-	const [loadError, setLoadError] = useState("");
-	const [loading, setLoading] = useState(true);
+	const { applicationDetails, setApplicationDetails, loading, loadError, refreshDetails } = useApplicationDetails(
+		jobId,
+		applicationId,
+	);
+
 	const [decisionLoading, setDecisionLoading] = useState(false);
 	const [decisionError, setDecisionError] = useTimedAlert();
 	const [negotiationSuccess, setNegotiationSuccess] = useTimedAlert();
@@ -56,31 +51,12 @@ export default function ApplicationDetailsPage() {
 	const [paymentError, setPaymentError] = useTimedAlert();
 	const [paymentLoading, setPaymentLoading] = useState(false);
 
-	useEffect(() => {
-		async function loadApplicationDetails() {
-			setLoading(true);
-			setLoadError("");
+	const details = normalizeApplicationDetails(applicationDetails);
 
-			try {
-				const details = await getJobApplicationDetails(jobId, applicationId);
-				setApplicationDetails(details);
-			} catch (error) {
-				console.error("Failed to load application details:", error);
-
-				const apiError = parseApiError(
-					error,
-					APPLICATION_ERRORS,
-					"We couldn't load application details. Please try again later.",
-				);
-
-				setLoadError(apiError.message);
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		loadApplicationDetails();
-	}, [jobId, applicationId]);
+	usePaymentPolling({
+		paymentStatus: details.payment?.status,
+		refreshDetails,
+	});
 
 	const handleDecision = async (decision) => {
 		try {
@@ -111,40 +87,6 @@ export default function ApplicationDetailsPage() {
 	const handleAccept = () => handleDecision("selected");
 	const handleReject = () => handleDecision("rejected");
 
-	const details = useMemo(
-		() => ({
-			application: applicationDetails?.application ?? null,
-			job: applicationDetails?.job ?? null,
-			contractor: applicationDetails?.contractor ?? null,
-			contractorReviews: applicationDetails?.reviews ?? emptyReviews,
-			negotiation: applicationDetails?.negotiation ?? null,
-			negotiationUpdates: applicationDetails?.negotiationUpdates ?? [],
-			contract: applicationDetails?.contract ?? null,
-			payment: applicationDetails?.payment ?? null,
-		}),
-		[applicationDetails],
-	);
-
-	useEffect(() => {
-		if (applicationDetails?.payment?.status !== "pending") return undefined;
-
-		let active = true;
-		const refreshPayment = async () => {
-			try {
-				const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-				if (active) setApplicationDetails(updatedDetails);
-			} catch {
-				// Keep the current payment visible and retry on the next polling interval.
-			}
-		};
-		const intervalId = window.setInterval(refreshPayment, 15000);
-
-		return () => {
-			active = false;
-			window.clearInterval(intervalId);
-		};
-	}, [applicationDetails?.payment?.status, jobId, applicationId]);
-
 	const handleAcceptNegotiation = async () => {
 		try {
 			setDecisionLoading(true);
@@ -153,9 +95,7 @@ export default function ApplicationDetailsPage() {
 
 			const result = await acceptNegotiationTerms(jobId, applicationId);
 
-			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-
-			setApplicationDetails(updatedDetails);
+			await refreshDetails();
 			setNegotiationSuccess(result.message);
 		} catch (error) {
 			const apiError = parseApiError(error, APPLICATION_ERRORS, "Terms could not be accepted. Please try again.");
@@ -173,9 +113,7 @@ export default function ApplicationDetailsPage() {
 			setNegotiationSuccess("");
 
 			const result = await rejectNegotiationTerms(jobId, applicationId);
-			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-
-			setApplicationDetails(updatedDetails);
+			await refreshDetails();
 			setNegotiationSuccess(result.message);
 		} catch (error) {
 			const apiError = parseApiError(error, APPLICATION_ERRORS, "Terms could not be rejected. Please try again.");
@@ -193,9 +131,7 @@ export default function ApplicationDetailsPage() {
 			setNegotiationSuccess("");
 
 			const result = await submitCounterOffer(jobId, applicationId, counterOffer);
-			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-
-			setApplicationDetails(updatedDetails);
+			await refreshDetails();
 			setNegotiationSuccess(result.message ?? "Counter-offer submitted successfully.");
 		} catch (error) {
 			const apiError = parseApiError(
@@ -216,9 +152,7 @@ export default function ApplicationDetailsPage() {
 			setJobCompletedSuccess("");
 
 			const result = await markJobCompleted(jobId);
-			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-
-			setApplicationDetails(updatedDetails);
+			await refreshDetails();
 			setJobCompletedSuccess(result.message ?? "Job completion confirmed successfully.");
 		} catch (error) {
 			const apiError = parseApiError(
@@ -240,9 +174,7 @@ export default function ApplicationDetailsPage() {
 			setJobIncompleteSuccess("");
 
 			const result = await markJobIncomplete(jobId);
-			const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-
-			setApplicationDetails(updatedDetails);
+			await refreshDetails();
 			setJobIncompleteSuccess(result.message ?? "Job marked as incomplete.");
 		} catch (error) {
 			const apiError = parseApiError(
@@ -259,8 +191,7 @@ export default function ApplicationDetailsPage() {
 
 	const handleSignContract = async (signatureDataUrl) => {
 		await signContract(details.contract.id, signatureDataUrl);
-		const updatedDetails = await getJobApplicationDetails(jobId, applicationId);
-		setApplicationDetails(updatedDetails);
+		await refreshDetails();
 	};
 
 	const canPay = findStatusKey(details.payment?.status, PAYMENT_STATUSES) === "pending";
@@ -283,13 +214,13 @@ export default function ApplicationDetailsPage() {
 
 			window.location.assign(checkoutUrl);
 		} catch (error) {
-			const apiError = parseApiError(error, {}, "Payment checkout could not be started. Please try again.");
+			const apiError = parseApiError(error, PAYMENT_ERRORS, "Payment checkout could not be started. Please try again.");
 			setPaymentError(apiError.message);
 			setPaymentLoading(false);
 		}
 	};
 
-	const tabs = useApplicationTabs({
+	const tabs = createApplicationTabs({
 		application: details.application,
 		job: details.job,
 		negotiation: details.negotiation,
@@ -306,7 +237,7 @@ export default function ApplicationDetailsPage() {
 		onPay: handlePay,
 	});
 
-	const initialTab = getInitialTab({
+	const initialTab = getInitialApplicationTab({
 		contract: details.contract,
 		tabs,
 	});
@@ -397,7 +328,7 @@ export default function ApplicationDetailsPage() {
 					}}
 				>
 					<Stack spacing={2}>
-						<ContractorProfileSection contractor={details.contractor} />
+						<ContractorProfileSection contractor={details.contractor} backTo={`/client/jobs/${jobId}/applications`} />
 
 						<ReviewSummaryCard
 							title="Contractor reviews"

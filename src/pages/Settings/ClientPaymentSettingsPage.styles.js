@@ -51,6 +51,8 @@ export const paymentCardSx = (theme) => ({
 export const cardLayerSx = {
 	position: "relative",
 	zIndex: 1,
+	alignItems: "center",
+	justifyContent: "space-between",
 };
 
 export const cardFooterSx = {
@@ -67,6 +69,7 @@ export const cardIconSx = {
 };
 
 export const verifiedBadgeSx = (theme) => ({
+	alignItems: "center",
 	px: 1.25,
 	py: 0.6,
 	borderRadius: 10,
@@ -93,4 +96,13 @@ export const cardLabelSx = {
 
 export const editAddressButtonSx = {
 	alignSelf: { xs: "stretch", sm: "flex-start" },
+};
+
+export const paymentHeadingRowSx = {
+	alignItems: "center",
+	justifyContent: "space-between",
+};
+
+export const expiryDetailsSx = {
+	alignItems: "flex-end",
 };

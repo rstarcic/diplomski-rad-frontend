@@ -1,16 +1,20 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
-import AppAlert from "../../components/ui/Alert";
+import { useParams } from "react-router-dom";
+
+import { getJobApplicationDetails, getJobApplications } from "../../api/core.api";
+
+import AppAlert from "../../components/ui/AppAlert";
+import { BackButton } from "../../components/ui/BackButton";
 import PageHeader from "../../components/ui/PageHeader";
 import StatusFilter from "../../components/ui/StatusFilter";
-import { APPLICATION_STATUSES } from "../../constants/statuses";
-import { getJobApplications } from "../../api/coreAPI";
-import { parseApiError } from "../../utils/parseApiError";
+
 import { APPLICATION_ERRORS } from "../../constants/apiErrors";
-import ApplicationsCard from "./components/ApplicationsCard";
-import { BackButton } from "../../components/ui/BackButton";
+import { APPLICATION_STATUSES } from "../../constants/statuses";
 import { findStatusKey } from "../../utils/jobs";
+import { parseApiError } from "../../utils/parseApiError";
+
+import ApplicationsCard from "./components/ApplicationsCard";
 
 export default function JobApplicationsPage() {
 	const { jobId } = useParams();
@@ -36,9 +40,37 @@ export default function JobApplicationsPage() {
 			setLoading(true);
 
 			try {
-				const applications = await getJobApplications(jobId);
-				setApplications(applications);
-				setJobTitle(applications[0]?.job?.title ?? "");
+				const applicationItems = await getJobApplications(jobId);
+				const enrichedApplications = await Promise.all(
+					applicationItems.map(async (item) => {
+						const statusKey = findStatusKey(item.application.status, APPLICATION_STATUSES);
+
+						if (statusKey !== "accepted" || item.contract || item.payment) {
+							return item;
+						}
+
+						try {
+							const details = await getJobApplicationDetails(jobId, item.application.id);
+
+							return {
+								...item,
+								application: {
+									...item.application,
+									appliedAt: item.application.appliedAt ?? details.application?.appliedAt ?? null,
+								},
+								job: details.job ?? item.job,
+								contract: details.contract ?? null,
+								payment: details.payment ?? null,
+							};
+						} catch (error) {
+							console.error(`Failed to load details for application ${item.application.id}:`, error);
+							return item;
+						}
+					}),
+				);
+
+				setApplications(enrichedApplications);
+				setJobTitle(enrichedApplications[0]?.job?.title ?? "");
 			} catch (error) {
 				console.error("Error loading applications:", error);
 				const apiError = parseApiError(
@@ -59,8 +91,8 @@ export default function JobApplicationsPage() {
 		<Box>
 			<BackButton backTo="/client/jobs" sx={{ mb: 2 }} />
 			<PageHeader
-				label="Applications"
-				title={jobTitle ? `Applications for "${jobTitle}"` : "Job Applications"}
+				label="Applications for"
+				title={jobTitle ? `${jobTitle}` : "Job Applications"}
 				subtitle="Review and manage all applications submitted for this job."
 			/>
 
@@ -79,9 +111,15 @@ export default function JobApplicationsPage() {
 				)}
 
 				<Grid container spacing={2.5}>
-					{filteredApplications.map(({ application, contractor }) => (
+					{filteredApplications.map(({ application, contractor, job, contract, payment }) => (
 						<Grid key={application.id} size={{ xs: 12, sm: 6, md: 6, lg: 4 }}>
-							<ApplicationsCard application={application} contractor={contractor} />
+							<ApplicationsCard
+								application={application}
+								contractor={contractor}
+								job={job}
+								contract={contract}
+								payment={payment}
+							/>
 						</Grid>
 					))}
 				</Grid>

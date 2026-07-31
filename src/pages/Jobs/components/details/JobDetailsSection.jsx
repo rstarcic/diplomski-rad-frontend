@@ -1,4 +1,6 @@
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
 import StatusChip from "../../../../components/ui/StatusChip";
 import { JOB_STATUSES } from "../../../../constants/statuses";
 import { detailGridSx, sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
@@ -33,20 +35,35 @@ export default function JobDetailsSection({ job }) {
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
-				{/* Title + status */}
+				{/* Description title + status */}
 				<Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 2 }}>
-					<Box>
-						<Typography variant="h6" sx={{ fontWeight: 900 }}>
-							{job.title}
-						</Typography>
+					<Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+						<Box
+							sx={(theme) => ({
+								width: 42,
+								height: 42,
+								borderRadius: "50%",
+								display: "grid",
+								placeItems: "center",
+								bgcolor: theme.custom.jobForm.sectionIconBackground,
+								color: theme.custom.jobForm.sectionIconColor,
+								flexShrink: 0,
+							})}
+						>
+							<WorkRoundedIcon sx={{ fontSize: 21 }} />
+						</Box>
 
-						<Typography variant="body" sx={{ fontWeight: 900 }}>
-							{job.category}
+						<Typography variant="h6" sx={{ fontWeight: 900 }}>
+							Job description
 						</Typography>
-					</Box>
+					</Stack>
 
 					<StatusChip status={job.status} config={JOB_STATUSES[job.status]} />
 				</Stack>
+
+				<Typography variant="subtitle2" sx={(theme) => ({ width: "fit-content", px: 1, py: 0.25, borderRadius: 1.5, bgcolor: theme.custom.jobForm.sectionIconBackground, color: theme.custom.jobForm.sectionIconColor, fontWeight: 900 })}>
+					{job.category}
+				</Typography>
 
 				<Typography variant="body2" color="text.secondary">
 					{job.description}
@@ -60,13 +77,16 @@ export default function JobDetailsSection({ job }) {
 						<Stack spacing={1}>
 							<SectionTitle>Requirements</SectionTitle>
 
-							<Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+							<Stack spacing={1}>
 								{job.requirements.filter(Boolean).map((requirement, index) => (
-									<Typography key={index} component="li" variant="body2" color="text.secondary">
-										{requirement}
-									</Typography>
+									<Stack key={index} direction="row" spacing={1} sx={{ alignItems: "center" }}>
+										<CheckCircleRoundedIcon sx={{ color: "primary.main", fontSize: 17, flexShrink: 0 }} />
+										<Typography variant="body2" color="text.secondary">
+											{requirement}
+										</Typography>
+									</Stack>
 								))}
-							</Box>
+							</Stack>
 						</Stack>
 					</>
 				)}

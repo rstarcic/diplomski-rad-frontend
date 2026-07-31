@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
 import { Navigate, Outlet } from "react-router-dom";
-import { authPageSx } from "../theme/layout";
-import { useAuth } from "../hooks/useAuth";
+
 import { getHomePath } from "../constants/roles";
+import { useAuth } from "../hooks/useAuth";
+import { authPageSx } from "../theme/layout";
 
 export default function AuthLayout() {
 	const { isAuthenticated, loading, role } = useAuth();

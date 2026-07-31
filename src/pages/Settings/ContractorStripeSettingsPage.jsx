@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Box, Card, Stack, Typography } from "@mui/material";
 import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
 
-import { createStripeConnectAccount } from "../../api/paymentAPI";
-import AppAlert from "../../components/ui/Alert";
+import { createStripeConnectAccount } from "../../api/payment.api";
+import AppAlert from "../../components/ui/AppAlert";
 import PageHeader from "../../components/ui/PageHeader";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../components/ui/PrimaryTextField";
+import { PAYMENT_ERRORS } from "../../constants/apiErrors";
 import { useAuth } from "../../hooks/useAuth";
 import { parseApiError } from "../../utils/parseApiError";
 import { surfaceSectionSx } from "../../theme/layout";
@@ -52,7 +53,7 @@ export default function ContractorStripeSettingsPage() {
 		} catch (err) {
 			const apiError = parseApiError(
 				err,
-				{},
+				PAYMENT_ERRORS,
 				"We couldn't start Stripe account setup. Please try again later.",
 			);
 			setError(apiError.message);

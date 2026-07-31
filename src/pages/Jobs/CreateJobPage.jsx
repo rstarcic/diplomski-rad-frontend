@@ -8,13 +8,13 @@ import ContractSection from "./components/create/ContractSection";
 import BudgetWorkloadSection from "./components/create/BudgetWorkloadSection";
 import PreviewSection from "./components/create/PreviewSection";
 import PrimaryButton from "../../components/ui/PrimaryButton";
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
 import AccountSetupAlert from "../../components/account/AccountAlert";
 
 import { getMissingFields, getMissingFieldsMessage } from "../../utils/jobs";
 import { parseApiError } from "../../utils/parseApiError";
 import { JOB_ERRORS } from "../../constants/apiErrors";
-import { createJob, getJobById } from "../../api/coreAPI";
+import { createJob, getJobById } from "../../api/core.api";
 import { useAuth } from "../../hooks/useAuth";
 import { useTimedAlert } from "../../hooks/useTimedAlert";
 
@@ -191,7 +191,7 @@ export default function CreateJobPage() {
 				<AccountSetupAlert
 					accountSetup={setup}
 					actionName="publish a job"
-					settingsPath={setup.profileCompleted ? "/client/settings/stripe" : "/client/profile"}
+					settingsPath={setup.profileCompleted ? "/client/stripe" : "/client/profile"}
 					sx={{ mt: 3 }}
 				/>
 			)}

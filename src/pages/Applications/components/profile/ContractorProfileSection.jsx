@@ -8,64 +8,24 @@ import { Link as RouterLink } from "react-router-dom";
 
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { formatDate } from "../../../../utils/formatters";
+import {
+	aboutSx,
+	avatarSx,
+	clickableAvatarSx,
+	contactIconSx,
+	identityContentSx,
+	identityRowSx,
+	locationIconSx,
+	locationRowSx,
+	memberSinceSx,
+	memberSinceTextSx,
+	profileLinkSx,
+	profileNameLinkSx,
+	profileNameSx,
+} from "./ContractorProfileSection.styles";
+import ProfileContactItem from "./ProfileContactItem";
 
-const avatarSx = {
-	width: 64,
-	height: 64,
-	bgcolor: "primary.light",
-	flexShrink: 0,
-};
-
-const profileLinkSx = {
-	color: "inherit",
-	textDecoration: "none",
-	borderRadius: 2,
-	"&:focus-visible": {
-		outline: "2px solid",
-		outlineColor: "primary.main",
-		outlineOffset: 3,
-	},
-};
-
-const clickableAvatarSx = {
-	...avatarSx,
-	transition: "transform 160ms ease, box-shadow 160ms ease",
-	"&:hover": {
-		transform: "scale(1.05)",
-		boxShadow: 3,
-	},
-};
-
-const contactBoxSx = {
-	display: "flex",
-	alignItems: "center",
-	gap: 1,
-	p: 1.25,
-	border: "1px solid",
-	borderColor: "divider",
-	borderRadius: 2,
-	overflow: "hidden",
-	minWidth: 0,
-};
-
-const contactIconSx = {
-	fontSize: 18,
-	color: "primary.main",
-	flexShrink: 0,
-};
-
-const memberSinceSx = (theme) => ({
-	display: "flex",
-	alignItems: "center",
-	gap: 1,
-	p: 1.25,
-	border: "1px solid",
-	borderColor: theme.custom.tint.primaryBorder,
-	borderRadius: 2,
-	bgcolor: theme.custom.tint.primarySubtle,
-});
-
-export default function ContractorProfileSection({ contractor }) {
+export default function ContractorProfileSection({ contractor, backTo }) {
 	if (!contractor) return null;
 
 	const location =
@@ -81,11 +41,12 @@ export default function ContractorProfileSection({ contractor }) {
 
 				<Divider />
 
-				<Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+				<Stack direction="row" spacing={2} sx={identityRowSx}>
 					{contractorProfilePath ? (
 						<Box
 							component={RouterLink}
 							to={contractorProfilePath}
+							state={backTo ? { from: backTo } : undefined}
 							aria-label={`View ${contractor.fullName}'s public profile`}
 							sx={profileLinkSx}
 						>
@@ -99,30 +60,25 @@ export default function ContractorProfileSection({ contractor }) {
 						</Avatar>
 					)}
 
-					<Box sx={{ minWidth: 0 }}>
+					<Box sx={identityContentSx}>
 						{contractorProfilePath ? (
 							<Typography
 								component={RouterLink}
 								to={contractorProfilePath}
+								state={backTo ? { from: backTo } : undefined}
 								variant="subtitle1"
-								sx={{
-									...profileLinkSx,
-									display: "inline-block",
-									fontWeight: 900,
-									lineHeight: 1.25,
-									"&:hover": { color: "primary.main", textDecoration: "underline" },
-								}}
+								sx={profileNameLinkSx}
 							>
 								{`${contractor.fullName}`}
 							</Typography>
 						) : (
-							<Typography variant="subtitle1" sx={{ fontWeight: 900, lineHeight: 1.25 }}>
+							<Typography variant="subtitle1" sx={profileNameSx}>
 								{`${contractor.fullName}`}
 							</Typography>
 						)}
 
-						<Stack direction="row" spacing={0.5} sx={{ mt: 0.5, alignItems: "center" }}>
-							<LocationOnRoundedIcon sx={{ fontSize: 15, color: "text.secondary" }} />
+						<Stack direction="row" spacing={0.5} sx={locationRowSx}>
+							<LocationOnRoundedIcon sx={locationIconSx} />
 							<Typography variant="body2" color="text.secondary" noWrap>
 								{location}
 							</Typography>
@@ -131,7 +87,7 @@ export default function ContractorProfileSection({ contractor }) {
 				</Stack>
 
 				{contractor.about && (
-					<Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+					<Typography variant="body2" color="text.secondary" sx={aboutSx}>
 						{contractor.about}
 					</Typography>
 				)}
@@ -139,28 +95,16 @@ export default function ContractorProfileSection({ contractor }) {
 				<Divider />
 
 				<Stack spacing={1}>
-					<Box sx={contactBoxSx}>
-						<EmailOutlinedIcon sx={contactIconSx} />
-						<Typography
-							variant="body2"
-							sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-						>
-							{contractor.email ?? "Not provided"}
-						</Typography>
-					</Box>
-					<Box sx={contactBoxSx}>
-						<PhoneOutlinedIcon sx={contactIconSx} />
-						<Typography
-							variant="body2"
-							sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-						>
-							{contractor.phone ?? "Not provided"}
-						</Typography>
-					</Box>
+					<ProfileContactItem icon={EmailOutlinedIcon}>
+						{contractor.email ?? "Not provided"}
+					</ProfileContactItem>
+					<ProfileContactItem icon={PhoneOutlinedIcon}>
+						{contractor.phone ?? "Not provided"}
+					</ProfileContactItem>
 
 					<Box sx={memberSinceSx}>
 						<CalendarMonthRoundedIcon sx={contactIconSx} />
-						<Typography variant="body2" sx={{ fontWeight: 700 }}>
+						<Typography variant="body2" sx={memberSinceTextSx}>
 							Member since {formatDate(contractor.createdAt)}
 						</Typography>
 					</Box>

@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { Alert, Button, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
+
 import AuthCard from "./components/AuthCard";
+import AppAlert from "../../components/ui/AppAlert";
 import FormTextField from "../../components/ui/FormTextField";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import FORM_ERRORS from "../../constants/formError";
 import { AUTH_ERRORS } from "../../constants/apiErrors";
 import { applyApiError } from "../../utils/parseApiError";
-import { forgotPasswordApi } from "../../api/authAPI.js";
+import { forgotPasswordApi } from "../../api/auth.api";
 
-const visualContent = {
+const VISUAL_CONTENT = {
 	title: "Reset your password.",
 	description: "Enter your email and we will send instructions for creating a new password.",
 	ctaLabel: "Back to sign in",
 	ctaTo: "/login",
 };
 
-const formContent = {
+const FORM_CONTENT = {
 	formTitle: "Forgot password?",
 	formSubtitle: "Enter your email to receive reset instructions.",
 };
@@ -40,16 +42,22 @@ export default function ForgotPasswordPage() {
 			await forgotPasswordApi(email);
 			setSent(true);
 		} catch (err) {
-			applyApiError(err, { setApiError: () => setErrors({ email: "Something went wrong. Please try again." }), setErrors, errorMap: AUTH_ERRORS });
+			applyApiError(err, {
+				setApiError: () => setErrors({ email: "Something went wrong. Please try again." }),
+				setErrors,
+				errorMap: AUTH_ERRORS,
+			});
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<AuthCard visualContent={visualContent} formContent={formContent}>
+		<AuthCard visualContent={VISUAL_CONTENT} formContent={FORM_CONTENT}>
 			{sent ? (
-				<Alert severity="success">If this email is registered, you'll receive a reset link within a few minutes.</Alert>
+				<AppAlert severity="success">
+					If this email is registered, you'll receive a reset link within a few minutes.
+				</AppAlert>
 			) : (
 				<Stack component="form" noValidate spacing={2} onSubmit={handleSubmit}>
 					<FormTextField

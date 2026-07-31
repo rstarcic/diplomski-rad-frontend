@@ -1,24 +1,25 @@
 import { Box, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
+import {
+	editFieldSx,
+	editorNameSx,
+	termBoxSx,
+	termContentSx,
+	termLabelSx,
+	termRowSx,
+} from "./CurrentOfferCard.styles";
+
 const BUDGET_TYPE_OPTIONS = [
 	{ value: "fixed", label: "Fixed" },
 	{ value: "hourly", label: "Hourly" },
 ];
 
-const termBoxSx = {
-	p: 2,
-	borderRadius: 2,
-	border: "1px solid",
-	borderColor: "divider",
-	bgcolor: "background.paper",
-};
-
 function TermCell({ label, value, editedBy, isEditing, inputType, multiline, editValue, onChange, options }) {
 	return (
-		<Stack direction="row" spacing={2} sx={{ alignItems: multiline ? "flex-start" : "center" }}>
-			<Box sx={{ flex: 1, minWidth: 0 }}>
+		<Stack direction="row" spacing={2} sx={termRowSx(multiline)}>
+			<Box sx={termContentSx}>
 				<Typography variant="body1">
-					<Box component="span" sx={{ fontWeight: 800 }}>
+					<Box component="span" sx={termLabelSx}>
 						{label}:
 					</Box>{" "}
 					{value}
@@ -26,7 +27,7 @@ function TermCell({ label, value, editedBy, isEditing, inputType, multiline, edi
 				{editedBy && (
 					<Typography variant="caption" color="text.secondary">
 						Last edit by{" "}
-						<Box component="span" sx={{ fontWeight: 700, textTransform: "capitalize" }}>
+						<Box component="span" sx={editorNameSx}>
 							{editedBy}
 						</Box>
 					</Typography>
@@ -41,7 +42,7 @@ function TermCell({ label, value, editedBy, isEditing, inputType, multiline, edi
 					type={options ? undefined : inputType || "text"}
 					multiline={!options && multiline}
 					minRows={!options && multiline ? 2 : undefined}
-					sx={{ width: 220, flexShrink: 0 }}
+					sx={editFieldSx}
 					slotProps={options ? undefined : { htmlInput: { min: 0 } }}
 				>
 					{options?.map((option) => (

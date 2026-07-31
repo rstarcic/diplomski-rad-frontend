@@ -1,6 +1,6 @@
 import { Link, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
 import { ACCOUNT_SETUP_MESSAGES } from "../../constants/accountSetupMessages";
 
 const getRequirementMessage = (accountSetup) => {

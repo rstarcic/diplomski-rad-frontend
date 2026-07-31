@@ -1,5 +1,5 @@
-import { Box, Stack, Typography, LinearProgress } from "@mui/material";
-import { cardSx, mutedTextSx, percentageSx, progressSx } from "./ProfileProgressCard.styles";
+import { Box, Stack, Typography } from "@mui/material";
+import { cardSx, circleInnerSx, circleSx, mutedTextSx, percentageSx } from "./ProfileProgressCard.styles";
 import { getProfileCompletion } from "./profileCompletion";
 
 export default function ProfileProgressCard({ profileData = {}, requiredFields }) {
@@ -11,27 +11,18 @@ export default function ProfileProgressCard({ profileData = {}, requiredFields }
 
 	return (
 		<Box sx={cardSx}>
-			<Stack spacing={2}>
-				<Box>
-					<Typography variant="overline" fontWeight={800}>
-						Profile completion
-					</Typography>
-
-					<Typography variant="h2" sx={percentageSx}>
-						{completionPercent}%
-					</Typography>
+			<Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+				<Box sx={circleSx(completionPercent)} aria-label={`Profile completion ${completionPercent}%`}>
+					<Box sx={circleInnerSx}>
+						<Typography sx={percentageSx}>{completionPercent}%</Typography>
+					</Box>
 				</Box>
 
-				<LinearProgress
-					variant="determinate"
-					value={completionPercent}
-					sx={progressSx}
-					aria-label={`Profile completion ${completionPercent}%`}
-				/>
+				<Box sx={{ flex: 1 }}>
+					<Typography variant="subtitle2" sx={{ color: "white", mb: 0.5 }}>Profile completion</Typography>
+					<Typography variant="body2" sx={mutedTextSx}>{statusText}</Typography>
+				</Box>
 
-				<Typography variant="body2" sx={mutedTextSx}>
-					{statusText}
-				</Typography>
 			</Stack>
 		</Box>
 	);

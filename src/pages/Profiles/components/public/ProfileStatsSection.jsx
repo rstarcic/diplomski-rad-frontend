@@ -11,14 +11,23 @@ const statsGridSx = {
 	gap: 2,
 };
 
-export default function ProfileStatsSection({ stats = [], config = {} }) {
+export default function ProfileStatsSection({ stats = [], config = {}, columns = 2, compact = false, tone }) {
 	return (
-		<Box sx={statsGridSx}>
+		<Box
+			sx={{
+				...statsGridSx,
+				gridTemplateColumns: {
+					xs: "1fr",
+					sm: "repeat(2, minmax(0, 1fr))",
+					lg: `repeat(${columns}, minmax(0, 1fr))`,
+				},
+			}}
+		>
 			{stats.map((stat, index) => {
 				const statConfig = config[stat.id];
 				const Icon = statConfig?.Icon;
 
-				const isLastOdd = stats.length % 2 !== 0 && index === stats.length - 1;
+				const isLastOdd = columns === 2 && stats.length % 2 !== 0 && index === stats.length - 1;
 
 				return (
 					<Box
@@ -34,8 +43,9 @@ export default function ProfileStatsSection({ stats = [], config = {} }) {
 							label={statConfig?.label ?? stat.title}
 							value={stat.value}
 							subtitle={stat.subtitle}
-							icon={Icon ? <Icon /> : null}
-							accent={statConfig?.accent}
+							Icon={Icon}
+							compact={compact}
+							tone={tone ?? statConfig?.tone}
 						/>
 					</Box>
 				);

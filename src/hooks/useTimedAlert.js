@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useTimedAlert(initial = null, duration = 4000) {
-    const [message, setMessage] = useState(initial ?? null);
-    const timer = useRef(null);
+	const [message, setMessage] = useState(initial ?? null);
+	const timer = useRef(null);
 
-    useEffect(() => {
-        if (!message) return;
-        clearTimeout(timer.current);
-        timer.current = setTimeout(() => setMessage(null), duration);
-        return () => clearTimeout(timer.current);
-    }, [message, duration]);
+	useEffect(() => {
+		if (!message) return;
+		clearTimeout(timer.current);
+		timer.current = setTimeout(() => setMessage(null), duration);
+		return () => clearTimeout(timer.current);
+	}, [message, duration]);
 
-    return [message, setMessage];
+	return [message, setMessage];
 }

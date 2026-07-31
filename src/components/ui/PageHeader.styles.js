@@ -18,8 +18,7 @@ export const labelSx = (theme) => ({
 });
 
 export const titleSx = {
-	fontSize: { xs: "2rem", sm: "2.35rem", md: "3rem" },
-	lineHeight: 1.1,
+	maxWidth: 900,
 };
 
 export const subtitleSx = (theme) => ({
@@ -33,6 +32,7 @@ export const actionsSx = {
 	display: "flex",
 	alignItems: "center",
 	gap: 1.5,
+	width: { xs: "100%", md: "auto" },
 	flexWrap: "wrap",
 	justifyContent: { xs: "flex-start", md: "flex-end" },
 	flexShrink: 0,

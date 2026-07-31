@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, CircularProgress, Grid, Stack, Typography } from "@mui/material";
 
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
+import { BackButton } from "../../components/ui/BackButton";
 import PageHeader from "../../components/ui/PageHeader";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
-import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
 import ApplyCard from "./components/details/ApplyCard";
 import ClientProfileSection from "./components/details/ClientProfileSection";
 import JobDetailsSection from "./components/details/JobDetailsSection";
 
-import { createJobApplication, getJobDetails } from "../../api/coreAPI";
+import { createJobApplication, getJobDetails } from "../../api/core.api";
 import { APPLICATION_ERRORS, JOB_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
 import { useAuth } from "../../hooks/useAuth";
@@ -104,6 +105,10 @@ export default function JobDetailsPage() {
 
 	return (
 		<Box>
+			<BackButton backTo="/contractor/jobs/search" sx={{ mb: 2 }}>
+				Back to jobs
+			</BackButton>
+
 			<PageHeader
 				label="Job details"
 				title={job.title}

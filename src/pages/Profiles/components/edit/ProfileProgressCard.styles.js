@@ -1,33 +1,42 @@
 export const cardSx = {
-    p: { xs: 2, sm: 3 },
-    borderRadius: { xs: 3, sm: 4 },
-    color: "primary.contrastText",
-    background:
-        "linear-gradient(135deg, #6C4DF6 0%, #8E6CFF 55%, #B18CFF 100%)",
-    boxShadow: {
-        xs: "0 12px 28px rgba(108, 77, 246, 0.22)",
-        sm: "0 18px 45px rgba(108, 77, 246, 0.28)",
-    },
-};
-
-export const progressSx = {
-    height: { xs: 8, sm: 10 },
-    borderRadius: 999,
-    bgcolor: "rgba(255,255,255,0.24)",
-    "& .MuiLinearProgress-bar": {
-        borderRadius: 999,
-        bgcolor: "#fff",
-    },
+	width: { xs: "100%", md: 370 },
+	p: 2,
+	border: "1px solid rgba(255,255,255,.16)",
+	borderRadius: 3,
+	color: "primary.contrastText",
+	background: "linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.055))",
+	boxShadow: "inset 0 1px 0 rgba(255,255,255,.08), 0 12px 28px rgba(30,18,92,.16)",
+	backdropFilter: "blur(12px)",
 };
 
 export const percentageSx = {
-    fontSize: { xs: "2.25rem", sm: "3.75rem" },
-    fontWeight: 950,
-    lineHeight: 0.95,
-    mt: 0.5,
+	fontSize: "1.05rem",
+	fontWeight: 800,
+	lineHeight: 1.25,
+	color: "white",
 };
 
-export const mutedTextSx = {
-    color: "rgba(255,255,255,0.84)",
-    fontWeight: 600,
+export const circleSx = (percentage) => ({
+	width: 82,
+	height: 82,
+	borderRadius: "50%",
+	p: "6px",
+	flexShrink: 0,
+	background: `conic-gradient(#ddd6fe ${percentage * 3.6}deg, rgba(255,255,255,0.14) 0deg)`,
+	boxShadow: "0 8px 22px rgba(20, 12, 72, .22)",
+});
+
+export const circleInnerSx = {
+	width: "100%",
+	height: "100%",
+	borderRadius: "50%",
+	display: "grid",
+	placeItems: "center",
+	background: "linear-gradient(145deg, rgba(92,61,202,.98), rgba(58,36,150,.98))",
+	boxShadow: "inset 0 0 0 1px rgba(255,255,255,.08)",
 };
+
+export const mutedTextSx = (theme) => ({
+	color: theme.custom.profileProgress.mutedText,
+	fontWeight: 500,
+});

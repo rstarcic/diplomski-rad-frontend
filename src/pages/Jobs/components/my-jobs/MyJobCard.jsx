@@ -4,24 +4,36 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
 
-import { Box, Button, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
 
 import StatusChip from "../../../../components/ui/StatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
+import SecondaryButton from "../../../../components/ui/SecondaryButton";
 import { findStatusKey, formatDeadline } from "../../../../utils/jobs";
 import { formatDate } from "../../../../utils/formatters";
-import { JOB_STATUSES } from "../../../../constants/statuses";
+import {
+	CONTRACT_STATUSES,
+	JOB_STATUSES,
+	PAYMENT_STATUSES,
+} from "../../../../constants/statuses";
 import {
 	cardSx,
+	cardContentSx,
 	actionRowSx,
 	applicationsIconSx,
 	contractIconSx,
 	paymentIconSx,
+	overviewLabelSx,
+	rowValueSx,
+	summaryStatusChipSx,
 	footerSx,
 	footerDividerSx,
 	metaRowSx,
 	metaItemSx,
+	metaIconSx,
 	actionButtonsSx,
 	actionButtonSx,
 } from "./MyJobCard.styles";
@@ -29,6 +41,14 @@ import {
 export default function MyJobCard({ job }) {
 	const navigate = useNavigate();
 	const statusKey = findStatusKey(job.status, JOB_STATUSES);
+	const contractStatusKey = findStatusKey(job.contracts?.status, CONTRACT_STATUSES);
+	const paymentStatusKey = findStatusKey(job.payments?.status, PAYMENT_STATUSES);
+	const contractStatusLabel = contractStatusKey
+		? CONTRACT_STATUSES[contractStatusKey].label
+		: "Not started";
+	const paymentStatusLabel = paymentStatusKey
+		? PAYMENT_STATUSES[paymentStatusKey].label
+		: "No payments yet";
 
 	const handleApplications = () => navigate(`/client/jobs/${job.id}/applications`);
 	const handleEditJob = () => navigate(`/client/jobs/${job.id}/edit`);
@@ -37,7 +57,7 @@ export default function MyJobCard({ job }) {
 	const canCreateSimilarJob = statusKey === "cancelled" && !job.replacementJobId;
 	return (
 		<Card sx={cardSx}>
-			<CardContent sx={{ p: 3, height: "100%", display: "flex", flexDirection: "column" }}>
+			<CardContent sx={cardContentSx}>
 				<Stack spacing={2.2} sx={{ flex: 1 }}>
 					<Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
 						<Box sx={{ minWidth: 0 }}>
@@ -57,9 +77,9 @@ export default function MyJobCard({ job }) {
 						<Chip label={job.budgetType} size="small" color="primary" variant="outlined" />
 					</Stack>
 
-					<Divider />
-
 					<Stack spacing={1.2}>
+						<Typography sx={overviewLabelSx}>Overview</Typography>
+
 						<Stack direction="row" sx={actionRowSx}>
 							<Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
 								<Box sx={applicationsIconSx}>
@@ -69,12 +89,16 @@ export default function MyJobCard({ job }) {
 									<Typography variant="body2" fontWeight={800}>
 										Applications
 									</Typography>
-									<Typography variant="caption" color="text.secondary">
-										{job.applications?.total ?? 0} applicants
-									</Typography>
 								</Box>
 							</Stack>
-							{job.applications?.new > 0 && <Chip label={`${job.applications.new} new`} size="small" color="primary" />}
+							<Stack direction="row" spacing={1.75} sx={{ alignItems: "center" }}>
+								{job.applications?.new > 0 && (
+									<Chip label={`${job.applications.new} new`} size="small" color="primary" />
+								)}
+								<Typography variant="body2" sx={rowValueSx}>
+									{job.applications?.total ?? 0}
+								</Typography>
+							</Stack>
 						</Stack>
 
 						<Stack direction="row" sx={actionRowSx}>
@@ -86,11 +110,9 @@ export default function MyJobCard({ job }) {
 									<Typography variant="body2" fontWeight={800}>
 										Contract
 									</Typography>
-									<Typography variant="caption" color="text.secondary">
-										{job.contracts?.status ?? "Not started"}
-									</Typography>
 								</Box>
 							</Stack>
+							<Chip label={contractStatusLabel} size="small" sx={summaryStatusChipSx} />
 						</Stack>
 
 						<Stack direction="row" sx={actionRowSx}>
@@ -102,11 +124,9 @@ export default function MyJobCard({ job }) {
 									<Typography variant="body2" fontWeight={800}>
 										Payment
 									</Typography>
-									<Typography variant="caption" color="text.secondary">
-										{job.payments?.status ?? "No payments yet"}
-									</Typography>
 								</Box>
 							</Stack>
+							<Chip label={paymentStatusLabel} size="small" sx={summaryStatusChipSx} />
 						</Stack>
 					</Stack>
 				</Stack>
@@ -115,27 +135,33 @@ export default function MyJobCard({ job }) {
 					<Divider sx={footerDividerSx} />
 					<Stack sx={metaRowSx}>
 						<Box sx={metaItemSx}>
-							<Typography variant="caption" color="text.secondary">
-								Deadline
-							</Typography>
-							<Typography variant="body2" fontWeight={800}>
-								{formatDeadline(job.deadline)}
-							</Typography>
+							<CalendarMonthOutlinedIcon sx={metaIconSx} />
+							<Box sx={{ minWidth: 0 }}>
+								<Typography variant="caption" color="text.secondary">
+									Deadline
+								</Typography>
+								<Typography variant="body2" fontWeight={800}>
+									{formatDeadline(job.deadline)}
+								</Typography>
+							</Box>
 						</Box>
 						<Box sx={metaItemSx}>
-							<Typography variant="caption" color="text.secondary">
-								Last updated
-							</Typography>
-							<Typography variant="body2" fontWeight={800}>
-								{formatDate(job.updatedAt)}
-							</Typography>
+							<UpdateOutlinedIcon sx={metaIconSx} />
+							<Box sx={{ minWidth: 0 }}>
+								<Typography variant="caption" color="text.secondary">
+									Last updated
+								</Typography>
+								<Typography variant="body2" fontWeight={800}>
+									{formatDate(job.updatedAt)}
+								</Typography>
+							</Box>
 						</Box>
 					</Stack>
 					{statusKey === "cancelled" ? (
 						<Stack sx={actionButtonsSx}>
 							{canCreateSimilarJob && (
 								<PrimaryButton
-									size="small"
+									size="large"
 									startIcon={<ContentCopyOutlinedIcon />}
 									onClick={handleCreateSimilarJob}
 									sx={actionButtonSx}
@@ -144,20 +170,19 @@ export default function MyJobCard({ job }) {
 								</PrimaryButton>
 							)}
 
-							<Button
-								size="small"
-								variant="outlined"
+							<SecondaryButton
+								size="large"
 								startIcon={<PeopleAltOutlinedIcon />}
 								onClick={handleApplications}
 								sx={actionButtonSx}
 							>
 								Applications
-							</Button>
+							</SecondaryButton>
 						</Stack>
 					) : (
 						<Stack sx={actionButtonsSx}>
 							<PrimaryButton
-								size="small"
+								size="large"
 								startIcon={<PeopleAltOutlinedIcon />}
 								onClick={handleApplications}
 								sx={actionButtonSx}
@@ -166,15 +191,14 @@ export default function MyJobCard({ job }) {
 							</PrimaryButton>
 
 							{statusKey === "open" && (
-								<Button
-									size="small"
-									variant="outlined"
+								<SecondaryButton
+									size="large"
 									startIcon={<EditOutlinedIcon />}
 									onClick={handleEditJob}
 									sx={actionButtonSx}
 								>
 									Edit
-								</Button>
+								</SecondaryButton>
 							)}
 						</Stack>
 					)}

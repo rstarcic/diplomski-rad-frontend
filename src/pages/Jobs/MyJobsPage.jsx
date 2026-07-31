@@ -3,10 +3,10 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import PageHeader from "../../components/ui/PageHeader";
 import StatusFilter from "../../components/ui/StatusFilter";
 import MyJobCard from "./components/my-jobs/MyJobCard";
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
 import { JOB_STATUSES } from "../../constants/statuses";
 import { findStatusKey } from "../../utils/jobs";
-import { getMyJobs } from "../../api/coreAPI";
+import { getMyJobs } from "../../api/core.api";
 import { parseApiError } from "../../utils/parseApiError";
 import { JOB_ERRORS } from "../../constants/apiErrors";
 

@@ -3,10 +3,8 @@ import { Box, CircularProgress } from "@mui/material";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import "./App.css";
-
 import AuthLayout from "./layouts/AuthLayout";
-import AppLayout from "./layouts/AppLayout";
+import AppLayout from "./layouts/AppLayout/AppLayout";
 import RequireRole from "./components/auth/RequireRole";
 import RoleRedirect from "./components/auth/RoleRedirect";
 import { ROLES } from "./constants/roles";
@@ -56,7 +54,7 @@ function App() {
 						<Route path="/signup" element={<SignupPage />} />
 						<Route path="/forgot-password" element={<ForgotPassword />} />
 						<Route path="/reset-password" element={<ResetPassword />} />
-					<Route path="/error" element={<ErrorPage />} />
+						<Route path="/error" element={<ErrorPage />} />
 					</Route>
 
 					<Route element={<AppLayout />}>
@@ -69,7 +67,7 @@ function App() {
 							<Route path="jobs/:jobId/applications" element={<JobApplicationsPage />} />
 							<Route path="jobs/:jobId/applications/:applicationId" element={<ApplicationDetailsPage />} />
 							<Route path="profile" element={<ClientProfilePage />} />
-							<Route path="settings/stripe" element={<ClientPaymentSettingsPage />} />
+							<Route path="stripe" element={<ClientPaymentSettingsPage />} />
 							<Route path="contractors/:contractorId" element={<ContractorPublicProfilePage />} />
 						</Route>
 						<Route path="/contractor" element={<RequireRole role={ROLES.CONTRACTOR} />}>
@@ -80,7 +78,7 @@ function App() {
 							<Route path="applications" element={<ContractorApplicationsPage />} />
 							<Route path="applications/:applicationId" element={<ContractorApplicationDetailsPage />} />
 							<Route path="profile" element={<ContractorProfilePage />} />
-							<Route path="settings/stripe" element={<ContractorStripeSettingsPage />} />
+							<Route path="stripe" element={<ContractorStripeSettingsPage />} />
 							<Route path="clients/:clientId" element={<ClientPublicProfilePage />} />
 						</Route>
 					</Route>

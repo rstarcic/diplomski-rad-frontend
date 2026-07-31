@@ -1,11 +1,12 @@
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { surfaceSectionSx } from "../../../../theme/layout";
+import SectionHeading from "./SectionHeading";
 
-const titleSx = { mb: 2, fontWeight: 800 };
 const addRequirementSx = { mt: 1.5, fontWeight: 800 };
 
 const requirementRowSx = {
@@ -54,9 +55,9 @@ export default function ContractSection({ jobData, setJobData }) {
 
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={titleSx}>
+			<SectionHeading icon={<DescriptionRoundedIcon />} subtitle="Describe the deliverables and requirements for this job.">
 				Contract expectations
-			</Typography>
+			</SectionHeading>
 
 			<Stack spacing={2}>
 				<PrimaryTextField

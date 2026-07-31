@@ -1,11 +1,18 @@
 import { Box, Chip, Stack, Typography } from "@mui/material";
+
 import { formatDate } from "../../../../utils/formatters";
 import { getNegotiationUpdateLabel } from "./negotiationLabels";
-
-const rightPanelTitleSx = {
-	fontWeight: 800,
-	mb: 1.5,
-};
+import {
+	latestChipSx,
+	rightPanelTitleSx,
+	timelineConnectorSx,
+	timelineContentSx,
+	timelineDotSx,
+	timelineHeadingSx,
+	timelineItemSx,
+	timelineMetaSx,
+	timelineRailSx,
+} from "./Timeline.styles";
 
 export default function NegotiationTimeline({ updates }) {
 	if (!updates?.length) return null;
@@ -20,24 +27,14 @@ export default function NegotiationTimeline({ updates }) {
 					const isLast = index === updates.length - 1;
 					const updateLabel = getNegotiationUpdateLabel(update, index);
 					return (
-						<Box key={update.id} sx={{ display: "flex", gap: 1.5 }}>
-							<Stack sx={{ width: 16, alignItems: "center", flexShrink: 0, mt: 0.3 }}>
-								<Box
-									sx={{
-										width: 10,
-										height: 10,
-										borderRadius: "50%",
-										flexShrink: 0,
-										bgcolor: isLast ? "primary.main" : "background.paper",
-										border: "2px solid",
-										borderColor: isLast ? "primary.main" : "divider",
-									}}
-								/>
-								{!isLast && <Box sx={{ width: 2, flex: 1, bgcolor: "divider", my: 0.5, minHeight: 20 }} />}
+						<Box key={update.id} sx={timelineItemSx}>
+							<Stack sx={timelineRailSx}>
+								<Box sx={timelineDotSx(isLast)} />
+								{!isLast && <Box sx={timelineConnectorSx} />}
 							</Stack>
 
-							<Box sx={{ pb: isLast ? 0 : 2, minWidth: 0 }}>
-								<Stack direction="row" spacing={0.75} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+							<Box sx={timelineContentSx(isLast)}>
+								<Stack direction="row" spacing={0.75} sx={timelineHeadingSx}>
 									<Typography variant="body2" fontWeight={800}>
 										{updateLabel}
 									</Typography>
@@ -46,14 +43,14 @@ export default function NegotiationTimeline({ updates }) {
 											label="Latest"
 											size="small"
 											color="primary"
-											sx={{ height: 17, fontSize: 10, fontWeight: 700 }}
+											sx={latestChipSx}
 										/>
 									)}
 								</Stack>
 								<Typography
 									variant="caption"
 									color="text.secondary"
-									sx={{ textTransform: "capitalize", display: "block" }}
+									sx={timelineMetaSx}
 								>
 									{update.submittedBy} · {formatDate(update.submittedAt)}
 								</Typography>

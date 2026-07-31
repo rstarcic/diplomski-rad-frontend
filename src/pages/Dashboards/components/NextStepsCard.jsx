@@ -1,43 +1,29 @@
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import { Box, Card, Chip, Paper, Stack, Typography } from "@mui/material";
-import { sectionTitleSx, sectionSx } from "../../../theme/layout";
+import { Link as RouterLink } from "react-router-dom";
 
-const itemSx = (theme) => ({
-	position: "relative",
-	overflow: "hidden",
-	borderRadius: 3,
-	p: { xs: 1.75, sm: 2.2 },
-	background: theme.custom.dashboardList.cardBackground,
-	backdropFilter: "blur(14px)",
-	border: theme.custom.dashboardList.cardBorder,
-	boxShadow: theme.custom.dashboardList.cardShadow,
-	cursor: "pointer",
-	"&::before": {
-		content: '""',
-		position: "absolute",
-		top: 0,
-		left: 0,
-		width: 7,
-		height: "100%",
-		background: theme.custom.dashboardList.accent,
-	},
-});
+import { useAuth } from "../../../hooks/useAuth";
+import { sectionSx, sectionTitleSx } from "../../../theme/layout";
 
-const itemContentSx = {
-	display: "grid",
-	gridTemplateColumns: { xs: "1fr", sm: "minmax(0, 1fr) auto" },
-	gap: { xs: 1, sm: 2 },
-	alignItems: "start",
-};
+import { getActionPresentation } from "../dashboardActions";
+import { getDashboardItemPath } from "../dashboardRoutes";
+import {
+	actionAsideSx,
+	actionCardSx,
+	actionContentSx,
+	actionCtaSx,
+	actionSubtitleSx,
+	actionTextSx,
+	actionTitleSx,
+	eyebrowSx,
+	jobTitleSx,
+	priorityChipSx,
+} from "./NextStepsCard.styles";
 
-const chipSx = (theme) => ({
-	width: "fit-content",
-	fontWeight: 700,
-	borderRadius: "10px",
-	backgroundColor: theme.custom.dashboardList.chipBackground,
-	color: theme.custom.dashboardList.chipColor,
-});
+export default function NextStepsCard({ actions = [] }) {
+	const { role } = useAuth();
 
-export default function NextStepsCard({ actions }) {
 	return (
 		<Paper elevation={0} sx={sectionSx}>
 			<Typography variant="h6" sx={sectionTitleSx}>
@@ -45,27 +31,53 @@ export default function NextStepsCard({ actions }) {
 			</Typography>
 
 			<Stack spacing={{ xs: 1.25, sm: 2 }} sx={{ mt: { xs: 2, sm: 2.5 } }}>
-				{actions.map((action) => (
-					<Card key={action.id} sx={itemSx}>
-						<Box sx={itemContentSx}>
-							<Box sx={{ minWidth: 0 }}>
-								<Typography
-									variant="subtitle1"
-									noWrap
-									sx={{ fontWeight: 800, color: "text.primary", letterSpacing: 0 }}
-								>
-									{action.title}
-								</Typography>
+				{actions.map((action) => {
+					const path = getDashboardItemPath(action, role);
+					const { eyebrow, title, ctaLabel } = getActionPresentation(action);
 
-								<Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6 }}>
-									{action.subtitle}
-								</Typography>
+					return (
+						<Card
+							key={action.id}
+							component={path ? RouterLink : "div"}
+							to={path || undefined}
+							aria-label={path ? `Open ${action.title}` : undefined}
+							sx={actionCardSx(Boolean(path))}
+						>
+							<Box sx={actionContentSx}>
+								<Box sx={actionTextSx}>
+									<Typography variant="overline" sx={eyebrowSx}>
+										<BoltRoundedIcon fontSize="small" />
+										{eyebrow}
+									</Typography>
+
+									<Typography variant="h6" sx={actionTitleSx}>
+										{title}
+									</Typography>
+
+									{action.job_title && (
+										<Typography variant="body2" sx={jobTitleSx}>
+											{action.job_title}
+										</Typography>
+									)}
+
+									<Typography variant="body2" sx={actionSubtitleSx}>
+										{action.subtitle}
+									</Typography>
+								</Box>
+
+								<Box sx={actionAsideSx}>
+									<Chip label={action.meta} size="small" sx={priorityChipSx} />
+									{path && (
+										<Box aria-hidden sx={actionCtaSx}>
+											{ctaLabel}
+											<ArrowForwardRoundedIcon fontSize="small" />
+										</Box>
+									)}
+								</Box>
 							</Box>
-
-							<Chip label={action.meta} size="small" sx={chipSx} />
-						</Box>
-					</Card>
-				))}
+						</Card>
+					);
+				})}
 			</Stack>
 		</Paper>
 	);

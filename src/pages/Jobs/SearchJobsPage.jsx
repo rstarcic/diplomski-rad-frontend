@@ -2,7 +2,7 @@ import { useState } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { Box, Drawer, Pagination } from "@mui/material";
 
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
 import SecondaryButton from "../../components/ui/SecondaryButton";
 import Filters from "./components/search/Filters";
 import SearchJobsHeader from "./components/search/SearchJobsHeader";

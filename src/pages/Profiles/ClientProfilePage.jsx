@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
 
 import PageHeader from "../../components/ui/PageHeader";
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
 import ProfileDetailsSection from "./components/edit/ProfileDetailsSection";
 import ProfileImageUpload from "./components/edit/ProfileImageUpload";
 import ProfileProgressCard from "./components/edit/ProfileProgressCard";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 
-import { reviewCriteria } from "../../components/reviews/reviewCriteria";
-import { getMyProfile, updateMyProfile } from "../../api/coreAPI";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
+import { getMyProfile, updateMyProfile } from "../../api/core.api";
 import { useAuth } from "../../hooks/useAuth";
 import { PROFILE_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
@@ -45,10 +46,11 @@ export default function ClientProfilePage() {
 			try {
 				const { profile, reviews } = await getMyProfile();
 				setProfileCompleted(profile.profileCompleted);
-				setProfileData({
+				const loadedProfile = {
 					...emptyProfileData,
 					...profile,
-				});
+				};
+				setProfileData(loadedProfile);
 
 				setReviewData({
 					...emptyReviewData,
@@ -96,6 +98,7 @@ export default function ClientProfilePage() {
 			const { profile } = await updateMyProfile(profileData);
 
 			setProfileCompleted(profile.profileCompleted);
+			setProfileData((current) => ({ ...current, ...profile }));
 			setSuccess("Profile saved successfully.");
 		} catch (err) {
 			console.error("Failed to update profile:", err);
@@ -109,7 +112,7 @@ export default function ClientProfilePage() {
 	return (
 		<Box>
 			<PageHeader
-				label="Settings"
+				label="Your profile"
 				title="Client Profile"
 				subtitle="Complete your profile before publishing jobs and starting contracts."
 			>
@@ -150,6 +153,7 @@ export default function ClientProfilePage() {
 
 							<ReviewSummaryCard
 								title="Reviews from contractors"
+								titleIcon={<StarRoundedIcon />}
 								summary={reviewData.summary}
 								criteria={reviewCriteria.client}
 								reviews={reviewData.reviews}

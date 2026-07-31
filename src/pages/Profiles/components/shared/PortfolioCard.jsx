@@ -104,6 +104,7 @@ export default function PortfolioCard({
 	onRemoveItem,
 	title = "Portfolio",
 	disablePaper = false,
+	featured = false,
 }) {
 	const [form, setForm] = useState(emptyForm);
 	const [editingId, setEditingId] = useState(null);
@@ -111,8 +112,8 @@ export default function PortfolioCard({
 	const [open, setOpen] = useState(false);
 	const [openProjects, setOpenProjects] = useState(false);
 
-	const previewItems = editable ? items : items.slice(0, PREVIEW_LIMIT);
-	const hasMoreProjects = !editable && items.length > PREVIEW_LIMIT;
+	const previewItems = editable ? items : items.slice(0, featured ? 1 : PREVIEW_LIMIT);
+	const hasMoreProjects = !editable && (featured ? items.length > 0 : items.length > PREVIEW_LIMIT);
 	const isEditing = Boolean(editingId);
 
 	const handleChange = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -174,11 +175,22 @@ export default function PortfolioCard({
 						</Typography>
 					)}
 				</Box>
+
+				{featured && items.length > 0 && (
+					<Button
+						variant="outlined"
+						endIcon={<OpenInNewRoundedIcon />}
+						onClick={() => setOpenProjects(true)}
+						sx={{ ml: "auto", flexShrink: 0 }}
+					>
+						View full portfolio
+					</Button>
+				)}
 			</Stack>
 
 			{previewItems.length > 0 ? (
 				<>
-					<Box sx={portfolioGridSx}>
+					<Box sx={featured ? { ...portfolioGridSx, gridTemplateColumns: "minmax(0, 1fr)", maxWidth: 480 } : portfolioGridSx}>
 						{previewItems.map((item, index) => (
 							<PortfolioItem
 								key={item.id ?? index}
@@ -190,7 +202,7 @@ export default function PortfolioCard({
 						))}
 					</Box>
 
-					{hasMoreProjects && (
+					{hasMoreProjects && !featured && (
 						<Button
 							variant="text"
 							endIcon={<ArrowForwardRoundedIcon />}

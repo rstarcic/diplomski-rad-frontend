@@ -1,24 +1,25 @@
 import { useState } from "react";
-import GoogleIcon from "@mui/icons-material/Google";
 import { Button, Divider, Link, Stack } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+
+import { startGoogleLogin } from "../../../api/auth.api";
+import AppAlert from "../../../components/ui/AppAlert";
 import FormTextField from "../../../components/ui/FormTextField";
 import PasswordTextField from "../../../components/ui/PasswordTextField";
-import AppAlert from "../../../components/ui/Alert";
-import { useFormErrors } from "../../../hooks/useFormErrors";
-import { useAuth } from "../../../hooks/useAuth";
-import { useTimedAlert } from "../../../hooks/useTimedAlert";
-import { getHomePath } from "../../../constants/roles";
-import FORM_ERRORS from "../../../constants/formError";
 import { AUTH_ERRORS } from "../../../constants/apiErrors";
+import FORM_ERRORS from "../../../constants/formError";
+import { getHomePath } from "../../../constants/roles";
+import { useAuth } from "../../../hooks/useAuth";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import { useTimedAlert } from "../../../hooks/useTimedAlert";
 import { applyApiError } from "../../../utils/parseApiError";
-import { startGoogleLogin } from "../../../api/authAPI";
 
 export default function LoginForm({ initialError = null, successMessage = null }) {
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const [loading, setLoading] = useState(false);
 	const [apiError, setApiError] = useTimedAlert(initialError, 7000);
-	const [success, setSuccess] = useTimedAlert(successMessage, 5000);
+	const [success] = useTimedAlert(successMessage, 5000);
 	const { errors, setErrors, clearErrors } = useFormErrors();
 	const { login } = useAuth();
 	const navigate = useNavigate();
@@ -53,7 +54,7 @@ export default function LoginForm({ initialError = null, successMessage = null }
 	};
 
 	return (
-		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
+		<Stack component="form" noValidate onSubmit={handleSubmit} sx={{ width: "100%" }}>
 			{success && (
 				<AppAlert severity="success" sx={{ mb: 2 }}>
 					{success}
@@ -82,6 +83,7 @@ export default function LoginForm({ initialError = null, successMessage = null }
 				value={formData.password}
 				onChange={updateField("password")}
 				errors={errors}
+				autoComplete="current-password"
 				required
 			/>
 

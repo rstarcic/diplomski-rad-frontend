@@ -1,7 +1,9 @@
 export const cardSx = {
 	p: { xs: 2.5, sm: 3.5 },
-	borderRadius: 3,
-	boxShadow: "0 2px 16px rgba(15,23,42,0.07)",
+	borderRadius: 2.5,
+	border: "1px solid",
+	borderColor: "divider",
+	boxShadow: "0 8px 24px rgba(37, 48, 82, 0.06)",
 	bgcolor: "background.paper",
 };
 
@@ -10,9 +12,9 @@ export const headerSx = {
 };
 
 export const avatarSx = {
-	width: { xs: 110, sm: 150 },
-	height: { xs: 110, sm: 150 },
-	border: "4px solid",
+	width: { xs: 110, sm: 136 },
+	height: { xs: 110, sm: 136 },
+	border: "2px solid",
 	borderColor: "primary.light",
 	bgcolor: "primary.light",
 	flexShrink: 0,
@@ -36,7 +38,7 @@ export const infoRowSx = {
 
 export const infoLabelSx = {
 	color: "text.secondary",
-	minWidth: 120,
+	minWidth: 0,
 	flexShrink: 0,
 };
 

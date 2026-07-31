@@ -34,7 +34,19 @@ const dialogTitleSx = {
 	pr: 1,
 };
 
-export default function ReviewSummaryCard({ title = "Reviews", summary = {}, criteria = [], reviews = [] }) {
+const titleIconSx = (theme) => ({
+	width: 42,
+	height: 42,
+	borderRadius: "50%",
+	display: "grid",
+	placeItems: "center",
+	flexShrink: 0,
+	color: theme.custom.iconPalette.applications.color,
+	bgcolor: theme.custom.iconPalette.applications.bg,
+	"& .MuiSvgIcon-root": { fontSize: 21 },
+});
+
+export default function ReviewSummaryCard({ title = "Reviews", titleIcon, summary = {}, criteria = [], reviews = [] }) {
 	const [openReviews, setOpenReviews] = useState(false);
 
 	const totalReviews = summary.totalReviews ?? reviews.length;
@@ -48,15 +60,17 @@ export default function ReviewSummaryCard({ title = "Reviews", summary = {}, cri
 		<>
 			<Card sx={surfaceSectionSx}>
 				<Stack spacing={2}>
-					<Box>
-						<Typography variant="h6" sx={sectionTitleSx}>
-							{title}
-						</Typography>
-
-						<Typography variant="body2" color="text.secondary">
-							{totalReviews} reviews
-						</Typography>
-					</Box>
+					<Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+						{titleIcon && (
+							<Box sx={titleIconSx}>
+								{titleIcon}
+							</Box>
+						)}
+						<Box>
+							<Typography variant="h6" sx={sectionTitleSx}>{title}</Typography>
+							<Typography variant="body2" color="text.secondary">{totalReviews} reviews</Typography>
+						</Box>
+					</Stack>
 
 					<Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
 						<Typography variant="h5" sx={{ fontWeight: 900, lineHeight: 1 }}>

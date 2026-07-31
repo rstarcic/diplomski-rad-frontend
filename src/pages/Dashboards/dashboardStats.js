@@ -1,32 +1,32 @@
-import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
-import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
-import DrawRoundedIcon from "@mui/icons-material/DrawRounded";
-import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
-import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
 import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
+import AssignmentTurnedInRoundedIcon from "@mui/icons-material/AssignmentTurnedInRounded";
+import DrawRoundedIcon from "@mui/icons-material/DrawRounded";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
+import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import WorkOutlineRoundedIcon from "@mui/icons-material/WorkOutlineRounded";
 
 export const dashboardStatCardConfig = {
 	client: {
 		active_jobs: {
 			label: "Active jobs",
 			Icon: WorkOutlineRoundedIcon,
-			accent: "#0f766e",
+			tone: "green",
 		},
 		applications: {
 			label: "Applications",
 			Icon: MailOutlineRoundedIcon,
-			accent: "#ea580c",
+			tone: "orange",
 		},
 		signed_contracts: {
 			label: "Signed contracts",
 			Icon: DrawRoundedIcon,
-			accent: "#7c3aed",
+			tone: "violet",
 		},
 		hiring_spend: {
 			label: "Hiring spend",
 			Icon: PaymentsRoundedIcon,
-			accent: "#1d4ed8",
+			tone: "blue",
 		},
 	},
 
@@ -34,22 +34,22 @@ export const dashboardStatCardConfig = {
 		active_contracts: {
 			label: "Active contracts",
 			Icon: AssignmentTurnedInRoundedIcon,
-			accent: "#0f766e",
+			tone: "green",
 		},
 		pending_payments: {
 			label: "Pending payments",
 			Icon: PaymentsRoundedIcon,
-			accent: "#ea580c",
+			tone: "orange",
 		},
 		job_success: {
 			label: "Job success",
 			Icon: StarRoundedIcon,
-			accent: "#f59e0b",
+			tone: "rating",
 		},
 		total_earnings: {
 			label: "Total earnings",
 			Icon: AccountBalanceWalletRoundedIcon,
-			accent: "#1d4ed8",
+			tone: "blue",
 		},
 	},
 };

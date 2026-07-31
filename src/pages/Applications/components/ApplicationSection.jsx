@@ -4,8 +4,8 @@ import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 
 import PrimaryButton from "../../../components/ui/PrimaryButton";
 import SecondaryButton from "../../../components/ui/SecondaryButton";
-import StatusChip from "../../../components/ui/StatusChip";
-import AppAlert from "../../../components/ui/Alert";
+import ApplicationStatusChip from "../../../components/ui/ApplicationStatusChip";
+import AppAlert from "../../../components/ui/AppAlert";
 import { sectionTitleSx, surfaceSectionSx } from "../../../theme/layout";
 import { formatDate } from "../../../utils/formatters";
 import { findStatusKey } from "../../../utils/jobs";
@@ -79,143 +79,143 @@ export default function ApplicationSection({
 		<>
 			{hasCompletionDispute && (
 				<AppAlert severity="warning" title="Work completion dispute" sx={{ mb: 2 }}>
-					The client and contractor did not reach an agreement about the completed work. The job and contract
-					have therefore been closed as disputed. Any further resolution, including payment-related claims,
-					must take place outside the application through the appropriate legal process or competent court.
+					The client and contractor did not reach an agreement about the completed work. The job and contract have
+					therefore been closed as disputed. Any further resolution, including payment-related claims, must take place
+					outside the application through the appropriate legal process or competent court.
 				</AppAlert>
 			)}
 
 			<Card elevation={0} sx={surfaceSectionSx}>
-			<Stack spacing={2}>
-				<Stack direction="row" sx={headerSx}>
-					<Typography variant="h6" sx={sectionTitleSx}>
-						Application
-					</Typography>
-
-					{statusKey && <StatusChip status={statusKey} config={APPLICATION_STATUSES} />}
-				</Stack>
-
-				<Divider />
-
-				<Stack spacing={0.5}>
-					<Typography variant="caption" color="text.secondary" sx={labelSx}>
-						Cover letter
-					</Typography>
-
-					<Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
-						{application.coverLetter}
-					</Typography>
-				</Stack>
-
-				<Divider />
-
-				<Stack direction="row" spacing={3}>
-					<Stack spacing={0.25}>
-						<Typography variant="caption" color="text.secondary" sx={labelSx}>
-							Applied
+				<Stack spacing={2}>
+					<Stack direction="row" sx={headerSx}>
+						<Typography variant="h6" sx={sectionTitleSx}>
+							Application
 						</Typography>
 
-						<Typography variant="body2" fontWeight={700}>
-							{formatDate(application.appliedAt)}
+						<ApplicationStatusChip status={application.status} />
+					</Stack>
+
+					<Divider />
+
+					<Stack spacing={0.5}>
+						<Typography variant="caption" color="text.secondary" sx={labelSx}>
+							Cover letter
+						</Typography>
+
+						<Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+							{application.coverLetter}
 						</Typography>
 					</Stack>
+
+					<Divider />
+
+					<Stack direction="row" spacing={3}>
+						<Stack spacing={0.25}>
+							<Typography variant="caption" color="text.secondary" sx={labelSx}>
+								Applied
+							</Typography>
+
+							<Typography variant="body2" fontWeight={700}>
+								{formatDate(application.appliedAt)}
+							</Typography>
+						</Stack>
+					</Stack>
+
+					{clientCanMakeDecision && (
+						<>
+							<Divider />
+
+							<Stack
+								direction={{
+									xs: "column-reverse",
+									sm: "row",
+								}}
+								spacing={1.5}
+								sx={actionsSx}
+							>
+								<SecondaryButton disabled={decisionLoading} onClick={onReject}>
+									Reject
+								</SecondaryButton>
+
+								<PrimaryButton disabled={decisionLoading} onClick={onAccept}>
+									{decisionLoading ? "Updating..." : "Accept application"}
+								</PrimaryButton>
+							</Stack>
+						</>
+					)}
+
+					{contractorCanMakeDecision && (
+						<>
+							<Divider />
+
+							<Typography variant="body2" color="text.secondary">
+								The client selected your application and wants to proceed with you. Review the original job terms before
+								responding.
+							</Typography>
+
+							<Stack direction="row" sx={actionsSx}>
+								<PrimaryButton
+									startIcon={<SwapHorizRoundedIcon />}
+									disabled={decisionLoading}
+									onClick={onReviewOffer}
+									sx={reviewOfferBtnSx}
+								>
+									Review job terms
+								</PrimaryButton>
+							</Stack>
+						</>
+					)}
+
+					{contractorCanWithdraw && (
+						<>
+							<Divider />
+
+							<Stack direction="row" sx={actionsSx}>
+								<SecondaryButton disabled={applicationWithdrawLoading} onClick={onApplicationWithdraw}>
+									{applicationWithdrawLoading ? "Withdrawing..." : "Withdraw application"}
+								</SecondaryButton>
+							</Stack>
+						</>
+					)}
+
+					{canMarkJobDone && (
+						<>
+							<Divider />
+
+							<Stack direction="row" sx={actionsSx}>
+								<PrimaryButton
+									startIcon={<TaskAltRoundedIcon />}
+									disabled={jobDoneLoading}
+									onClick={onJobDone}
+									sx={reviewOfferBtnSx}
+								>
+									{jobDoneLoading ? "Updating..." : "Job done"}
+								</PrimaryButton>
+							</Stack>
+						</>
+					)}
+
+					{canMarkJobCompleted && (
+						<>
+							<Divider />
+
+							<Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={1.5} sx={actionsSx}>
+								<SecondaryButton disabled={jobCompletedLoading || jobIncompleteLoading} onClick={onJobIncomplete}>
+									{jobIncompleteLoading ? "Updating..." : "Job not done properly"}
+								</SecondaryButton>
+
+								<PrimaryButton
+									startIcon={<TaskAltRoundedIcon />}
+									disabled={jobCompletedLoading || jobIncompleteLoading}
+									onClick={onJobCompleted}
+									sx={reviewOfferBtnSx}
+								>
+									{jobCompletedLoading ? "Updating..." : "Confirm completion"}
+								</PrimaryButton>
+							</Stack>
+						</>
+					)}
 				</Stack>
-
-				{clientCanMakeDecision && (
-					<>
-						<Divider />
-
-						<Stack
-							direction={{
-								xs: "column-reverse",
-								sm: "row",
-							}}
-							spacing={1.5}
-							sx={actionsSx}
-						>
-							<SecondaryButton disabled={decisionLoading} onClick={onReject}>
-								Reject
-							</SecondaryButton>
-
-							<PrimaryButton disabled={decisionLoading} onClick={onAccept}>
-								{decisionLoading ? "Updating..." : "Accept application"}
-							</PrimaryButton>
-						</Stack>
-					</>
-				)}
-
-				{contractorCanMakeDecision && (
-					<>
-						<Divider />
-
-						<Typography variant="body2" color="text.secondary">
-							The client selected your application and wants to proceed with you. Review the original job terms before
-							responding.
-						</Typography>
-
-						<Stack direction="row" sx={actionsSx}>
-							<PrimaryButton
-								startIcon={<SwapHorizRoundedIcon />}
-								disabled={decisionLoading}
-								onClick={onReviewOffer}
-								sx={reviewOfferBtnSx}
-							>
-								Review job terms
-							</PrimaryButton>
-						</Stack>
-					</>
-				)}
-
-				{contractorCanWithdraw && (
-					<>
-						<Divider />
-
-						<Stack direction="row" sx={actionsSx}>
-							<SecondaryButton disabled={applicationWithdrawLoading} onClick={onApplicationWithdraw}>
-								{applicationWithdrawLoading ? "Withdrawing..." : "Withdraw application"}
-							</SecondaryButton>
-						</Stack>
-					</>
-				)}
-
-				{canMarkJobDone && (
-					<>
-						<Divider />
-
-						<Stack direction="row" sx={actionsSx}>
-							<PrimaryButton
-								startIcon={<TaskAltRoundedIcon />}
-								disabled={jobDoneLoading}
-								onClick={onJobDone}
-								sx={reviewOfferBtnSx}
-							>
-								{jobDoneLoading ? "Updating..." : "Job done"}
-							</PrimaryButton>
-						</Stack>
-					</>
-				)}
-
-				{canMarkJobCompleted && (
-					<>
-						<Divider />
-
-						<Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={1.5} sx={actionsSx}>
-							<SecondaryButton disabled={jobCompletedLoading || jobIncompleteLoading} onClick={onJobIncomplete}>
-								{jobIncompleteLoading ? "Updating..." : "Job not done properly"}
-							</SecondaryButton>
-
-							<PrimaryButton
-								startIcon={<TaskAltRoundedIcon />}
-								disabled={jobCompletedLoading || jobIncompleteLoading}
-								onClick={onJobCompleted}
-								sx={reviewOfferBtnSx}
-							>
-								{jobCompletedLoading ? "Updating..." : "Confirm completion"}
-							</PrimaryButton>
-						</Stack>
-					</>
-				)}
-			</Stack>
 			</Card>
 		</>
 	);

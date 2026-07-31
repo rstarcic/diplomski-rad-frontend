@@ -1,14 +1,11 @@
-import { Box, Grid, MenuItem, Stack, Typography } from "@mui/material";
+import { Box, Grid, MenuItem, Stack } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers";
+import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import { surfaceSectionSx } from "../../../../theme/layout";
 import { LOCATION_TYPES } from "../../../../constants/jobFilters";
-
-const titleSx = {
-	mb: 2,
-	...sectionTitleSx,
-};
+import SectionHeading from "./SectionHeading";
 
 const dateFieldSx = (theme) => ({
 	"& .MuiInputBase-root": {
@@ -22,7 +19,7 @@ const dateFieldSx = (theme) => ({
 	},
 });
 
-export default function JobDetailsSection({ jobData, setJobData }) {
+export default function JobDetailsSection({ jobData, setJobData, fieldSpacing = 2 }) {
 	const requiresLocation = jobData.locationType === "onsite" || jobData.locationType === "hybrid";
 	const showsDeadlineInLocationRow = !requiresLocation;
 
@@ -51,12 +48,12 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 	};
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={titleSx}>
+			<SectionHeading icon={<WorkRoundedIcon />} subtitle="Basic information about the job you want to post.">
 				Job details
-			</Typography>
+			</SectionHeading>
 
-			<Stack spacing={2}>
-				<Grid container spacing={2}>
+			<Stack spacing={fieldSpacing}>
+				<Grid container spacing={fieldSpacing}>
 					<Grid size={{ xs: 12, sm: 6 }}>
 						<PrimaryTextField label="Job title" name="title" value={jobData.title} onChange={updateField("title")} />
 					</Grid>
@@ -81,7 +78,7 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 					minRows={4}
 				/>
 
-				<Grid container spacing={2}>
+				<Grid container spacing={fieldSpacing}>
 					<Grid size={{ xs: 12, sm: 6 }}>
 						<PrimaryTextField
 							select
@@ -119,6 +116,7 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 								label="Application deadline"
 								value={jobData.deadline}
 								onChange={updateDeadline}
+								format="DD.MM.YYYY"
 								fullWidth
 								size="small"
 								sx={dateFieldSx}
@@ -128,12 +126,13 @@ export default function JobDetailsSection({ jobData, setJobData }) {
 				</Grid>
 
 				{requiresLocation && (
-					<Grid container spacing={2}>
+					<Grid container spacing={fieldSpacing}>
 						<Grid size={{ xs: 12, sm: 6 }}>
 							<DateField
 								label="Application deadline"
 								value={jobData.deadline}
 								onChange={updateDeadline}
+								format="DD.MM.YYYY"
 								fullWidth
 								size="small"
 								sx={dateFieldSx}

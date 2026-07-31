@@ -1,7 +1,7 @@
 import { Card, Divider, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
-import AppAlert from "../../../../components/ui/Alert";
+import AppAlert from "../../../../components/ui/AppAlert";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import SecondaryButton from "../../../../components/ui/SecondaryButton";
 import StatusChip from "../../../../components/ui/StatusChip";
@@ -9,6 +9,7 @@ import { PAYMENT_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { formatCurrency, formatDate } from "../../../../utils/formatters";
 import { findStatusKey } from "../../../../utils/jobs";
+import PaymentDetail from "./PaymentDetail";
 import {
 	actionsSx,
 	detailsGridSx,
@@ -26,7 +27,7 @@ export default function PaymentsSection({
 	onPay,
 }) {
 	const transactionHistoryPath =
-		role === "contractor" ? "/contractor/settings/stripe" : "/client/settings/stripe";
+		role === "contractor" ? "/contractor/stripe" : "/client/stripe";
 
 	if (!payment) {
 		return (
@@ -81,35 +82,20 @@ export default function PaymentsSection({
 					<Divider />
 
 					<Stack sx={detailsGridSx}>
-						<Stack spacing={0.25}>
-							<Typography variant="caption" color="text.secondary">
-								Amount
-							</Typography>
-							<Typography variant="body2" fontWeight={700}>
-								{formatCurrency(payment.amount, payment.currency)}
-							</Typography>
-						</Stack>
+						<PaymentDetail label="Amount">
+							{formatCurrency(payment.amount, payment.currency)}
+						</PaymentDetail>
 
 						{payment.createdAt && (
-							<Stack spacing={0.25}>
-								<Typography variant="caption" color="text.secondary">
-									Created
-								</Typography>
-								<Typography variant="body2" fontWeight={700}>
-									{formatDate(payment.createdAt)}
-								</Typography>
-							</Stack>
+							<PaymentDetail label="Created">
+								{formatDate(payment.createdAt)}
+							</PaymentDetail>
 						)}
 
 						{payment.updatedAt && (
-							<Stack spacing={0.25}>
-								<Typography variant="caption" color="text.secondary">
-									Last updated
-								</Typography>
-								<Typography variant="body2" fontWeight={700}>
-									{formatDate(payment.updatedAt)}
-								</Typography>
-							</Stack>
+							<PaymentDetail label="Last updated">
+								{formatDate(payment.updatedAt)}
+							</PaymentDetail>
 						)}
 					</Stack>
 

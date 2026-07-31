@@ -1,51 +1,71 @@
 import { useState } from "react";
-import { Alert, Button, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
+
 import AuthCard from "./components/AuthCard";
+import AppAlert from "../../components/ui/AppAlert";
 import PasswordTextField from "../../components/ui/PasswordTextField";
 import { useFormErrors } from "../../hooks/useFormErrors";
 import FORM_ERRORS from "../../constants/formError";
 import { AUTH_ERRORS } from "../../constants/apiErrors";
 import { applyApiError } from "../../utils/parseApiError";
-import { resetPasswordApi } from "../../api/authAPI.js";
+import { resetPasswordApi } from "../../api/auth.api";
 
-const visualContent = {
+const VISUAL_CONTENT = {
 	title: "Choose a new password.",
 	description: "Pick something strong and memorable.",
 	ctaLabel: "Back to sign in",
 	ctaTo: "/login",
 };
 
-const formContent = {
+const FORM_CONTENT = {
 	formTitle: "Reset password",
 	formSubtitle: "Enter your new password below.",
 };
 
 export default function ResetPasswordPage() {
 	const [searchParams] = useSearchParams();
-	const token = searchParams.get("token") ?? "";
-	const [formData, setFormData] = useState({ password: "", confirmPassword: "" });
+	const navigate = useNavigate();
+	const { errors, setErrors, clearErrors } = useFormErrors();
+
+	const [formData, setFormData] = useState({
+		password: "",
+		confirmPassword: "",
+	});
 	const [loading, setLoading] = useState(false);
 	const [apiError, setApiError] = useState(null);
-	const { errors, setErrors, clearErrors } = useFormErrors();
-	const navigate = useNavigate();
 
-	const updateField = (field) => (e) => setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+	const token = searchParams.get("token") ?? "";
+
+	const updateField = (field) => (event) => {
+		setFormData((previousData) => ({
+			...previousData,
+			[field]: event.target.value,
+		}));
+	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		clearErrors();
 		setApiError(null);
 
+		if (!token) {
+			setApiError(AUTH_ERRORS.reset_token_invalid);
+			return;
+		}
+
 		const nextErrors = {};
-		if (!formData.password) nextErrors.password = FORM_ERRORS.PASSWORD_REQUIRED;
-		if (!formData.confirmPassword) nextErrors.confirmPassword = FORM_ERRORS.CONFIRM_PASSWORD_REQUIRED;
+
+		if (!formData.password) {
+			nextErrors.password = FORM_ERRORS.PASSWORD_REQUIRED;
+		}
+
+		if (!formData.confirmPassword) {
+			nextErrors.confirmPassword = FORM_ERRORS.CONFIRM_PASSWORD_REQUIRED;
+		}
+
 		if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
 			nextErrors.confirmPassword = FORM_ERRORS.PASSWORDS_DO_NOT_MATCH;
-		}
-		if (!token) {
-			setApiError("Invalid or expired reset link. Please request a new one.");
-			return;
 		}
 
 		if (Object.keys(nextErrors).length > 0) {
@@ -54,18 +74,28 @@ export default function ResetPasswordPage() {
 		}
 
 		setLoading(true);
+
 		try {
 			await resetPasswordApi(token, formData.password);
-			navigate("/login", { replace: true });
-		} catch (err) {
-			applyApiError(err, { setApiError, setErrors, errorMap: AUTH_ERRORS });
+			navigate("/login", {
+				replace: true,
+				state: {
+					successMessage: "Your password has been reset. You can now sign in.",
+				},
+			});
+		} catch (error) {
+			applyApiError(error, {
+				setApiError,
+				setErrors,
+				errorMap: AUTH_ERRORS,
+			});
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<AuthCard visualContent={visualContent} formContent={formContent}>
+		<AuthCard visualContent={VISUAL_CONTENT} formContent={FORM_CONTENT}>
 			<Stack component="form" noValidate spacing={2} onSubmit={handleSubmit}>
 				<PasswordTextField
 					name="password"
@@ -75,6 +105,7 @@ export default function ResetPasswordPage() {
 					errors={errors}
 					required
 				/>
+
 				<PasswordTextField
 					name="confirmPassword"
 					label="Confirm new password"
@@ -84,15 +115,9 @@ export default function ResetPasswordPage() {
 					required
 				/>
 
-				{apiError && <Alert severity="error">{apiError}</Alert>}
+				{apiError && <AppAlert severity="error">{apiError}</AppAlert>}
 
-				<Button
-					type="submit"
-					variant="contained"
-					size="medium"
-					loading={loading}
-					sx={{ width: "fit-content" }}
-				>
+				<Button type="submit" variant="contained" size="medium" loading={loading} sx={{ width: "fit-content" }}>
 					Set new password
 				</Button>
 			</Stack>

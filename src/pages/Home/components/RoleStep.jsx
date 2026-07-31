@@ -1,28 +1,21 @@
 import { Box, Stack, Typography } from "@mui/material";
+import { iconSx, rowSx, textSx, titleSx } from "./RoleStep.styles";
 
 export default function RoleStep({ item, color, bg }) {
 	const { Icon } = item;
 
 	return (
-		<Stack direction="row" spacing={1.8} alignItems="center">
-			<Box
-				sx={{
-					width: 50,
-					height: 50,
-					flex: "0 0 auto",
-					display: "grid",
-					placeItems: "center",
-					borderRadius: 3,
-					color,
-					bgcolor: bg,
-					"& svg": { fontSize: 25 },
-				}}
-			>
+		<Stack direction="row" spacing={1.8} sx={rowSx}>
+			<Box sx={iconSx(color, bg)}>
 				<Icon />
 			</Box>
 			<Box>
-				<Typography sx={{ fontWeight: 900, fontSize: "0.94rem", color: "#101632" }}>{item.title}</Typography>
-				<Typography sx={{ mt: 0.25, color: "#2f3859", fontSize: "0.82rem", lineHeight: 1.55 }}>{item.text}</Typography>
+				<Typography variant="subtitle2" sx={titleSx}>
+					{item.title}
+				</Typography>
+				<Typography variant="body2" sx={textSx}>
+					{item.text}
+				</Typography>
 			</Box>
 		</Stack>
 	);

@@ -10,11 +10,11 @@ import PreviewSection from "./components/create/PreviewSection";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import { BackButton } from "../../components/ui/BackButton";
 import AccountSetupAlert from "../../components/account/AccountAlert";
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
 import { getMissingFields, getMissingFieldsMessage } from "../../utils/jobs";
 import { parseApiError } from "../../utils/parseApiError";
 import { JOB_ERRORS } from "../../constants/apiErrors";
-import { getJobById, updateJob } from "../../api/coreAPI";
+import { getJobById, updateJob } from "../../api/core.api";
 import { useAuth } from "../../hooks/useAuth";
 import { useTimedAlert } from "../../hooks/useTimedAlert";
 
@@ -170,7 +170,7 @@ export default function EditJobPage() {
 				<Grid container spacing={3}>
 					<Grid size={{ xs: 12, md: 8 }}>
 						<Stack spacing={3}>
-							<JobDetailsSection jobData={jobData} setJobData={setJobData} />
+							<JobDetailsSection jobData={jobData} setJobData={setJobData} fieldSpacing={2.5} />
 							<ContractSection jobData={jobData} setJobData={setJobData} />
 							<Box sx={desktopSubmitWrapSx}>
 								<Stack spacing={0.75} sx={{ width: "50%" }}>

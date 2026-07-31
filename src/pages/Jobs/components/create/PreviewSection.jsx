@@ -1,15 +1,15 @@
 import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../../../../utils/jobs";
 import { detailGridSx, sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import SectionHeading from "./SectionHeading";
 
 const previewCardSx = (theme) => ({
 	p: 2,
-	border: `1px solid ${theme.palette.divider}`,
+	border: `1px solid ${theme.custom.jobForm.previewBorder}`,
 	borderRadius: 2,
-	bgcolor: "background.default",
+	background: theme.custom.jobForm.previewBackground,
 });
-
-const titleSx = { mb: 2, ...sectionTitleSx };
 
 const metaRowSx = {
 	display: "flex",
@@ -26,9 +26,9 @@ export default function PreviewSection({ jobData }) {
 	const estimatedCost = getEstimatedCost(jobData);
 	return (
 		<Box sx={surfaceSectionSx}>
-			<Typography variant="h6" sx={titleSx}>
-				Preview Job post
-			</Typography>
+			<SectionHeading icon={<VisibilityRoundedIcon />} subtitle="This is how contractors will see your job.">
+				Preview job post
+			</SectionHeading>
 
 			<Box sx={previewCardSx}>
 				<Stack spacing={2}>
@@ -121,12 +121,28 @@ export default function PreviewSection({ jobData }) {
 					</Stack>
 				</Stack>
 			</Box>
-			<Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
-				<Typography variant="body2" color="text.secondary">
+			<Stack
+				direction="row"
+				spacing={2}
+				sx={(theme) => ({
+					mt: 2,
+					px: 2,
+					py: 1.5,
+					alignItems: "center",
+					justifyContent: "space-between",
+					borderRadius: 2,
+					border: `1px solid ${theme.custom.jobForm.estimateBorder}`,
+					background: theme.custom.jobForm.estimateBackground,
+				})}
+			>
+				<Typography
+					variant="body2"
+					sx={(theme) => ({ color: theme.custom.jobForm.estimateLabel, fontWeight: 700 })}
+				>
 					Total estimated cost:
 				</Typography>
 
-				<Typography variant="body2" sx={{ fontWeight: 900 }}>
+				<Typography variant="body2" sx={{ fontWeight: 900, color: "text.primary", whiteSpace: "nowrap" }}>
 					{estimatedCost}
 				</Typography>
 			</Stack>

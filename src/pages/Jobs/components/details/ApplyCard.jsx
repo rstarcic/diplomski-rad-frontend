@@ -4,7 +4,7 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import AccountSetupAlert from "../../../../components/account/AccountAlert";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import StatusChip from "../../../../components/ui/StatusChip";
+import ApplicationStatusChip from "../../../../components/ui/ApplicationStatusChip";
 import { APPLICATION_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
@@ -86,7 +86,7 @@ export default function ApplyCard({
 						Application already submitted
 					</Typography>
 
-					{statusKey && <StatusChip status={statusKey} config={APPLICATION_STATUSES} />}
+					<ApplicationStatusChip status={applicationStatus || "pending"} />
 
 					<Typography variant="body2" color="text.secondary" sx={applicationMessageSx}>
 						{statusMessage}
@@ -137,11 +137,7 @@ export default function ApplyCard({
 					<AccountSetupAlert
 						accountSetup={accountSetup}
 						actionName="apply for this job"
-						settingsPath={
-							accountSetup.profileCompleted
-								? "/contractor/settings/stripe"
-								: "/contractor/profile"
-						}
+						settingsPath={accountSetup.profileCompleted ? "/contractor/stripe" : "/contractor/profile"}
 					/>
 				)}
 

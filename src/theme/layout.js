@@ -16,6 +16,7 @@ export const surfaceSectionSx = {
 
 export const sectionTitleSx = {
     fontWeight: 800,
+    lineHeight: 1.3,
 };
 
 export const detailGridSx = {

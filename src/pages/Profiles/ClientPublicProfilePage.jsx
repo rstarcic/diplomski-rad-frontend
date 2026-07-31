@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Grid, Stack } from "@mui/material";
 
-import AppAlert from "../../components/ui/Alert";
+import AppAlert from "../../components/ui/AppAlert";
+import { BackButton } from "../../components/ui/BackButton";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
-import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
 import ProfileInfoCard from "./components/public/ProfileInfoCard";
 import ProfileStatsSection from "./components/public/ProfileStatsSection";
 
-import { getClientPublicProfile } from "../../api/coreAPI";
+import { getClientPublicProfile } from "../../api/core.api";
 import { PROFILE_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
 import { profileStatCardConfig } from "./profileStats";
@@ -74,10 +75,15 @@ export default function ClientPublicProfilePage() {
 
 	return (
 		<Box>
-			<Grid container spacing={3} sx={profileGridSx}>
+			<BackButton backTo="/contractor/applications" sx={{ mb: 2 }}>
+				Back to applications
+			</BackButton>
+
+			<Grid container spacing={2.5} sx={profileGridSx}>
 				<Grid size={{ xs: 12, lg: 8 }}>
-					<Stack spacing={3}>
+					<Stack spacing={2.5}>
 						<ProfileInfoCard
+							featured
 							firstName={profile.firstName}
 							lastName={profile.lastName}
 							image={profile.image}
@@ -89,11 +95,11 @@ export default function ClientPublicProfilePage() {
 							about={profile.about}
 						/>
 
-						<ProfileStatsSection stats={stats} config={profileStatCardConfig.client} />
+						<ProfileStatsSection stats={stats} config={profileStatCardConfig.client} columns={2} tone="violet" />
 					</Stack>
 				</Grid>
 
-				<Grid size={{ xs: 12, lg: 4 }}>
+				<Grid size={{ xs: 12, lg: 4 }} sx={{ position: { lg: "sticky" }, top: { lg: 24 }, alignSelf: "flex-start" }}>
 					<ReviewSummaryCard
 						title="Reviews about the client"
 						summary={reviews.summary ?? {}}

@@ -5,65 +5,37 @@ import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 
 import PrimaryButton from "../../../components/ui/PrimaryButton";
-import StatusChip from "../../../components/ui/StatusChip";
+import SecondaryButton from "../../../components/ui/SecondaryButton";
+import ApplicationStatusChip from "../../../components/ui/ApplicationStatusChip";
 
 import { APPLICATION_STATUSES } from "../../../constants/statuses";
 import { findStatusKey } from "../../../utils/jobs";
 import { formatDate } from "../../../utils/formatters";
-
-const cardSx = {
-	height: "100%",
-	display: "flex",
-	flexDirection: "column",
-	borderRadius: 3,
-	border: "1px solid",
-	borderColor: "divider",
-	boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
-	bgcolor: "background.paper",
-};
-
-const clientButtonSx = {
-	display: "flex",
-	justifyContent: "flex-start",
-	gap: 1.25,
-	minWidth: 0,
-	textAlign: "left",
-	borderRadius: 2,
-	"&:hover": {
-		bgcolor: "action.hover",
-	},
-};
-
-const avatarSx = {
-	width: 40,
-	height: 40,
-	flexShrink: 0,
-	bgcolor: "primary.light",
-};
-
-const metaRowSx = {
-	alignItems: "center",
-	color: "text.secondary",
-};
-
-const coverLetterSx = {
-	display: "-webkit-box",
-	WebkitLineClamp: 3,
-	WebkitBoxOrient: "vertical",
-	overflow: "hidden",
-};
-
-const footerSx = {
-	justifyContent: "center",
-	p: 2,
-	pt: 0,
-};
+import {
+	actionButtonSx,
+	actionRowSx,
+	avatarSx,
+	cardContentSx,
+	cardSx,
+	clientButtonSx,
+	clientDetailsSx,
+	clientNameSx,
+	coverLetterSx,
+	footerSx,
+	headerRowSx,
+	locationIconSx,
+	metaRowSx,
+	titleWrapSx,
+} from "./ContractorApplicationCard.styles";
 
 export default function ContractorApplicationCard({ application, job, client }) {
 	const navigate = useNavigate();
 
 	if (!application || !job) return null;
 	const statusKey = findStatusKey(application.status, APPLICATION_STATUSES);
+	const statusPaletteKey = statusKey
+		? APPLICATION_STATUSES[statusKey].paletteKey
+		: "info";
 	const clientName = client?.fullName || "Unknown client";
 	const clientLocation = [client?.city, client?.country].filter(Boolean).join(", ");
 	const openApplication = () => {
@@ -72,24 +44,19 @@ export default function ContractorApplicationCard({ application, job, client }) 
 
 	const openClientProfile = () => {
 		if (client?.userId) {
-			navigate(`/contractor/clients/${client.userId}`);
+			navigate(`/contractor/clients/${client.userId}`, {
+				state: { from: "/contractor/applications" },
+			});
 		}
 	};
 
 	return (
-		<Card elevation={0} sx={cardSx}>
-			<CardContent sx={{ p: 2.5, flexGrow: 1 }}>
+		<Card elevation={0} sx={cardSx(statusPaletteKey)}>
+			<CardContent sx={cardContentSx}>
 				<Stack spacing={2}>
-					<Stack
-						direction="row"
-						spacing={2}
-						sx={{
-							alignItems: "flex-start",
-							justifyContent: "space-between",
-						}}
-					>
-						<Box sx={{ minWidth: 0 }}>
-							<Typography variant="h6" sx={{ fontWeight: 850 }}>
+					<Stack direction="row" spacing={2} sx={headerRowSx}>
+						<Box sx={titleWrapSx}>
+							<Typography variant="h6">
 								{job.title}
 							</Typography>
 
@@ -98,7 +65,7 @@ export default function ContractorApplicationCard({ application, job, client }) 
 							</Typography>
 						</Box>
 
-						{statusKey && <StatusChip status={statusKey} config={APPLICATION_STATUSES} />}
+						<ApplicationStatusChip status={application.status} />
 					</Stack>
 
 					<Divider />
@@ -108,14 +75,14 @@ export default function ContractorApplicationCard({ application, job, client }) 
 							<PersonOutlineRoundedIcon />
 						</Avatar>
 
-						<Box sx={{ minWidth: 0 }}>
-							<Typography variant="body2" sx={{ fontWeight: 800 }} noWrap>
+						<Box sx={clientDetailsSx}>
+							<Typography variant="body2" sx={clientNameSx} noWrap>
 								{clientName}
 							</Typography>
 
 							{clientLocation && (
 								<Stack direction="row" spacing={0.5} sx={metaRowSx}>
-									<LocationOnOutlinedIcon sx={{ fontSize: 15 }} />
+									<LocationOnOutlinedIcon sx={locationIconSx} />
 
 									<Typography variant="caption" noWrap>
 										{clientLocation}
@@ -143,12 +110,14 @@ export default function ContractorApplicationCard({ application, job, client }) 
 			</CardContent>
 
 			<CardActions sx={footerSx}>
-				<Stack direction="row" spacing={1}>
-					<PrimaryButton variant="outlined" onClick={openClientProfile}>
+				<Stack sx={actionRowSx}>
+					<SecondaryButton onClick={openClientProfile} sx={actionButtonSx}>
 						View profile
-					</PrimaryButton>
+					</SecondaryButton>
 
-					<PrimaryButton onClick={openApplication}>Review application</PrimaryButton>
+					<PrimaryButton onClick={openApplication} sx={actionButtonSx}>
+						Review application
+					</PrimaryButton>
 				</Stack>
 			</CardActions>
 		</Card>

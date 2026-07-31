@@ -1,31 +1,34 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import {
-	getMyApplicationDetails,
 	acceptNegotiationTerms,
-	rejectNegotiationTerms,
-	submitCounterOffer,
-	signContract,
 	markJobDone,
+	rejectNegotiationTerms,
+	signContract,
+	submitCounterOffer,
 	withdrawApplication,
-} from "../../api/coreAPI";
-import { APPLICATION_ERRORS } from "../../constants/apiErrors";
-import { parseApiError } from "../../utils/parseApiError";
-import { useTimedAlert } from "../../hooks/useTimedAlert";
+} from "../../api/core.api";
 
-import AppAlert from "../../components/ui/Alert";
+import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
+import AppAlert from "../../components/ui/AppAlert";
 import { BackButton } from "../../components/ui/BackButton";
 import PageHeader from "../../components/ui/PageHeader";
-import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
-import { reviewCriteria } from "../../components/reviews/ReviewCriteria";
 
+import { APPLICATION_ERRORS } from "../../constants/apiErrors";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
+import { parseApiError } from "../../utils/parseApiError";
+
+import ClientProfileSection from "../Jobs/components/details/ClientProfileSection";
+import JobDetailsSection from "../Jobs/components/details/JobDetailsSection";
+import { getInitialApplicationTab } from "./applicationDetails.utils";
 import ApplicationSection from "./components/ApplicationSection";
 import StepTabs from "./components/StepTabs";
-import { useApplicationTabs } from "./hooks/useApplicationTabs";
-import JobDetailsSection from "../Jobs/components/details/JobDetailsSection";
-import ClientProfileSection from "../Jobs/components/details/ClientProfileSection";
+import { createApplicationTabs } from "./components/applicationTabs.config";
+import { useContractorApplicationDetails } from "./hooks/useContractorApplicationDetails";
+import { usePaymentPolling } from "./hooks/usePaymentPolling";
 
 const pageContentSx = {
 	mt: 3,
@@ -37,17 +40,9 @@ const sidebarSx = {
 	top: 24,
 };
 
-function getInitialTab({ contract, tabs }) {
-	if (!contract) return 0;
-	const contractTab = tabs.findIndex((tab) => tab.label === "Contract");
-	return contractTab >= 0 ? contractTab : 0;
-}
-
 export default function ContractorApplicationDetailsPage() {
 	const { applicationId } = useParams();
-	const [details, setDetails] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [loadError, setLoadError] = useState("");
+	const { details, loading, loadError, refreshDetails } = useContractorApplicationDetails(applicationId);
 	const [negotiationSuccess, setNegotiationSuccess] = useTimedAlert();
 	const [jobDoneLoading, setJobDoneLoading] = useState(false);
 	const [jobDoneFeedback, setJobDoneFeedback] = useTimedAlert();
@@ -64,37 +59,6 @@ export default function ContractorApplicationDetailsPage() {
 		});
 	};
 
-	useEffect(() => {
-		const controller = new AbortController();
-
-		async function loadMyApplicationDetails() {
-			try {
-				setLoading(true);
-				setLoadError("");
-
-				const data = await getMyApplicationDetails(applicationId, controller.signal);
-				setDetails(data);
-			} catch (error) {
-				if (error.name === "CanceledError" || error.name === "AbortError") return;
-
-				const apiError = parseApiError(
-					error,
-					APPLICATION_ERRORS,
-					"We couldn't load this application. Please try again later.",
-				);
-
-				setLoadError(apiError.message);
-				setDetails(null);
-			} finally {
-				if (!controller.signal.aborted) setLoading(false);
-			}
-		}
-
-		loadMyApplicationDetails();
-
-		return () => controller.abort();
-	}, [applicationId]);
-
 	const application = details?.application ?? null;
 	const job = details?.job ?? null;
 	const client = details?.client ?? null;
@@ -104,58 +68,35 @@ export default function ContractorApplicationDetailsPage() {
 	const contract = details?.contract ?? null;
 	const payment = details?.payment ?? null;
 
-	useEffect(() => {
-		if (details?.payment?.status !== "pending") return undefined;
-
-		let active = true;
-		const refreshPayment = async () => {
-			try {
-				const updatedDetails = await getMyApplicationDetails(applicationId);
-				if (active) setDetails(updatedDetails);
-			} catch {
-				// Keep the current payment visible and retry on the next polling interval.
-			}
-		};
-		const intervalId = window.setInterval(refreshPayment, 15000);
-
-		return () => {
-			active = false;
-			window.clearInterval(intervalId);
-		};
-	}, [details?.payment?.status, applicationId]);
+	usePaymentPolling({
+		paymentStatus: payment?.status,
+		refreshDetails,
+	});
 
 	const handleAcceptNegotiation = async () => {
 		setNegotiationSuccess("");
 		const result = await acceptNegotiationTerms(job.id, applicationId);
-
-		const updatedDetails = await getMyApplicationDetails(applicationId);
-
-		setDetails(updatedDetails);
+		await refreshDetails();
 		setNegotiationSuccess(result.message);
 	};
 
 	const handleRejectNegotiation = async () => {
 		setNegotiationSuccess("");
 		const result = await rejectNegotiationTerms(job.id, applicationId);
-		const updatedDetails = await getMyApplicationDetails(applicationId);
-
-		setDetails(updatedDetails);
+		await refreshDetails();
 		setNegotiationSuccess(result.message);
 	};
 
 	const handleSubmitCounterOffer = async (counterOffer) => {
 		setNegotiationSuccess("");
 		const result = await submitCounterOffer(job.id, applicationId, counterOffer);
-		const updatedDetails = await getMyApplicationDetails(applicationId);
-
-		setDetails(updatedDetails);
+		await refreshDetails();
 		setNegotiationSuccess(result.message ?? "Counter-offer submitted successfully.");
 	};
 
 	const handleSignContract = async (signatureDataUrl) => {
 		await signContract(contract.id, signatureDataUrl);
-		const updatedDetails = await getMyApplicationDetails(applicationId);
-		setDetails(updatedDetails);
+		await refreshDetails();
 	};
 
 	const handleJobDone = async () => {
@@ -164,9 +105,7 @@ export default function ContractorApplicationDetailsPage() {
 			setJobDoneFeedback(null);
 
 			const result = await markJobDone(job.id);
-			const updatedDetails = await getMyApplicationDetails(applicationId);
-
-			setDetails(updatedDetails);
+			await refreshDetails();
 			setJobDoneFeedback({
 				severity: "success",
 				message: result.message ?? "Job marked as done successfully.",
@@ -190,9 +129,7 @@ export default function ContractorApplicationDetailsPage() {
 			setApplicationWithdrawFeedback(null);
 
 			const result = await withdrawApplication(applicationId);
-			const updatedDetails = await getMyApplicationDetails(applicationId);
-
-			setDetails(updatedDetails);
+			await refreshDetails();
 			setApplicationWithdrawFeedback({
 				severity: "success",
 				message: result.message ?? "Application withdrawn successfully.",
@@ -210,7 +147,7 @@ export default function ContractorApplicationDetailsPage() {
 		}
 	};
 
-	const tabs = useApplicationTabs({
+	const tabs = createApplicationTabs({
 		application,
 		job,
 		negotiation,
@@ -244,7 +181,7 @@ export default function ContractorApplicationDetailsPage() {
 		);
 	}
 
-	const initialTab = getInitialTab({ contract, tabs });
+	const initialTab = getInitialApplicationTab({ contract, tabs });
 
 	return (
 		<Box>

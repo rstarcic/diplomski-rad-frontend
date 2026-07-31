@@ -58,6 +58,8 @@ export default function StepTabs({ tabs, initialTab = 0, selectedTab }) {
 		if (!selectedTab) return;
 
 		const requestedIndex = tabs.findIndex((tab) => tab.label === selectedTab && !tab.locked);
+		// Synchronize an externally requested tab with the local tab selection.
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		if (requestedIndex >= 0) setActive(requestedIndex);
 	}, [selectedTab, tabs]);
 

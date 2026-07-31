@@ -1,20 +1,21 @@
 import { useState } from "react";
-import GoogleIcon from "@mui/icons-material/Google";
-import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { Button, Divider, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
+import GoogleIcon from "@mui/icons-material/Google";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { useNavigate } from "react-router-dom";
+
+import { startGoogleRegister } from "../../../api/auth.api";
+import AppAlert from "../../../components/ui/AppAlert";
 import FormTextField from "../../../components/ui/FormTextField";
 import PasswordTextField from "../../../components/ui/PasswordTextField";
-import AppAlert from "../../../components/ui/Alert";
-import { useFormErrors } from "../../../hooks/useFormErrors";
-import { useAuth } from "../../../hooks/useAuth";
-import { useTimedAlert } from "../../../hooks/useTimedAlert";
+import { AUTH_ERRORS } from "../../../constants/apiErrors";
 import FORM_ERRORS from "../../../constants/formError";
 import { ROLES } from "../../../constants/roles";
-import { AUTH_ERRORS } from "../../../constants/apiErrors";
+import { useAuth } from "../../../hooks/useAuth";
+import { useFormErrors } from "../../../hooks/useFormErrors";
+import { useTimedAlert } from "../../../hooks/useTimedAlert";
 import { applyApiError } from "../../../utils/parseApiError";
-import { startGoogleRegister } from "../../../api/authAPI.js";
 
 const toggleGroupSx = {
 	width: "100%",
@@ -68,6 +69,9 @@ export default function SignupForm({ initialRole = null }) {
 	};
 
 	const handleGoogleSignup = () => {
+		clearErrors();
+		setApiError(null);
+
 		if (!formData.role) {
 			setErrors({ role: FORM_ERRORS.ROLE_REQUIRED });
 			return;
@@ -133,7 +137,7 @@ export default function SignupForm({ initialRole = null }) {
 	};
 
 	return (
-		<Stack component="form" noValidate width="100%" onSubmit={handleSubmit}>
+		<Stack component="form" noValidate onSubmit={handleSubmit} sx={{ width: "100%" }}>
 			{apiError && (
 				<AppAlert severity="error" sx={{ mb: 2 }}>
 					{apiError}

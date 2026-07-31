@@ -32,7 +32,7 @@ export default function SearchJobsHeader({ value = "", onChange, onSearch }) {
 				</Typography>
 
 				<Typography variant="h3" sx={titleSx}>
-					Explore available opportunities
+					Find Opportunities
 				</Typography>
 
 				<Typography variant="subtitle1" sx={subtitleSx}>

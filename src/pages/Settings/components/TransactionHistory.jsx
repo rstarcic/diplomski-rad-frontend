@@ -15,9 +15,10 @@ import {
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
-import { getMyTransactions } from "../../../api/paymentAPI";
-import AppAlert from "../../../components/ui/Alert";
+import { getMyTransactions } from "../../../api/payment.api";
+import AppAlert from "../../../components/ui/AppAlert";
 import SecondaryButton from "../../../components/ui/SecondaryButton";
+import { PAYMENT_ERRORS } from "../../../constants/apiErrors";
 import { useAuth } from "../../../hooks/useAuth";
 import { surfaceSectionSx } from "../../../theme/layout";
 import { parseApiError } from "../../../utils/parseApiError";
@@ -80,7 +81,7 @@ export default function TransactionHistory() {
 
 				const apiError = parseApiError(
 					err,
-					{},
+					PAYMENT_ERRORS,
 					"We couldn't load your transaction history.",
 				);
 				setError(apiError.message);
@@ -111,7 +112,7 @@ export default function TransactionHistory() {
 		} catch (err) {
 			const apiError = parseApiError(
 				err,
-				{},
+				PAYMENT_ERRORS,
 				"We couldn't load your transaction history.",
 			);
 			setError(apiError.message);
@@ -130,9 +131,7 @@ export default function TransactionHistory() {
 						Transaction history
 					</Typography>
 					<Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-						{isContractor
-							? "Earnings received for completed jobs."
-							: "Payments made for completed jobs."}
+						{isContractor ? "Earnings received for completed jobs." : "Payments made for completed jobs."}
 					</Typography>
 				</Box>
 
@@ -147,14 +146,31 @@ export default function TransactionHistory() {
 						<CircularProgress size={28} />
 					</Box>
 				) : transactions.length === 0 ? (
-					<AppAlert title="No transactions yet">
-						Completed job payments will appear here.
-					</AppAlert>
+					<AppAlert title="No transactions yet">Completed job payments will appear here.</AppAlert>
 				) : (
 					<>
 						<TableContainer sx={{ overflowX: "auto" }}>
 							<Table aria-label="Transaction history">
-								<TableHead>
+								<TableHead
+									sx={{
+										"& .MuiTableCell-root": {
+											bgcolor: "rgba(91, 63, 214, 0.055)",
+											color: "text.primary",
+											fontSize: "0.75rem",
+											fontWeight: 900,
+											letterSpacing: "0.045em",
+											textTransform: "uppercase",
+											borderBottomColor: "rgba(91, 63, 214, 0.12)",
+											py: 1.75,
+										},
+										"& .MuiTableCell-root:first-of-type": {
+											borderTopLeftRadius: 10,
+										},
+										"& .MuiTableCell-root:last-of-type": {
+											borderTopRightRadius: 10,
+										},
+									}}
+								>
 									<TableRow>
 										<TableCell>Job</TableCell>
 										<TableCell>Type</TableCell>
@@ -186,9 +202,7 @@ export default function TransactionHistory() {
 														{transaction.jobTitle || "Untitled job"}
 													</Typography>
 												</TableCell>
-												<TableCell>
-													{transaction.type === "earning" ? "Earning" : "Payment"}
-												</TableCell>
+												<TableCell>{transaction.type === "earning" ? "Earning" : "Payment"}</TableCell>
 												<TableCell>
 													<Chip
 														size="small"
@@ -197,19 +211,9 @@ export default function TransactionHistory() {
 														sx={{ textTransform: "capitalize", fontWeight: 700 }}
 													/>
 												</TableCell>
-												<TableCell>
-													{formatDate(
-														transaction.updatedAt ?? transaction.createdAt,
-													)}
-												</TableCell>
-												<TableCell
-													align="right"
-													sx={{ fontWeight: 800, whiteSpace: "nowrap" }}
-												>
-													{formatAmount(
-														transaction.amountMinor,
-														transaction.currency,
-													)}
+												<TableCell>{formatDate(transaction.updatedAt ?? transaction.createdAt)}</TableCell>
+												<TableCell align="right" sx={{ fontWeight: 800, whiteSpace: "nowrap" }}>
+													{formatAmount(transaction.amountMinor, transaction.currency)}
 												</TableCell>
 											</TableRow>
 										);
@@ -218,15 +222,12 @@ export default function TransactionHistory() {
 							</Table>
 						</TableContainer>
 
-						<Stack direction="row" justifyContent="space-between" alignItems="center">
+						<Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
 							<Typography variant="caption" color="text.secondary">
 								Showing {transactions.length} of {total}
 							</Typography>
 							{hasMore && (
-								<SecondaryButton
-									disabled={loadingMore}
-									onClick={loadMore}
-								>
+								<SecondaryButton disabled={loadingMore} onClick={loadMore}>
 									{loadingMore ? "Loading..." : "Load more"}
 								</SecondaryButton>
 							)}

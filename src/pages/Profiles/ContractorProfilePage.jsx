@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
 import PsychologyRoundedIcon from "@mui/icons-material/PsychologyRounded";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 
-import AppAlert from "../../components/ui/Alert";
+import { getMyProfile, updateMyProfile } from "../../api/core.api.js";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
+import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
+import AppAlert from "../../components/ui/AppAlert";
 import PageHeader from "../../components/ui/PageHeader";
+import { PROFILE_ERRORS } from "../../constants/apiErrors";
+import { useAuth } from "../../hooks/useAuth";
+import { useTimedAlert } from "../../hooks/useTimedAlert";
+import { parseApiError } from "../../utils/parseApiError";
+
+import { CONTRACTOR_REQUIRED_PROFILE_FIELDS } from "./components/edit/profileCompletion";
 import ProfileDetailsSection from "./components/edit/ProfileDetailsSection";
 import ProfileImageUpload from "./components/edit/ProfileImageUpload";
 import ProfileProgressCard from "./components/edit/ProfileProgressCard";
-import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import PortfolioCard from "./components/shared/PortfolioCard";
 import SkillsCard from "./components/shared/SkillsCard";
-
-import { reviewCriteria } from "../../components/reviews/reviewCriteria";
-import { getMyProfile, updateMyProfile } from "../../api/coreAPI";
-import { PROFILE_ERRORS } from "../../constants/apiErrors";
-import { parseApiError } from "../../utils/parseApiError";
-import { useTimedAlert } from "../../hooks/useTimedAlert";
-import { CONTRACTOR_REQUIRED_PROFILE_FIELDS } from "./components/edit/profileCompletion";
 
 const emptyProfileData = {
 	firstName: "",
@@ -165,7 +165,7 @@ export default function ContractorProfilePage() {
 	return (
 		<Box>
 			<PageHeader
-				label="Settings"
+				label="Your profile"
 				title="Contractor Profile"
 				subtitle="Complete your profile before publishing jobs and starting contracts."
 			>

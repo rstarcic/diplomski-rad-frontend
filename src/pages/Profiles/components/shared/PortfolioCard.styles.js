@@ -1,11 +1,12 @@
 export const portfolioPaperSx = {
-	p: 2.5,
-	borderRadius: 2,
-	boxShadow: "0 1px 8px rgba(15, 23, 42, 0.08)",
+	p: { xs: 2.25, sm: 3 },
+	borderRadius: 2.5,
+	boxShadow: "0 8px 24px rgba(37, 48, 82, 0.06)",
 };
 
 export const portfolioHeaderSx = {
-	alignItems: "flex-start",
+	alignItems: "center",
+	justifyContent: "space-between",
 	mb: 1.5,
 };
 
@@ -18,7 +19,7 @@ export const portfolioGridSx = {
 
 export const portfolioImageSx = {
 	width: "100%",
-	height: 160,
+	height: 180,
 	borderRadius: 1.5,
 	objectFit: "cover",
 	display: "block",

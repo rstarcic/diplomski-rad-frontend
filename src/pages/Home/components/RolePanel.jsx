@@ -18,6 +18,7 @@ export default function RolePanel({ variant, onSignup }) {
 		<Box sx={[rolePanel.root, { background: tone.background }]}>
 			<Box sx={rolePanel.content.sx}>
 				<Typography
+					variant="overline"
 					sx={[
 						rolePanel.eyebrow,
 						{
@@ -29,7 +30,7 @@ export default function RolePanel({ variant, onSignup }) {
 					{isClient ? "FOR CLIENTS" : "FOR CONTRACTORS"}
 				</Typography>
 
-				<Typography component="h1" sx={rolePanel.title}>
+				<Typography component="h1" variant="h2" sx={rolePanel.title}>
 					{isClient ? "Get work done." : "Find great jobs."}
 					<br />
 					{isClient ? "The " : "Grow "}
@@ -42,7 +43,7 @@ export default function RolePanel({ variant, onSignup }) {
 
 			<Box sx={rolePanel.body}>
 				<Stack spacing={rolePanel.steps.spacing} sx={rolePanel.content.sx}>
-					<Typography sx={rolePanel.subtitle}>
+					<Typography variant="body1" sx={rolePanel.subtitle}>
 						{isClient
 							? "Find trusted professionals, manage your project and pay securely, all in one place."
 							: "Discover opportunities that match your skills, build your reputation and get paid fairly."}
@@ -50,7 +51,12 @@ export default function RolePanel({ variant, onSignup }) {
 
 					<Stack spacing={rolePanel.steps.spacing}>
 						{steps.map((item) => (
-							<RoleStep key={item.title} item={item} color={tone.accent} bg={tone.soft} />
+							<RoleStep
+								key={item.title}
+								item={item}
+								color={tone.accent}
+								bg={tone.soft}
+							/>
 						))}
 					</Stack>
 

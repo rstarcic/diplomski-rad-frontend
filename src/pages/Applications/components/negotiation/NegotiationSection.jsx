@@ -1,21 +1,25 @@
-import { useState } from "react";
 import { Card, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
 
-import CurrentOfferCard from "./CurrentOfferCard";
-import DecisionSection from "./DecisionSection";
-import NegotiationTimeline from "./Timeline";
+import AppAlert from "../../../../components/ui/AppAlert";
 import StatusChip from "../../../../components/ui/StatusChip";
 import { NEGOTIATION_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
+import CurrentOfferCard from "./CurrentOfferCard";
+import DecisionSection from "./DecisionSection";
+import NegotiationTimeline from "./Timeline";
 import { getCurrentTermsTitle } from "./negotiationLabels";
-import AppAlert from "../../../../components/ui/Alert";
-
-const MAX_NEGOTIATION_ROUNDS = 3;
-
-function normalizeBudgetType(value) {
-	return String(value ?? "").trim().toLowerCase();
-}
+import {
+	getNegotiationTerms,
+	MAX_NEGOTIATION_ROUNDS,
+} from "./negotiation.utils";
+import {
+	contentGridSx,
+	headerSx,
+	roundChipSx,
+	statusGroupSx,
+} from "./NegotiationSection.styles";
+import { useNegotiationActions } from "./useNegotiationActions";
 
 export default function NegotiationSection({
 	initialOffer,
@@ -26,82 +30,32 @@ export default function NegotiationSection({
 	onRejectNegotiation,
 	onSubmitCounterOffer,
 }) {
-	const sortedUpdates = [...updates].sort((a, b) => a.roundNumber - b.roundNumber);
-	const currentOffer = sortedUpdates.at(-1) ?? initialOffer ?? null;
-	const currentRound = Math.min(Number(currentOffer?.roundNumber ?? 1), MAX_NEGOTIATION_ROUNDS);
-
-	const [isEditing, setIsEditing] = useState(false);
-	const [isSubmittingCounter, setIsSubmittingCounter] = useState(false);
-	const [counterError, setCounterError] = useState("");
-	const [editValues, setEditValues] = useState({
-		budgetType: normalizeBudgetType(currentOffer?.budgetType),
-		budgetAmount: currentOffer?.budgetAmount ?? "",
-		hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
-		duration: currentOffer?.duration ?? "",
-		deliverables: currentOffer?.deliverables ?? "",
-		message: "",
+	const { sortedUpdates, currentOffer, currentRound } = getNegotiationTerms(
+		initialOffer,
+		updates,
+	);
+	const {
+		isEditing,
+		isSubmittingCounter,
+		counterError,
+		editValues,
+		handleEditChange,
+		handleCounterOffer,
+		handleCancelEdit,
+		handleSubmitCounter,
+		handleAccept,
+		handleReject,
+	} = useNegotiationActions({
+		currentOffer,
+		onAcceptNegotiation,
+		onRejectNegotiation,
+		onSubmitCounterOffer,
 	});
 
 	const statusKey = status ? findStatusKey(status, NEGOTIATION_STATUSES) : null;
 	const negotiationIsFinal = ["accepted", "rejected", "expired"].includes(statusKey);
 	const canCounterOffer = currentRound < MAX_NEGOTIATION_ROUNDS;
 	const termsTitle = getCurrentTermsTitle(sortedUpdates, isEditing);
-
-	const handleEditChange = (field, value) => {
-		setEditValues((prev) => ({ ...prev, [field]: value }));
-	};
-
-	const handleCounterOffer = () => {
-		setEditValues({
-			budgetType: normalizeBudgetType(currentOffer?.budgetType),
-			budgetAmount: currentOffer?.budgetAmount ?? "",
-			hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
-			duration: currentOffer?.duration ?? "",
-			deliverables: currentOffer?.deliverables ?? "",
-			message: "",
-		});
-		setIsEditing(true);
-	};
-
-	const handleCancelEdit = () => {
-		setEditValues({
-			budgetType: normalizeBudgetType(currentOffer?.budgetType),
-			budgetAmount: currentOffer?.budgetAmount ?? "",
-			hoursPerWeek: currentOffer?.hoursPerWeek ?? "",
-			duration: currentOffer?.duration ?? "",
-			deliverables: currentOffer?.deliverables ?? "",
-			message: "",
-		});
-		setIsEditing(false);
-	};
-
-	const handleSubmitCounter = async () => {
-		if (isSubmittingCounter) return;
-
-		if (!["fixed", "hourly"].includes(editValues.budgetType)) {
-			setCounterError("Select a valid budget type.");
-			return;
-		}
-
-		try {
-			setIsSubmittingCounter(true);
-			setCounterError("");
-			await onSubmitCounterOffer?.(editValues);
-			setIsEditing(false);
-		} catch (error) {
-			setCounterError(error?.message || "Counter-offer could not be submitted. Please try again.");
-		} finally {
-			setIsSubmittingCounter(false);
-		}
-	};
-
-	const handleAccept = async () => {
-		await onAcceptNegotiation?.();
-	};
-
-	const handleReject = async () => {
-		await onRejectNegotiation?.();
-	};
 
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
@@ -113,18 +67,18 @@ export default function NegotiationSection({
 				)}
 				<Stack
 					direction={{ xs: "column", sm: "row" }}
-					sx={{ justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 1 }}
+					sx={headerSx}
 				>
 					<Typography variant="h6" sx={sectionTitleSx}>
 						{termsTitle}
 					</Typography>
-					<Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+					<Stack direction="row" spacing={1} sx={statusGroupSx}>
 						<Chip
 							label={`Round ${currentRound} of ${MAX_NEGOTIATION_ROUNDS}`}
 							size="small"
 							color="primary"
 							variant="outlined"
-							sx={{ fontWeight: 800 }}
+							sx={roundChipSx}
 						/>
 						{statusKey && <StatusChip status={statusKey} config={NEGOTIATION_STATUSES} />}
 					</Stack>
@@ -132,7 +86,7 @@ export default function NegotiationSection({
 
 				<Divider />
 
-				<Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
+				<Grid container spacing={3} sx={contentGridSx}>
 					<Grid size={{ xs: 12, md: 8 }}>
 						<Stack spacing={2}>
 							<CurrentOfferCard
