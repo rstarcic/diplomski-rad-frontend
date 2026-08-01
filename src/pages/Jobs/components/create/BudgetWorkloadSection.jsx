@@ -2,13 +2,13 @@ import { Box, Grid, MenuItem, Stack } from "@mui/material";
 import PaidRoundedIcon from "@mui/icons-material/PaidRounded";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../../theme/layout";
 import { BUDGET_TYPES } from "../../../../constants/jobFilters";
+import { surfaceSectionSx } from "../../../../theme/layout";
 import SectionHeading from "./SectionHeading";
 
 const positiveNumberInputProps = {
 	htmlInput: {
-		min: 0,
+		min: 1,
 	},
 };
 
@@ -66,24 +66,26 @@ export default function BudgetWorkloadSection({ jobData, setJobData }) {
 				<Grid container spacing={2}>
 					<Grid size={{ xs: 12, sm: 6 }}>
 						<PrimaryTextField
+							required
 							label="Duration"
 							name="durationDays"
 							type="number"
 							value={jobData.durationDays}
 							onChange={updateField("durationDays")}
-							placeholder="Days"
+							placeholder="Enter duration in days"
 							slotProps={positiveNumberInputProps}
 						/>
 					</Grid>
 
 					<Grid size={{ xs: 12, sm: 6 }}>
 						<PrimaryTextField
+							required
 							label="Hours per week"
 							name="hoursPerWeek"
 							type="number"
 							value={jobData.hoursPerWeek}
 							onChange={updateField("hoursPerWeek")}
-							placeholder="Optional"
+							placeholder="Enter weekly hours"
 							slotProps={positiveNumberInputProps}
 						/>
 					</Grid>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CircularProgress, Stack, Typography } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CreditCardRoundedIcon from "@mui/icons-material/CreditCardRounded";
+import { Box, Card, CircularProgress, Stack, Typography } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 
 import { createSetupSession, getMyBillingDetails } from "../../api/payment.api";
@@ -9,12 +9,13 @@ import AppAlert from "../../components/ui/AppAlert";
 import PageHeader from "../../components/ui/PageHeader";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../components/ui/PrimaryTextField";
+import SecondaryButton from "../../components/ui/SecondaryButton";
 import { PAYMENT_ERRORS } from "../../constants/apiErrors";
 import { parseApiError } from "../../utils/parseApiError";
-import TransactionHistory from "./components/TransactionHistory";
+
 import {
-	cardIconSx,
 	cardFooterSx,
+	cardIconSx,
 	cardLabelSx,
 	cardLayerSx,
 	cardNumberSx,
@@ -27,6 +28,10 @@ import {
 	verifiedBadgeSx,
 	verifiedIconSx,
 } from "./ClientPaymentSettingsPage.styles";
+import TransactionHistory from "./components/TransactionHistory";
+
+const LOAD_ERROR_MESSAGE = "We couldn't load your payment details.";
+const STRIPE_ERROR_MESSAGE = "We couldn't open Stripe. Please try again.";
 
 const emptyDetails = {
 	address: "",
@@ -41,6 +46,17 @@ const emptyDetails = {
 	verified: false,
 };
 
+function isCanceledRequest(error) {
+	return error.name === "CanceledError" || error.name === "AbortError";
+}
+
+function getBillingActionLabel({ editingAddress, redirecting, verified }) {
+	if (redirecting) return "Opening Stripe...";
+	if (editingAddress) return "Save billing details";
+
+	return verified ? "Edit billing details" : "Add payment method";
+}
+
 export default function ClientPaymentSettingsPage() {
 	const [searchParams] = useSearchParams();
 	const setupResult = searchParams.get("setup");
@@ -52,31 +68,36 @@ export default function ClientPaymentSettingsPage() {
 	const [stripeError, setStripeError] = useState("");
 
 	useEffect(() => {
+		const controller = new AbortController();
 		let active = true;
 
 		async function loadDetails() {
 			const attempts = setupResult === "success" ? 8 : 1;
+			setLoadError("");
 
 			try {
 				for (let attempt = 0; attempt < attempts; attempt += 1) {
-					const data = await getMyBillingDetails();
+					const data = await getMyBillingDetails(controller.signal);
 					if (!active) return;
 
 					setDetails((current) => ({ ...current, ...data }));
+
 					if (data.verified || attempt === attempts - 1) return;
 
 					await new Promise((resolve) => window.setTimeout(resolve, 1000));
 				}
-			} catch (err) {
-				if (active) {
-					if (err.response?.status === 404) {
-						setDetails(emptyDetails);
-					} else {
-						setLoadError(parseApiError(err, PAYMENT_ERRORS, "We couldn't load your payment details.").message);
-					}
+			} catch (error) {
+				if (!active || isCanceledRequest(error)) return;
+
+				if (error.response?.status === 404) {
+					setDetails(emptyDetails);
+				} else {
+					setLoadError(parseApiError(error, PAYMENT_ERRORS, LOAD_ERROR_MESSAGE).message);
 				}
 			} finally {
-				if (active) setLoading(false);
+				if (active) {
+					setLoading(false);
+				}
 			}
 		}
 
@@ -84,12 +105,18 @@ export default function ClientPaymentSettingsPage() {
 
 		return () => {
 			active = false;
+			controller.abort();
 		};
 	}, [setupResult]);
 
 	const updateField = (field) => (event) => {
-		const value = field === "countryCode" ? event.target.value.toUpperCase().slice(0, 2) : event.target.value;
-		setDetails((current) => ({ ...current, [field]: value }));
+		const value =
+			field === "countryCode" ? event.target.value.toUpperCase().slice(0, 2) : event.target.value;
+
+		setDetails((current) => ({
+			...current,
+			[field]: value,
+		}));
 	};
 
 	const openStripe = async () => {
@@ -98,17 +125,38 @@ export default function ClientPaymentSettingsPage() {
 
 		try {
 			const { checkoutUrl } = await createSetupSession(details);
-			if (!checkoutUrl) throw new Error("Stripe setup URL is missing.");
+
+			if (!checkoutUrl) {
+				throw new Error("Stripe setup URL is missing.");
+			}
+
 			window.location.assign(checkoutUrl);
-		} catch (err) {
-			setStripeError(parseApiError(err, PAYMENT_ERRORS, "We couldn't open Stripe. Please try again.").message);
+		} catch (error) {
+			setStripeError(parseApiError(error, PAYMENT_ERRORS, STRIPE_ERROR_MESSAGE).message);
 			setRedirecting(false);
 		}
 	};
 
-	const expiry = `${String(details.cardExpMonth ?? "").padStart(2, "0")}/${String(details.cardExpYear ?? "").slice(-2)}`;
+	const handleBillingAction = () => {
+		if (editingAddress) {
+			openStripe();
+			return;
+		}
+
+		setEditingAddress(true);
+	};
+
+	const expiry = `${String(details.cardExpMonth ?? "").padStart(2, "0")}/${String(
+		details.cardExpYear ?? "",
+	).slice(-2)}`;
 	const cardBrand = (details.cardBrand || "Card").toUpperCase();
 	const cardLast4 = details.cardLast4 || "••••";
+	const BillingActionButton = editingAddress || !details.verified ? PrimaryButton : SecondaryButton;
+	const billingActionLabel = getBillingActionLabel({
+		editingAddress,
+		redirecting,
+		verified: details.verified,
+	});
 
 	return (
 		<Box>
@@ -154,6 +202,7 @@ export default function ClientPaymentSettingsPage() {
 								<Typography variant="h6" fontWeight={800}>
 									Payment method
 								</Typography>
+
 								{details.verified && (
 									<Stack direction="row" spacing={0.6} sx={verifiedBadgeSx}>
 										<CheckCircleRoundedIcon sx={verifiedIconSx} />
@@ -163,11 +212,14 @@ export default function ClientPaymentSettingsPage() {
 									</Stack>
 								)}
 							</Stack>
+
 							<Box sx={paymentCardSx}>
 								<Stack direction="row" sx={cardLayerSx}>
 									<CreditCardRoundedIcon sx={cardIconSx} />
 								</Stack>
+
 								<Typography sx={cardNumberSx}>•••• •••• •••• {cardLast4}</Typography>
+
 								<Box sx={cardFooterSx}>
 									<Stack spacing={0.2}>
 										<Typography variant="caption" sx={cardLabelSx}>
@@ -177,6 +229,7 @@ export default function ClientPaymentSettingsPage() {
 											{cardBrand}
 										</Typography>
 									</Stack>
+
 									<Stack spacing={0.2} sx={expiryDetailsSx}>
 										<Typography variant="caption" sx={cardLabelSx}>
 											Expires
@@ -192,13 +245,19 @@ export default function ClientPaymentSettingsPage() {
 						<Stack spacing={2}>
 							{editingAddress && (
 								<Stack spacing={2}>
-									<PrimaryTextField label="Address" value={details.address} onChange={updateField("address")} />
+									<PrimaryTextField
+										label="Address"
+										value={details.address}
+										onChange={updateField("address")}
+									/>
+
 									<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
 										<PrimaryTextField
 											label="Postal code"
 											value={details.postalCode}
 											onChange={updateField("postalCode")}
 										/>
+
 										<PrimaryTextField
 											label="Country code"
 											value={details.countryCode}
@@ -208,26 +267,13 @@ export default function ClientPaymentSettingsPage() {
 								</Stack>
 							)}
 
-							<PrimaryButton
-								variant="outlined"
-								onClick={() => {
-									if (editingAddress) {
-										openStripe();
-										return;
-									}
-									setEditingAddress(true);
-								}}
+							<BillingActionButton
+								onClick={handleBillingAction}
 								disabled={redirecting}
 								sx={editAddressButtonSx}
 							>
-								{editingAddress
-									? redirecting
-										? "Opening Stripe..."
-										: "Save billing details"
-									: details.verified
-										? "Edit billing details"
-										: "Add payment method"}
-							</PrimaryButton>
+								{billingActionLabel}
+							</BillingActionButton>
 						</Stack>
 					</Stack>
 				)}

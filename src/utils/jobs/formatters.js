@@ -1,34 +1,91 @@
+import { formatCurrency, formatDate } from "../formatters";
 
-import { formatDate } from "../formatters";
+const DEFAULT_FALLBACK = "Not set";
 
-export const formatValue = (value, fallback = "Not set") => value || fallback;
+const normalizeStatus = (value) =>
+    String(value)
+        .trim()
+        .toLowerCase()
+        .replace(/[\s_-]+(.)/g, (_, character) =>
+            character.toUpperCase(),
+        );
 
-export const formatBudget = (job) => {
-    if (job.budgetType === "Hourly") {
-        return `${job.budgetAmount} € / h`;
-    }
+export const formatValue = (
+    value,
+    fallback = DEFAULT_FALLBACK,
+) => {
+    if (value == null) return fallback;
 
-    return `${job.budgetAmount} € fixed`;
-};
-
-export const formatOption = (value, fallback = "Not set") => {
-    if (!value) {
+    if (typeof value === "string" && !value.trim()) {
         return fallback;
     }
 
-    return value.charAt(0).toUpperCase() + value.slice(1);
+    return value;
 };
 
-export const formatDeadline = (deadline) => formatDate(deadline, "No deadline");
+export const formatBudget = ({
+    budgetType,
+    budgetAmount,
+    currency = "EUR",
+}) => {
+    const formattedAmount = formatCurrency(
+        budgetAmount,
+        currency,
+        DEFAULT_FALLBACK,
+    );
+
+    if (formattedAmount === DEFAULT_FALLBACK) {
+        return formattedAmount;
+    }
+
+    const normalizedBudgetType = String(budgetType)
+        .trim()
+        .toLowerCase();
+
+    if (normalizedBudgetType === "hourly") {
+        return `${formattedAmount} / h`;
+    }
+
+    if (normalizedBudgetType === "fixed") {
+        return `${formattedAmount} fixed`;
+    }
+
+    return formattedAmount;
+};
+
+export const formatOption = (
+    value,
+    fallback = DEFAULT_FALLBACK,
+) => {
+    if (value == null || value === "") {
+        return fallback;
+    }
+
+    const normalizedValue = String(value).trim();
+
+    if (!normalizedValue) {
+        return fallback;
+    }
+
+    return (
+        normalizedValue.charAt(0).toUpperCase() +
+        normalizedValue.slice(1)
+    );
+};
+
+export const formatDeadline = (deadline) =>
+    formatDate(deadline, "No deadline");
 
 export const findStatusKey = (rawStatus, statusConfig) => {
     if (!rawStatus || !statusConfig) return null;
 
-    const normalizedStatus = String(rawStatus)
-        .trim()
-        .toLowerCase()
-        .replace(/[_-]+(.)/g, (_, character) => character.toUpperCase());
-    return Object.keys(statusConfig).find(
-        (statusKey) => statusKey.toLowerCase() === normalizedStatus.toLowerCase(),
-    ) ?? null;
+    const normalizedStatus = normalizeStatus(rawStatus);
+
+    return (
+        Object.keys(statusConfig).find(
+            (statusKey) =>
+                statusKey.toLowerCase() ===
+                normalizedStatus.toLowerCase(),
+        ) ?? null
+    );
 };

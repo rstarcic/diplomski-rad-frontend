@@ -20,7 +20,7 @@ export const createFilterChipSx = (option, selected) => (theme) => {
 	return {
 		height: 48,
 		px: 0.75,
-		borderRadius: 999,
+		borderRadius: theme.custom.radius.pill,
 		borderWidth: selected ? 1.5 : 1,
 		borderColor: palette.border,
 		bgcolor: palette.background,

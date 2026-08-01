@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const createBackButtonSx = (customSx) => (theme) => ({
 	height: 40,
-	borderRadius: 999,
+	borderRadius: theme.custom.radius.pill,
 	px: 2,
 	fontWeight: 700,
 	textTransform: "none",
@@ -12,11 +12,13 @@ const createBackButtonSx = (customSx) => (theme) => ({
 	borderColor: theme.palette.divider,
 	backgroundColor: theme.palette.background.paper,
 	backdropFilter: "blur(8px)",
-	boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+	boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.03)",
+
 	"&:hover": {
 		borderColor: theme.palette.primary.main,
 		backgroundColor: theme.palette.background.paper,
 	},
+
 	...(typeof customSx === "function" ? customSx(theme) : customSx),
 });
 
@@ -41,12 +43,7 @@ export function BackButton({ children = "Back", sx = {}, backTo }) {
 	}
 
 	return (
-		<Button
-			variant="outlined"
-			startIcon={<ArrowBackRoundedIcon />}
-			onClick={handleBack}
-			sx={createBackButtonSx(sx)}
-		>
+		<Button variant="outlined" startIcon={<ArrowBackRoundedIcon />} onClick={handleBack} sx={createBackButtonSx(sx)}>
 			{children}
 		</Button>
 	);

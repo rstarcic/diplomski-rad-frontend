@@ -1,41 +1,36 @@
-import { useNavigate } from "react-router-dom";
-import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
-import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
-
 import { Box, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
+import { useNavigate } from "react-router-dom";
 
-import StatusChip from "../../../../components/ui/StatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import SecondaryButton from "../../../../components/ui/SecondaryButton";
-import { findStatusKey, formatDeadline } from "../../../../utils/jobs";
+import StatusChip from "../../../../components/ui/StatusChip";
+import { CONTRACT_STATUSES, JOB_STATUSES, PAYMENT_STATUSES } from "../../../../constants/statuses";
 import { formatDate } from "../../../../utils/formatters";
+import { findStatusKey, formatDeadline } from "../../../../utils/jobs";
 import {
-	CONTRACT_STATUSES,
-	JOB_STATUSES,
-	PAYMENT_STATUSES,
-} from "../../../../constants/statuses";
-import {
-	cardSx,
-	cardContentSx,
+	actionButtonSx,
+	actionButtonsSx,
 	actionRowSx,
 	applicationsIconSx,
+	cardContentSx,
+	cardSx,
 	contractIconSx,
-	paymentIconSx,
+	footerDividerSx,
+	footerSx,
+	metaIconSx,
+	metaItemSx,
+	metaRowSx,
 	overviewLabelSx,
+	paymentIconSx,
 	rowValueSx,
 	summaryStatusChipSx,
-	footerSx,
-	footerDividerSx,
-	metaRowSx,
-	metaItemSx,
-	metaIconSx,
-	actionButtonsSx,
-	actionButtonSx,
 } from "./MyJobCard.styles";
 
 export default function MyJobCard({ job }) {
@@ -43,12 +38,8 @@ export default function MyJobCard({ job }) {
 	const statusKey = findStatusKey(job.status, JOB_STATUSES);
 	const contractStatusKey = findStatusKey(job.contracts?.status, CONTRACT_STATUSES);
 	const paymentStatusKey = findStatusKey(job.payments?.status, PAYMENT_STATUSES);
-	const contractStatusLabel = contractStatusKey
-		? CONTRACT_STATUSES[contractStatusKey].label
-		: "Not started";
-	const paymentStatusLabel = paymentStatusKey
-		? PAYMENT_STATUSES[paymentStatusKey].label
-		: "No payments yet";
+	const contractStatusLabel = contractStatusKey ? CONTRACT_STATUSES[contractStatusKey].label : "Not started";
+	const paymentStatusLabel = paymentStatusKey ? PAYMENT_STATUSES[paymentStatusKey].label : "No payments yet";
 
 	const handleApplications = () => navigate(`/client/jobs/${job.id}/applications`);
 	const handleEditJob = () => navigate(`/client/jobs/${job.id}/edit`);
@@ -85,11 +76,10 @@ export default function MyJobCard({ job }) {
 								<Box sx={applicationsIconSx}>
 									<PeopleAltOutlinedIcon fontSize="small" />
 								</Box>
-								<Box>
-									<Typography variant="body2" fontWeight={800}>
-										Applications
-									</Typography>
-								</Box>
+
+								<Typography variant="body2" fontWeight={800}>
+									Applications
+								</Typography>
 							</Stack>
 							<Stack direction="row" spacing={1.75} sx={{ alignItems: "center" }}>
 								{job.applications?.new > 0 && (
@@ -106,11 +96,10 @@ export default function MyJobCard({ job }) {
 								<Box sx={contractIconSx}>
 									<DescriptionOutlinedIcon fontSize="small" />
 								</Box>
-								<Box>
-									<Typography variant="body2" fontWeight={800}>
-										Contract
-									</Typography>
-								</Box>
+
+								<Typography variant="body2" fontWeight={800}>
+									Contract
+								</Typography>
 							</Stack>
 							<Chip label={contractStatusLabel} size="small" sx={summaryStatusChipSx} />
 						</Stack>
@@ -120,11 +109,9 @@ export default function MyJobCard({ job }) {
 								<Box sx={paymentIconSx}>
 									<PaymentsOutlinedIcon fontSize="small" />
 								</Box>
-								<Box>
-									<Typography variant="body2" fontWeight={800}>
-										Payment
-									</Typography>
-								</Box>
+								<Typography variant="body2" fontWeight={800}>
+									Payment
+								</Typography>
 							</Stack>
 							<Chip label={paymentStatusLabel} size="small" sx={summaryStatusChipSx} />
 						</Stack>

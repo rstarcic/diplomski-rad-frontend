@@ -54,7 +54,7 @@ export const rowValueSx = {
 export const summaryStatusChipSx = {
 	height: 28,
 	maxWidth: 150,
-	borderRadius: 999,
+	borderRadius: (theme) => theme.custom.radius.pill,
 	bgcolor: "rgba(148, 163, 184, 0.12)",
 	color: "text.primary",
 	fontWeight: 700,

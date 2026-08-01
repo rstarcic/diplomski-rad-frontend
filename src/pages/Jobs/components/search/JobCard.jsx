@@ -1,35 +1,36 @@
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { Avatar, Box, ButtonBase, Card, CardContent, Chip, Divider, Stack, Typography } from "@mui/material";
-import StatusChip from "../../../../components/ui/StatusChip";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-import { findStatusKey, formatBudget, formatDeadline } from "../../../../utils/jobs";
+import StatusChip from "../../../../components/ui/StatusChip";
 import { JOB_STATUSES } from "../../../../constants/statuses";
+import { findStatusKey, formatBudget, formatDeadline } from "../../../../utils/jobs";
 import {
-	cardSx,
-	cardContentSx,
-	headerSx,
-	titleWrapSx,
-	categorySx,
-	titleSx,
-	statusSx,
-	chipRowSx,
-	metaRowSx,
-	metaItemSx,
-	deadlineMetaSx,
-	metaLabelSx,
-	budgetSx,
-	deadlineValueSx,
-	deadlineIconSx,
-	footerSx,
-	footerDividerSx,
-	footerRowSx,
 	avatarSx,
+	budgetSx,
+	cardContentSx,
+	cardSx,
+	categorySx,
+	chipRowSx,
 	clientLinkSx,
 	clientNameSx,
+	deadlineIconSx,
+	deadlineMetaSx,
+	deadlineValueSx,
 	detailsButtonSx,
+	footerDividerSx,
+	footerRowSx,
+	footerSx,
+	headerSx,
+	metaItemSx,
+	metaLabelSx,
+	metaRowSx,
+	statusSx,
+	titleSx,
+	titleWrapSx,
 } from "./JobCard.styles";
 
 export default function JobCard({ job }) {
@@ -97,11 +98,7 @@ export default function JobCard({ job }) {
 								{clientName}
 							</Typography>
 						</ButtonBase>
-						<PrimaryButton
-							endIcon={<ArrowForwardRoundedIcon />}
-							sx={detailsButtonSx}
-							onClick={handleViewDetails}
-						>
+						<PrimaryButton endIcon={<ArrowForwardRoundedIcon />} sx={detailsButtonSx} onClick={handleViewDetails}>
 							View details
 						</PrimaryButton>
 					</Stack>

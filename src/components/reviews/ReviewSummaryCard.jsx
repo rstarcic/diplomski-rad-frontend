@@ -37,7 +37,7 @@ const dialogTitleSx = {
 const titleIconSx = (theme) => ({
 	width: 42,
 	height: 42,
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	display: "grid",
 	placeItems: "center",
 	flexShrink: 0,

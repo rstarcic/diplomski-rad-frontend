@@ -24,7 +24,58 @@ const colors = {
 
 const tint = {
 	primarySubtle: "rgba(91, 63, 214, 0.03)",
+	primarySoft: "rgba(91, 63, 214, 0.08)",
 	primaryBorder: "rgba(91, 63, 214, 0.3)",
+};
+
+const radius = {
+	control: 8,
+	card: 12,
+	section: 16,
+	dialog: 16,
+	pill: 999,
+	circle: "50%",
+};
+
+const shadows = {
+	subtle: "0 8px 24px rgba(37, 48, 82, 0.06)",
+	surface: "0 10px 28px rgba(37, 48, 82, 0.06)",
+	card: "0 12px 32px rgba(37, 48, 82, 0.08)",
+	cardHover: "0 16px 38px rgba(37, 48, 82, 0.12)",
+	elevated: "0 18px 42px rgba(37, 48, 82, 0.14)",
+	primary: "0 7px 18px rgba(91, 63, 214, 0.2)",
+	primaryHover: "0 9px 22px rgba(91, 63, 214, 0.28)",
+};
+
+const gradients = {
+	primary: `linear-gradient(
+		135deg,
+		${colors.primary},
+		${colors.primaryDark}
+	)`,
+	primaryHover: `linear-gradient(
+		135deg,
+		${colors.primaryLight},
+		${colors.primaryDark}
+	)`,
+	primarySoft: `linear-gradient(
+		135deg,
+		${colors.paper},
+		rgba(124, 99, 240, 0.08)
+	)`,
+	primarySoftHover: `linear-gradient(
+		135deg,
+		rgba(124, 99, 240, 0.08),
+		rgba(91, 63, 214, 0.14)
+	)`,
+};
+
+const transitions = {
+	fast: "150ms ease",
+	standard: "180ms ease",
+	slow: "250ms ease",
+	interactive:
+		"background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease",
 };
 
 const alerts = {
@@ -153,8 +204,7 @@ const dashboardActivity = {
 
 const dashboardAction = {
 	border: "rgba(91, 63, 214, 0.24)",
-	background:
-		"linear-gradient(135deg, rgba(243, 240, 255, 0.96), rgba(255, 255, 255, 1) 52%)",
+	background: "linear-gradient(135deg, rgba(243, 240, 255, 0.96), rgba(255, 255, 255, 1) 52%)",
 	accent: colors.primaryLight,
 	eyebrow: colors.primaryDark,
 	shadow: "0 10px 28px rgba(70, 48, 159, 0.09)",
@@ -184,8 +234,7 @@ const jobForm = {
 };
 
 const jobCardAccent = {
-	green:
-		"linear-gradient(180deg, #16b879 0%, rgba(22, 184, 121, 0.32) 100%)",
+	green: "linear-gradient(180deg, #16b879 0%, rgba(22, 184, 121, 0.32) 100%)",
 };
 
 const home = {
@@ -265,7 +314,7 @@ const home = {
 			alignSelf: "flex-start",
 			px: 1.45,
 			py: 0.75,
-			borderRadius: 999,
+			borderRadius: (theme) => theme.custom.radius.pill,
 		},
 		title: {
 			mt: { xs: 3, md: 4 },
@@ -284,7 +333,6 @@ const home = {
 			justifyContent: "center",
 			minWidth: 0,
 			order: { xs: -1, md: 0 },
-
 		},
 		illustration: {
 			width: { xs: "100%", lg: "112%" },
@@ -454,41 +502,85 @@ const theme = createTheme({
 			defaultProps: {
 				disableElevation: true,
 			},
+
 			styleOverrides: {
 				root: {
 					minHeight: 40,
-					borderRadius: 8,
+					borderRadius: radius.control,
 					fontSize: "0.875rem",
 					fontWeight: 700,
 					textTransform: "none",
+					transition: transitions.interactive,
+
+					"&.Mui-focusVisible": {
+						outline: `3px solid ${tint.primaryBorder}`,
+						outlineOffset: 2,
+					},
 				},
+
 				sizeSmall: {
 					minHeight: 36,
 					paddingInline: 14,
 				},
+
 				sizeLarge: {
 					minHeight: 46,
 					paddingInline: 22,
 				},
+
 				containedPrimary: {
-					boxShadow: "0 7px 18px rgba(91, 63, 214, 0.2)",
+					color: colors.white,
+					background: gradients.primary,
+					border: "1.5px solid transparent",
+					boxShadow: shadows.primary,
+
 					"&:hover": {
-						boxShadow: "0 9px 22px rgba(91, 63, 214, 0.28)",
+						color: colors.white,
+						background: gradients.primaryHover,
+						boxShadow: shadows.primaryHover,
+					},
+
+					"&.Mui-disabled": {
+						color: colors.textMuted,
+						background: colors.border,
+						borderColor: "transparent",
+						boxShadow: "none",
 					},
 				},
+
 				outlinedPrimary: {
-					borderWidth: 1.5,
-					borderColor: colors.primary,
-					backgroundColor: colors.paper,
+					color: colors.primaryDark,
+					border: `1.5px solid ${tint.primaryBorder}`,
+					background: gradients.primarySoft,
+					boxShadow: "0 4px 12px rgba(91, 63, 214, 0.1)",
+
 					"&:hover": {
-						borderWidth: 1.5,
-						borderColor: colors.primaryDark,
-						backgroundColor: tint.primarySubtle,
+						color: colors.primaryDark,
+						borderColor: colors.primaryLight,
+						background: gradients.primarySoftHover,
+						boxShadow: "0 6px 16px rgba(91, 63, 214, 0.16)",
+					},
+
+					"&.Mui-disabled": {
+						color: colors.textMuted,
+						borderColor: colors.border,
+						background: colors.paper,
+						boxShadow: "none",
 					},
 				},
+
 				textPrimary: {
+					color: colors.primary,
+					backgroundColor: "transparent",
+
 					"&:hover": {
-						backgroundColor: tint.primarySubtle,
+						color: colors.primaryDark,
+						backgroundColor: tint.primarySoft,
+					},
+
+					"&.Mui-disabled": {
+						color: colors.textMuted,
+						backgroundColor: "transparent",
 					},
 				},
 			},
@@ -577,6 +669,10 @@ const theme = createTheme({
 	custom: {
 		pageHeader,
 		profileProgress,
+		radius,
+		shadows,
+		gradients,
+		transitions,
 		tint,
 		alerts,
 		dashboardList,

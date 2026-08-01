@@ -1,14 +1,38 @@
-import { Box, Grid, InputAdornment, Stack, Typography } from "@mui/material";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+import { Box, Grid, InputAdornment, Stack, Typography } from "@mui/material";
 
-import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
-
+import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { surfaceSectionSx } from "../../../../theme/layout";
+
+const profileDetailsSectionSx = {
+	...surfaceSectionSx,
+	boxShadow: (theme) => theme.custom.shadows.surface,
+};
+
+const headerSx = {
+	alignItems: "center",
+	mb: 3,
+	pb: 2.5,
+	borderBottom: "1px solid",
+	borderColor: "divider",
+};
+
+const headerIconSx = {
+	width: 42,
+	height: 42,
+	borderRadius: (theme) => theme.custom.radius.circle,
+	display: "grid",
+	placeItems: "center",
+	flexShrink: 0,
+	color: "primary.main",
+	background: "linear-gradient(145deg, #f2edff, #e6dcff)",
+	boxShadow: (theme) => `inset 0 0 0 1px ${theme.custom.tint.primarySoft}`,
+};
 
 export default function ProfileDetailsSection({
 	profileData,
@@ -17,25 +41,9 @@ export default function ProfileDetailsSection({
 	aboutPlaceholder = "Write a short introduction for your profile.",
 }) {
 	return (
-		<Box sx={{ ...surfaceSectionSx, boxShadow: "0 10px 28px rgba(37, 48, 82, 0.06)" }}>
-			<Stack
-				direction="row"
-				spacing={1.75}
-				sx={{ alignItems: "center", mb: 3, pb: 2.5, borderBottom: "1px solid", borderColor: "divider" }}
-			>
-				<Box
-					sx={{
-						width: 42,
-						height: 42,
-						borderRadius: "50%",
-						display: "grid",
-						placeItems: "center",
-						background: "linear-gradient(145deg, #f2edff, #e6dcff)",
-						color: "primary.main",
-						boxShadow: "inset 0 0 0 1px rgba(91,63,214,.08)",
-						flexShrink: 0,
-					}}
-				>
+		<Box sx={profileDetailsSectionSx}>
+			<Stack direction="row" spacing={1.75} sx={headerSx}>
+				<Box sx={headerIconSx}>
 					<PersonRoundedIcon sx={{ fontSize: 21 }} />
 				</Box>
 				<Box sx={{ minWidth: 0 }}>
@@ -56,7 +64,15 @@ export default function ProfileDetailsSection({
 							name="firstName"
 							value={profileData.firstName}
 							onChange={updateField("firstName")}
-							slotProps={{ input: { startAdornment: <InputAdornment position="start"><PersonRoundedIcon fontSize="small" /></InputAdornment> } }}
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position="start">
+											<PersonRoundedIcon fontSize="small" />
+										</InputAdornment>
+									),
+								},
+							}}
 						/>
 					</Grid>
 
@@ -66,7 +82,15 @@ export default function ProfileDetailsSection({
 							name="lastName"
 							value={profileData.lastName}
 							onChange={updateField("lastName")}
-							slotProps={{ input: { startAdornment: <InputAdornment position="start"><PersonRoundedIcon fontSize="small" /></InputAdornment> } }}
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position="start">
+											<PersonRoundedIcon fontSize="small" />
+										</InputAdornment>
+									),
+								},
+							}}
 						/>
 					</Grid>
 
@@ -77,12 +101,34 @@ export default function ProfileDetailsSection({
 							type="email"
 							value={profileData.email}
 							onChange={updateField("email")}
-							slotProps={{ input: { startAdornment: <InputAdornment position="start"><EmailOutlinedIcon fontSize="small" /></InputAdornment> } }}
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position="start">
+											<EmailOutlinedIcon fontSize="small" />
+										</InputAdornment>
+									),
+								},
+							}}
 						/>
 					</Grid>
 
 					<Grid size={{ xs: 12, sm: 6 }}>
-						<PrimaryTextField label="Phone" name="phone" value={profileData.phone} onChange={updateField("phone")} slotProps={{ input: { startAdornment: <InputAdornment position="start"><PhoneOutlinedIcon fontSize="small" /></InputAdornment> } }} />
+						<PrimaryTextField
+							label="Phone"
+							name="phone"
+							value={profileData.phone}
+							onChange={updateField("phone")}
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position="start">
+											<PhoneOutlinedIcon fontSize="small" />
+										</InputAdornment>
+									),
+								},
+							}}
+						/>
 					</Grid>
 
 					<Grid size={{ xs: 12, sm: 6 }}>
@@ -95,7 +141,21 @@ export default function ProfileDetailsSection({
 					</Grid>
 
 					<Grid size={{ xs: 12, sm: 6 }}>
-						<PrimaryTextField label="City" name="city" value={profileData.city} onChange={updateField("city")} slotProps={{ input: { startAdornment: <InputAdornment position="start"><LocationOnOutlinedIcon fontSize="small" /></InputAdornment> } }} />
+						<PrimaryTextField
+							label="City"
+							name="city"
+							value={profileData.city}
+							onChange={updateField("city")}
+							slotProps={{
+								input: {
+									startAdornment: (
+										<InputAdornment position="start">
+											<LocationOnOutlinedIcon fontSize="small" />
+										</InputAdornment>
+									),
+								},
+							}}
+						/>
 					</Grid>
 
 					<Grid size={{ xs: 12 }}>
@@ -109,11 +169,16 @@ export default function ProfileDetailsSection({
 							minRows={4}
 						/>
 					</Grid>
-
 				</Grid>
 
 				<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-					<PrimaryButton type="submit" size="large" loading={saving} startIcon={<SaveOutlinedIcon />} sx={{ width: { xs: "100%", sm: "55%" }, background: "linear-gradient(135deg, #6d3ee8, #4f2ac7)" }}>
+					<PrimaryButton
+						type="submit"
+						size="large"
+						loading={saving}
+						startIcon={<SaveOutlinedIcon />}
+						sx={{ width: { xs: "100%", sm: "55%" } }}
+					>
 						Save profile
 					</PrimaryButton>
 				</Box>

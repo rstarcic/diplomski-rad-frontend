@@ -17,7 +17,7 @@ export const blobTopSx = {
 	right: -120,
 	width: 420,
 	height: 420,
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	bgcolor: "rgba(255,255,255,0.06)",
 	pointerEvents: "none",
 };
@@ -28,7 +28,7 @@ export const blobBottomSx = {
 	left: -160,
 	width: 520,
 	height: 520,
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	bgcolor: "rgba(255,255,255,0.04)",
 	pointerEvents: "none",
 };
@@ -49,7 +49,7 @@ export const iconFloatSx = {
 export const iconCircleSx = {
 	width: 100,
 	height: 100,
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	bgcolor: "rgba(255,255,255,0.14)",
 	backdropFilter: "blur(6px)",
 	border: "1.5px solid rgba(255,255,255,0.22)",

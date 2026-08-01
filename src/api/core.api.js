@@ -50,8 +50,8 @@ export async function getMyProfile() {
 	};
 }
 
-export async function getContractorPublicProfile(contractorId) {
-	const { data } = await api.get(`/profiles/contractors/${contractorId}`);
+export async function getContractorPublicProfile(contractorId, signal) {
+	const { data } = await api.get(`/profiles/contractors/${contractorId}`, { signal });
 
 	const { profile, reviews, skills = [], stats = [] } = data;
 
@@ -216,7 +216,6 @@ export async function getJobApplicationDetails(jobId, applicationId) {
 async function getContractByApplicationId(applicationId, signal, fallbackJob = null) {
 	try {
 		const { data } = await api.get(`/contracts/application/${applicationId}`, { signal });
-		console.log("dataaaa", data);
 		return mapContractFromAPI(data, fallbackJob);
 	} catch (error) {
 		if (error.response?.status === 404) return null;

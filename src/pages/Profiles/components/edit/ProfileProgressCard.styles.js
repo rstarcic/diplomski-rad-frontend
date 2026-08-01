@@ -19,7 +19,7 @@ export const percentageSx = {
 export const circleSx = (percentage) => ({
 	width: 82,
 	height: 82,
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	p: "6px",
 	flexShrink: 0,
 	background: `conic-gradient(#ddd6fe ${percentage * 3.6}deg, rgba(255,255,255,0.14) 0deg)`,
@@ -29,7 +29,7 @@ export const circleSx = (percentage) => ({
 export const circleInnerSx = {
 	width: "100%",
 	height: "100%",
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	display: "grid",
 	placeItems: "center",
 	background: "linear-gradient(145deg, rgba(92,61,202,.98), rgba(58,36,150,.98))",

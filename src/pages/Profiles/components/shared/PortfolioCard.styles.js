@@ -1,7 +1,7 @@
 export const portfolioPaperSx = {
 	p: { xs: 2.25, sm: 3 },
 	borderRadius: 2.5,
-	boxShadow: "0 8px 24px rgba(37, 48, 82, 0.06)",
+	boxShadow: (theme) => theme.custom.shadows.subtle,
 };
 
 export const portfolioHeaderSx = {
@@ -17,6 +17,17 @@ export const portfolioGridSx = {
 	mt: 2,
 };
 
+export const featuredGridSx = {
+	...portfolioGridSx,
+	gridTemplateColumns: "minmax(0, 1fr)",
+	maxWidth: 480,
+};
+
+export const featuredPortfolioButtonSx = {
+	ml: "auto",
+	flexShrink: 0,
+};
+
 export const portfolioImageSx = {
 	width: "100%",
 	height: 180,
@@ -25,7 +36,7 @@ export const portfolioImageSx = {
 	display: "block",
 	border: "1px solid",
 	borderColor: "divider",
-	bgcolor: "#f1edff",
+	bgcolor: "primary.light",
 };
 
 export const portfolioItemHeaderSx = {
@@ -41,7 +52,6 @@ export const portfolioItemTitleSx = {
 	overflow: "hidden",
 	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
-	textAlign: "center",
 };
 
 export const portfolioLinkButtonSx = {
@@ -66,11 +76,7 @@ export const toggleButtonRowSx = {
 };
 
 export const toggleButtonSx = {
-	textTransform: "none",
-	borderColor: "#d8ccff",
-	color: "#6c47ff",
-	fontWeight: 700,
-	borderRadius: 1,
+	minHeight: 42,
 };
 
 export const addFormStackSx = {
@@ -88,8 +94,6 @@ export const formActionsRowSx = {
 
 export const viewAllButtonSx = {
 	mt: 2,
-	fontWeight: 800,
-	textTransform: "none",
 };
 
 export const dialogTitleSx = {

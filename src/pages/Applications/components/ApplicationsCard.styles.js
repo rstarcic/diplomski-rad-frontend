@@ -7,7 +7,7 @@ export const cardSx = (compact = false) => ({
 	border: "1px solid",
 	borderColor: "divider",
 	bgcolor: "background.paper",
-	boxShadow: "0 10px 28px rgba(37, 48, 82, 0.06)",
+	boxShadow: (theme) => theme.custom.shadows.surface,
 	overflow: "hidden",
 	transition: "transform 0.2s ease, box-shadow 0.2s ease",
 	"&:hover": {

@@ -1,19 +1,11 @@
-import {
-	Avatar,
-	Box,
-	ButtonBase,
-	Card,
-	CardActions,
-	CardContent,
-	Stack,
-	Typography,
-} from "@mui/material";
+import { Avatar, Box, ButtonBase, Card, CardActions, CardContent, Stack, Typography } from "@mui/material";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { useNavigate } from "react-router-dom";
 
 import ApplicationStatusChip from "../../../components/ui/ApplicationStatusChip";
 import PrimaryButton from "../../../components/ui/PrimaryButton";
+import SecondaryButton from "../../../components/ui/SecondaryButton";
 import { APPLICATION_STATUSES, JOB_STATUSES } from "../../../constants/statuses";
 import { formatDate } from "../../../utils/formatters";
 import { findStatusKey } from "../../../utils/jobs";
@@ -46,18 +38,8 @@ export default function ApplicationsCard({ application, contractor, job, contrac
 	const compact = statusKey === "accepted" && contractPhaseStarted;
 	const actionLabel = compact ? "View details" : presentation.action;
 
-	const {
-		id,
-		firstName,
-		lastName,
-		fullName: contractorFullName,
-		city,
-		country,
-		profileImageUrl,
-	} = contractor ?? {};
-	const fullName =
-		contractorFullName ||
-		(firstName && lastName ? `${firstName} ${lastName}` : "Unknown contractor");
+	const { id, firstName, lastName, fullName: contractorFullName, city, country, profileImageUrl } = contractor ?? {};
+	const fullName = contractorFullName || (firstName && lastName ? `${firstName} ${lastName}` : "Unknown contractor");
 
 	const openContractorProfile = () => {
 		if (id) {
@@ -90,11 +72,7 @@ export default function ApplicationsCard({ application, contractor, job, contrac
 							</Avatar>
 
 							<Box sx={{ minWidth: 0 }}>
-								<Typography
-									variant="subtitle1"
-									sx={{ fontWeight: 850, lineHeight: 1.2 }}
-									noWrap
-								>
+								<Typography variant="subtitle1" sx={{ fontWeight: 850, lineHeight: 1.2 }} noWrap>
 									{fullName}
 								</Typography>
 
@@ -117,17 +95,11 @@ export default function ApplicationsCard({ application, contractor, job, contrac
 						<Box sx={noticeSx(presentation)}>
 							<StatusNoticeIcon />
 							<Box>
-								<Typography
-									variant="body2"
-									sx={{ fontWeight: 700, color: "inherit", lineHeight: 1.45 }}
-								>
+								<Typography variant="body2" sx={{ fontWeight: 700, color: "inherit", lineHeight: 1.45 }}>
 									{presentation.message}
 								</Typography>
 								{presentation.detail && (
-									<Typography
-										variant="body2"
-										sx={{ mt: 0.25, color: "text.primary", lineHeight: 1.45 }}
-									>
+									<Typography variant="body2" sx={{ mt: 0.25, color: "text.primary", lineHeight: 1.45 }}>
 										{presentation.detail}
 									</Typography>
 								)}
@@ -157,10 +129,7 @@ export default function ApplicationsCard({ application, contractor, job, contrac
 
 			<CardActions sx={footerSx}>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-					<PrimaryButton variant="outlined" onClick={openContractorProfile}>
-						View profile
-					</PrimaryButton>
-
+					<SecondaryButton onClick={openContractorProfile}>View profile</SecondaryButton>
 					{actionLabel && (
 						<PrimaryButton
 							variant={statusKey === "rejected" ? "outlined" : "contained"}

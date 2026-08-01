@@ -1,24 +1,18 @@
-import { useEffect, useState } from "react";
 import { Box, Grid, Stack } from "@mui/material";
 import PsychologyRoundedIcon from "@mui/icons-material/PsychologyRounded";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 
-import { getMyProfile, updateMyProfile } from "../../api/core.api.js";
 import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import AppAlert from "../../components/ui/AppAlert";
 import PageHeader from "../../components/ui/PageHeader";
-import { PROFILE_ERRORS } from "../../constants/apiErrors";
-import { useAuth } from "../../hooks/useAuth";
-import { useTimedAlert } from "../../hooks/useTimedAlert";
-import { parseApiError } from "../../utils/parseApiError";
-
-import { CONTRACTOR_REQUIRED_PROFILE_FIELDS } from "./components/edit/profileCompletion";
+import { REQUIRED_PROFILE_FIELDS } from "./components/edit/profileFields.config";
 import ProfileDetailsSection from "./components/edit/ProfileDetailsSection";
 import ProfileImageUpload from "./components/edit/ProfileImageUpload";
 import ProfileProgressCard from "./components/edit/ProfileProgressCard";
 import PortfolioCard from "./components/shared/PortfolioCard";
 import SkillsCard from "./components/shared/SkillsCard";
+import { useEditableProfile } from "./hooks/useEditableProfile";
 
 const emptyProfileData = {
 	firstName: "",
@@ -33,63 +27,19 @@ const emptyProfileData = {
 	portfolio: [],
 };
 
-const emptyReviewData = {
-	summary: {},
-	reviews: [],
-};
-
 export default function ContractorProfilePage() {
-	const { setProfileCompleted } = useAuth();
-
-	const [profileData, setProfileData] = useState(emptyProfileData);
-	const [reviewData, setReviewData] = useState(emptyReviewData);
-	const [loadError, setLoadError] = useState("");
-	const [saveError, setSaveError] = useState("");
-	const [success, setSuccess] = useTimedAlert();
-	const [saving, setSaving] = useState(false);
-
-	useEffect(() => {
-		async function loadProfile() {
-			try {
-				const { profile, reviews, skills = [], portfolio = [] } = await getMyProfile();
-				setProfileCompleted(profile.profileCompleted);
-				setProfileData({
-					...emptyProfileData,
-					...profile,
-					skills,
-					portfolio,
-				});
-
-				setReviewData(reviews);
-			} catch (err) {
-				console.error("Failed to load contractor profile:", err);
-				const apiError = parseApiError(
-					err,
-					PROFILE_ERRORS,
-					"We couldn't load your profile data. Please refresh the page or try again later.",
-				);
-				setLoadError(apiError.message);
-			}
-		}
-
-		loadProfile();
-	}, [setProfileCompleted]);
-
-	const updateField = (field) => (event) => {
-		const value = event.target.value;
-
-		setProfileData((prev) => ({
-			...prev,
-			[field]: value,
-		}));
-	};
-
-	const updateImage = (file) => {
-		setProfileData((prev) => ({
-			...prev,
-			image: file,
-		}));
-	};
+	const {
+		profileData,
+		setProfileData,
+		reviewData,
+		loadError,
+		saveError,
+		success,
+		saving,
+		updateField,
+		updateImage,
+		saveProfile,
+	} = useEditableProfile(emptyProfileData);
 
 	const handleAddSkill = (skill) => {
 		setProfileData((prev) => ({
@@ -134,42 +84,17 @@ export default function ContractorProfilePage() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-
-		setSaveError("");
-		setSuccess("");
-
-		setSaving(true);
-
-		try {
-			const { profile, reviews, skills = [], portfolio = [] } = await updateMyProfile(profileData);
-			setProfileCompleted(profile.profileCompleted);
-			setProfileData({
-				...emptyProfileData,
-				...profile,
-				skills,
-				portfolio,
-			});
-
-			setReviewData(reviews);
-
-			setSuccess("Profile saved successfully.");
-		} catch (err) {
-			console.error("Failed to update profile:", err);
-			const apiError = parseApiError(err, PROFILE_ERRORS, "We couldn't save your profile. Please try again later.");
-			setSaveError(apiError.message);
-		} finally {
-			setSaving(false);
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		}
+		await saveProfile();
+		window.scrollTo({ top: 0, behavior: "smooth" });
 	};
 	return (
 		<Box>
 			<PageHeader
 				label="Your profile"
 				title="Contractor Profile"
-				subtitle="Complete your profile before publishing jobs and starting contracts."
+				subtitle="Complete your profile before applying for jobs and starting contracts."
 			>
-				<ProfileProgressCard profileData={profileData} requiredFields={CONTRACTOR_REQUIRED_PROFILE_FIELDS} />
+				<ProfileProgressCard profileData={profileData} requiredFields={REQUIRED_PROFILE_FIELDS} />
 			</PageHeader>
 			{loadError && (
 				<AppAlert severity="error" title="Profile could not be loaded" sx={{ mt: 3 }}>

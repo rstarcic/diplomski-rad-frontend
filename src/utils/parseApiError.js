@@ -1,75 +1,169 @@
-const DEFAULT_FALLBACK = "An unexpected error occurred. Please try again.";
+const DEFAULT_FALLBACK =
+    "An unexpected error occurred. Please try again.";
+
+const LOCATION_PREFIXES = [
+    "body",
+    "query",
+    "path",
+    "header",
+];
 
 function cleanValidationMessage(message) {
     if (typeof message !== "string") return null;
-    return message.replace("Value error, ", "");
+
+    return message.replace(/^Value error,\s*/i, "").trim();
 }
 
-/**
- * Parses a structured backend error ({ code, message, field }) from an axios error.
- * Pass a domain-specific error map from apiErrors.js to override backend messages.
- */
-export function parseApiError(err, errorMap = {}, fallback = DEFAULT_FALLBACK) {
-    const responseData = err.response?.data;
-    const detail = responseData?.detail;
+function getValidationField(location) {
+    if (!Array.isArray(location)) return null;
 
-    if (typeof detail === "string") {
-        return { code: null, message: detail, field: null };
-    }
+    return (
+        location
+            .filter(
+                (part) =>
+                    typeof part === "string" &&
+                    !LOCATION_PREFIXES.includes(part),
+            )
+            .at(-1) ?? null
+    );
+}
 
-    if (!detail || typeof detail !== "object") {
-        return {
-            code: responseData?.code ?? null,
-            message: errorMap[responseData?.code] ?? responseData?.message ?? fallback,
-            field: responseData?.field ?? null,
-        };
-    }
-
-    if (Array.isArray(detail)) {
-        const firstError = detail[0] ?? {};
-        const field = Array.isArray(firstError.loc) ? firstError.loc.at(-1) : null;
-
-        return {
-            code: firstError.type ?? null,
-            message: cleanValidationMessage(firstError.msg) ?? fallback,
-            field,
-        };
-    }
-
-    const { code, message, field } = detail;
+function createParsedError({
+    code = null,
+    message,
+    field = null,
+    errorMap,
+    fallback,
+}) {
     return {
-        code: code ?? null,
-        message: errorMap[code] ?? cleanValidationMessage(message) ?? fallback,
-        field: field ?? null,
+        code,
+        message:
+            errorMap[code] ??
+            cleanValidationMessage(message) ??
+            fallback,
+        field,
     };
 }
 
-export async function parseBlobApiError(err, errorMap = {}, fallback = DEFAULT_FALLBACK) {
-    const responseData = err.response?.data;
-    if (!(responseData instanceof Blob)) return parseApiError(err, errorMap, fallback);
+/**
+ * Converts a backend or Axios error into a consistent error object.
+ */
+export function parseApiError(
+    error,
+    errorMap = {},
+    fallback = DEFAULT_FALLBACK,
+) {
+    const responseData = error?.response?.data;
+    const detail = responseData?.detail;
+
+    if (Array.isArray(detail)) {
+        const firstError = detail[0] ?? {};
+
+        return createParsedError({
+            code: firstError.type,
+            message: firstError.msg,
+            field: getValidationField(firstError.loc),
+            errorMap,
+            fallback,
+        });
+    }
+
+    if (
+        detail &&
+        typeof detail === "object"
+    ) {
+        return createParsedError({
+            code: detail.code,
+            message: detail.message,
+            field: detail.field,
+            errorMap,
+            fallback,
+        });
+    }
+
+    if (typeof detail === "string") {
+        return createParsedError({
+            code: responseData?.code,
+            message: detail,
+            field: responseData?.field,
+            errorMap,
+            fallback,
+        });
+    }
+
+    return createParsedError({
+        code: responseData?.code,
+        message: responseData?.message,
+        field: responseData?.field,
+        errorMap,
+        fallback,
+    });
+}
+
+/**
+ * Parses API errors returned as Blob responses, such as failed downloads.
+ */
+export async function parseBlobApiError(
+    error,
+    errorMap = {},
+    fallback = DEFAULT_FALLBACK,
+) {
+    const responseData = error?.response?.data;
+
+    if (!(responseData instanceof Blob)) {
+        return parseApiError(error, errorMap, fallback);
+    }
 
     try {
-        const parsedData = JSON.parse(await responseData.text());
+        const parsedData = JSON.parse(
+            await responseData.text(),
+        );
+
         return parseApiError(
-            { ...err, response: { ...err.response, data: parsedData } },
+            {
+                ...error,
+                response: {
+                    ...error.response,
+                    data: parsedData,
+                },
+            },
             errorMap,
             fallback,
         );
     } catch {
-        return parseApiError(err, errorMap, fallback);
+        return {
+            code: null,
+            message: fallback,
+            field: null,
+        };
     }
 }
 
 /**
- * Parses the error and automatically routes it:
- * - field errors → setErrors({ [field]: message })
- * - global errors → setApiError(message)
+ * Routes a parsed API error to a form field or global alert.
  */
-export function applyApiError(err, { setApiError, setErrors, errorMap = {}, fallback = DEFAULT_FALLBACK }) {
-    const { message, field } = parseApiError(err, errorMap, fallback);
+export function applyApiError(
+    error,
+    {
+        setApiError,
+        setErrors,
+        errorMap = {},
+        fallback = DEFAULT_FALLBACK,
+    },
+) {
+    const { message, field } = parseApiError(
+        error,
+        errorMap,
+        fallback,
+    );
+
     if (field) {
-        setErrors({ [field]: message });
-    } else {
-        setApiError(message);
+        setErrors({
+            [field]: message,
+        });
+
+        return;
     }
+
+    setApiError(message);
 }

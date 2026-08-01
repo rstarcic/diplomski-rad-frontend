@@ -19,11 +19,24 @@ import { getMyTransactions } from "../../../api/payment.api";
 import AppAlert from "../../../components/ui/AppAlert";
 import SecondaryButton from "../../../components/ui/SecondaryButton";
 import { PAYMENT_ERRORS } from "../../../constants/apiErrors";
+import { ROLES } from "../../../constants/roles";
 import { useAuth } from "../../../hooks/useAuth";
-import { surfaceSectionSx } from "../../../theme/layout";
+import { formatCurrency } from "../../../utils/formatters";
 import { parseApiError } from "../../../utils/parseApiError";
 
+import {
+	amountCellSx,
+	cardSx,
+	footerSx,
+	jobLinkSx,
+	loadingSx,
+	statusChipSx,
+	tableContainerSx,
+	tableHeadSx,
+} from "./TransactionHistory.styles";
+
 const PAGE_SIZE = 10;
+const LOAD_ERROR_MESSAGE = "We couldn't load your transaction history.";
 
 const STATUS_COLORS = {
 	paid: "success",
@@ -32,14 +45,15 @@ const STATUS_COLORS = {
 	overdue: "error",
 };
 
-function formatAmount(amountMinor, currency) {
-	return new Intl.NumberFormat(undefined, {
-		style: "currency",
-		currency: String(currency || "EUR").toUpperCase(),
-	}).format((amountMinor ?? 0) / 100);
+function isCanceledRequest(error) {
+	return error.name === "CanceledError" || error.name === "AbortError";
 }
 
-function formatDate(value) {
+function formatTransactionAmount(amountMinor, currency) {
+	return formatCurrency((amountMinor ?? 0) / 100, currency, "—");
+}
+
+function formatTransactionDate(value) {
 	if (!value) return "—";
 
 	const date = new Date(value);
@@ -65,34 +79,37 @@ export default function TransactionHistory() {
 	const [error, setError] = useState("");
 
 	useEffect(() => {
-		let active = true;
+		const controller = new AbortController();
 
-		getMyTransactions({ page: 1, pageSize: PAGE_SIZE })
-			.then((result) => {
-				if (!active) return;
+		async function loadTransactions() {
+			setLoading(true);
+			setError("");
+
+			try {
+				const result = await getMyTransactions(
+					{ page: 1, pageSize: PAGE_SIZE },
+					controller.signal,
+				);
 
 				setTransactions(result.items);
 				setPage(result.page);
 				setTotal(result.total);
 				setHasMore(result.hasMore);
-			})
-			.catch((err) => {
-				if (!active) return;
+			} catch (requestError) {
+				if (isCanceledRequest(requestError)) return;
 
-				const apiError = parseApiError(
-					err,
-					PAYMENT_ERRORS,
-					"We couldn't load your transaction history.",
-				);
+				const apiError = parseApiError(requestError, PAYMENT_ERRORS, LOAD_ERROR_MESSAGE);
 				setError(apiError.message);
-			})
-			.finally(() => {
-				if (active) setLoading(false);
-			});
+			} finally {
+				if (!controller.signal.aborted) {
+					setLoading(false);
+				}
+			}
+		}
 
-		return () => {
-			active = false;
-		};
+		loadTransactions();
+
+		return () => controller.abort();
 	}, []);
 
 	const loadMore = async () => {
@@ -109,29 +126,28 @@ export default function TransactionHistory() {
 			setPage(result.page);
 			setTotal(result.total);
 			setHasMore(result.hasMore);
-		} catch (err) {
-			const apiError = parseApiError(
-				err,
-				PAYMENT_ERRORS,
-				"We couldn't load your transaction history.",
-			);
+		} catch (requestError) {
+			const apiError = parseApiError(requestError, PAYMENT_ERRORS, LOAD_ERROR_MESSAGE);
 			setError(apiError.message);
 		} finally {
 			setLoadingMore(false);
 		}
 	};
 
-	const isContractor = role === "contractor";
+	const isContractor = role === ROLES.CONTRACTOR;
 
 	return (
-		<Card elevation={0} sx={{ ...surfaceSectionSx, mt: 3 }}>
+		<Card elevation={0} sx={cardSx}>
 			<Stack spacing={2.5}>
 				<Box>
 					<Typography variant="h6" fontWeight={800}>
 						Transaction history
 					</Typography>
+
 					<Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-						{isContractor ? "Earnings received for completed jobs." : "Payments made for completed jobs."}
+						{isContractor
+							? "Earnings received for completed jobs."
+							: "Payments made for completed jobs."}
 					</Typography>
 				</Box>
 
@@ -142,35 +158,20 @@ export default function TransactionHistory() {
 				)}
 
 				{loading ? (
-					<Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
+					<Box sx={loadingSx}>
 						<CircularProgress size={28} />
 					</Box>
 				) : transactions.length === 0 ? (
-					<AppAlert title="No transactions yet">Completed job payments will appear here.</AppAlert>
+					!error && (
+						<AppAlert title="No transactions yet">
+							Completed job payments will appear here.
+						</AppAlert>
+					)
 				) : (
 					<>
-						<TableContainer sx={{ overflowX: "auto" }}>
+						<TableContainer sx={tableContainerSx}>
 							<Table aria-label="Transaction history">
-								<TableHead
-									sx={{
-										"& .MuiTableCell-root": {
-											bgcolor: "rgba(91, 63, 214, 0.055)",
-											color: "text.primary",
-											fontSize: "0.75rem",
-											fontWeight: 900,
-											letterSpacing: "0.045em",
-											textTransform: "uppercase",
-											borderBottomColor: "rgba(91, 63, 214, 0.12)",
-											py: 1.75,
-										},
-										"& .MuiTableCell-root:first-of-type": {
-											borderTopLeftRadius: 10,
-										},
-										"& .MuiTableCell-root:last-of-type": {
-											borderTopRightRadius: 10,
-										},
-									}}
-								>
+								<TableHead sx={tableHeadSx}>
 									<TableRow>
 										<TableCell>Job</TableCell>
 										<TableCell>Type</TableCell>
@@ -179,6 +180,7 @@ export default function TransactionHistory() {
 										<TableCell align="right">Amount</TableCell>
 									</TableRow>
 								</TableHead>
+
 								<TableBody>
 									{transactions.map((transaction) => {
 										const detailsPath = isContractor
@@ -192,28 +194,31 @@ export default function TransactionHistory() {
 														component={RouterLink}
 														to={detailsPath}
 														variant="body2"
-														sx={{
-															color: "primary.main",
-															fontWeight: 700,
-															textDecoration: "none",
-															"&:hover": { textDecoration: "underline" },
-														}}
+														sx={jobLinkSx}
 													>
 														{transaction.jobTitle || "Untitled job"}
 													</Typography>
 												</TableCell>
-												<TableCell>{transaction.type === "earning" ? "Earning" : "Payment"}</TableCell>
+
+												<TableCell>
+													{transaction.type === "earning" ? "Earning" : "Payment"}
+												</TableCell>
+
 												<TableCell>
 													<Chip
 														size="small"
 														label={transaction.status}
 														color={STATUS_COLORS[transaction.status] ?? "default"}
-														sx={{ textTransform: "capitalize", fontWeight: 700 }}
+														sx={statusChipSx}
 													/>
 												</TableCell>
-												<TableCell>{formatDate(transaction.updatedAt ?? transaction.createdAt)}</TableCell>
-												<TableCell align="right" sx={{ fontWeight: 800, whiteSpace: "nowrap" }}>
-													{formatAmount(transaction.amountMinor, transaction.currency)}
+
+												<TableCell>
+													{formatTransactionDate(transaction.updatedAt ?? transaction.createdAt)}
+												</TableCell>
+
+												<TableCell align="right" sx={amountCellSx}>
+													{formatTransactionAmount(transaction.amountMinor, transaction.currency)}
 												</TableCell>
 											</TableRow>
 										);
@@ -222,10 +227,11 @@ export default function TransactionHistory() {
 							</Table>
 						</TableContainer>
 
-						<Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
+						<Stack direction="row" sx={footerSx}>
 							<Typography variant="caption" color="text.secondary">
 								Showing {transactions.length} of {total}
 							</Typography>
+
 							{hasMore && (
 								<SecondaryButton disabled={loadingMore} onClick={loadMore}>
 									{loadingMore ? "Loading..." : "Load more"}

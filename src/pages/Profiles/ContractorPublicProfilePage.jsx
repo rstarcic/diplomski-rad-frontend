@@ -1,103 +1,82 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Box, Grid, Stack } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 import { getContractorPublicProfile } from "../../api/core.api.js";
 import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
 import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
 import AppAlert from "../../components/ui/AppAlert";
 import { BackButton } from "../../components/ui/BackButton";
-import { PROFILE_ERRORS } from "../../constants/apiErrors";
-import { parseApiError } from "../../utils/parseApiError";
 
-import PortfolioCard from "./components/shared/PortfolioCard";
-import SkillsCard from "./components/shared/SkillsCard";
 import ProfileInfoCard from "./components/public/ProfileInfoCard";
 import ProfileStatsSection from "./components/public/ProfileStatsSection";
-import { profileStatCardConfig } from "./profileStats";
+import { profileGridSx, reviewsColumnSx } from "./components/public/publicProfile.styles";
+import PortfolioCard from "./components/shared/PortfolioCard";
+import SkillsCard from "./components/shared/SkillsCard";
+import { usePublicProfile } from "./hooks/usePublicProfile";
+import { profileStatCardConfig } from "./profileStats.config";
+
+const PROFILE_LOAD_ERROR_MESSAGE = "We couldn't load this contractor profile. Please try again later.";
 
 export default function ContractorPublicProfilePage() {
 	const { contractorId } = useParams();
-	const [contractor, setContractor] = useState(null);
-	const [loadError, setLoadError] = useState("");
-	const [loading, setLoading] = useState(true);
+	const {
+		profileData: contractor,
+		loading,
+		loadError,
+	} = usePublicProfile(contractorId, getContractorPublicProfile, PROFILE_LOAD_ERROR_MESSAGE);
 
-	useEffect(() => {
-		async function loadPublicProfile() {
-			setLoadError("");
-			setLoading(true);
+	if (loading) {
+		return <AppAlert title="Loading profile">Please wait while we load this contractor profile.</AppAlert>;
+	}
 
-			try {
-				const profileData = await getContractorPublicProfile(contractorId);
-				setContractor(profileData);
-			} catch (error) {
-				console.error("Error loading contractor profile:", error);
-				const apiError = parseApiError(
-					error,
-					PROFILE_ERRORS,
-					"We couldn't load this contractor profile. Please try again later.",
-				);
-				setLoadError(apiError.message);
-			} finally {
-				setLoading(false);
-			}
-		}
+	if (loadError) {
+		return (
+			<AppAlert severity="error" title="Profile could not be loaded">
+				{loadError}
+			</AppAlert>
+		);
+	}
 
-		loadPublicProfile();
-	}, [contractorId]);
+	if (!contractor?.profile) {
+		return <AppAlert title="Profile not found">This contractor profile is not available.</AppAlert>;
+	}
 
-	const profile = contractor?.profile;
+	const { profile, portfolio = [], stats = [], skills = [], reviews = {} } = contractor;
 
 	return (
 		<Box>
 			<BackButton backTo="/client/jobs" sx={{ mb: 2 }}>
-				Back to applications
+				Back to jobs
 			</BackButton>
 
-			{loadError && (
-				<AppAlert severity="error" title="Profile could not be loaded" sx={{ mb: 3 }}>
-					{loadError}
-				</AppAlert>
-			)}
-
-			{loading && (
-				<AppAlert title="Loading profile" sx={{ mb: 3 }}>
-					Please wait while we load this contractor profile.
-				</AppAlert>
-			)}
-
-			<Grid container spacing={2.5} sx={{ alignItems: "flex-start" }}>
+			<Grid container spacing={2.5} sx={profileGridSx}>
 				<Grid size={{ xs: 12, lg: 8 }}>
 					<Stack spacing={2.5}>
 						<ProfileInfoCard
 							featured
-							firstName={profile?.firstName}
-							lastName={profile?.lastName}
-							image={profile?.image}
-							email={profile?.email}
-							phone={profile?.phone}
-							city={profile?.city}
-							country={profile?.country}
-							createdAt={profile?.createdAt}
-							about={profile?.about}
+							firstName={profile.firstName}
+							lastName={profile.lastName}
+							image={profile.image}
+							email={profile.email}
+							phone={profile.phone}
+							city={profile.city}
+							country={profile.country}
+							createdAt={profile.createdAt}
+							about={profile.about}
 						/>
-						<PortfolioCard items={contractor?.portfolio ?? []} editable={false} title="Portfolio" featured />
-						<ProfileStatsSection
-							stats={contractor?.stats ?? []}
-							config={profileStatCardConfig.contractor}
-							columns={2}
-							tone="violet"
-						/>
-						<SkillsCard skills={contractor?.skills ?? []} title="Skills" />
+
+						<PortfolioCard items={portfolio} title="Portfolio" featured />
+						<ProfileStatsSection stats={stats} config={profileStatCardConfig.contractor} columns={2} tone="violet" />
+						<SkillsCard skills={skills} title="Skills" />
 					</Stack>
 				</Grid>
 
-				<Grid size={{ xs: 12, lg: 4 }} sx={{ position: { lg: "sticky" }, top: { lg: 24 }, alignSelf: "flex-start" }}>
+				<Grid size={{ xs: 12, lg: 4 }} sx={reviewsColumnSx}>
 					<ReviewSummaryCard
 						title="Contractor reviews"
-						summary={contractor?.reviews?.summary}
+						summary={reviews.summary ?? {}}
 						criteria={reviewCriteria.contractor}
-						reviews={contractor?.reviews?.reviews ?? []}
+						reviews={reviews.reviews ?? []}
 					/>
 				</Grid>
 			</Grid>

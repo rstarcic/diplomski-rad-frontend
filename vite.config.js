@@ -1,65 +1,62 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
-// https://vite.dev/config/
+const SERVICE_URLS = {
+	auth: "http://localhost:8000",
+	core: "http://localhost:8001",
+	contracts: "http://localhost:8002",
+	payments: "http://localhost:8003",
+};
+
+const createProxy = (target) => ({
+	target,
+	changeOrigin: true,
+});
+
+const isPackage = (id, packageName) =>
+	id.includes(`/node_modules/${packageName}/`);
+
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      "/auth": {
-        target: "http://localhost:8000",
-        changeOrigin: true,
-      },
-      "/profiles": {
-        target: "http://localhost:8001",
-        changeOrigin: true,
-      },
-      "/jobs": {
-        target: "http://localhost:8001",
-        changeOrigin: true,
-      },
-      "/applications": {
-        target: "http://localhost:8001",
-        changeOrigin: true,
-      },
-      "/reviews": {
-        target: "http://localhost:8001",
-        changeOrigin: true,
-      },
-      "/dashboard": {
-        target: "http://localhost:8001",
-        changeOrigin: true,
-      },
-      // Sve contract operacije idu direktno contract servisu.
-      "/contracts": {
-        target: "http://localhost:8002",
-        changeOrigin: true,
-      },
-      "/payments": {
-        target: "http://localhost:8003",
-        changeOrigin: true,
-      },
-    },
-  },
-  preview: {
-    host: "0.0.0.0",
-    allowedHosts: ["frontend"],
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("@mui") || id.includes("@emotion")) return "mui";
-            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router-dom")) {
-              return "react-vendor";
-            }
-            if (id.includes("axios")) return "axios";
-            return "vendor";
-          }
-        },
-      },
-    },
-  }
+	plugins: [react()],
+	server: {
+		proxy: {
+			"/auth": createProxy(SERVICE_URLS.auth),
+			"/profiles": createProxy(SERVICE_URLS.core),
+			"/jobs": createProxy(SERVICE_URLS.core),
+			"/applications": createProxy(SERVICE_URLS.core),
+			"/reviews": createProxy(SERVICE_URLS.core),
+			"/dashboard": createProxy(SERVICE_URLS.core),
+			"/contracts": createProxy(SERVICE_URLS.contracts),
+			"/payments": createProxy(SERVICE_URLS.payments),
+		},
+	},
+	preview: {
+		host: "0.0.0.0",
+		allowedHosts: ["frontend"],
+	},
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (!id.includes("node_modules")) return undefined;
 
-})
+					if (id.includes("/node_modules/@mui/") || id.includes("/node_modules/@emotion/")) {
+						return "mui";
+					}
+
+					if (
+						isPackage(id, "react") ||
+						isPackage(id, "react-dom") ||
+						isPackage(id, "react-router-dom")
+					) {
+						return "react-vendor";
+					}
+
+					if (isPackage(id, "axios")) return "axios";
+
+					return "vendor";
+				},
+			},
+		},
+	},
+});

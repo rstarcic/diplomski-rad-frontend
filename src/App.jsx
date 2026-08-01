@@ -1,19 +1,20 @@
 import { lazy, Suspense } from "react";
 import { Box, CircularProgress } from "@mui/material";
-import { Navigate, Route, Routes } from "react-router-dom";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import AuthLayout from "./layouts/AuthLayout";
-import AppLayout from "./layouts/AppLayout/AppLayout";
+import { Navigate, Route, Routes } from "react-router-dom";
+
 import RequireRole from "./components/auth/RequireRole";
 import RoleRedirect from "./components/auth/RoleRedirect";
 import { ROLES } from "./constants/roles";
+import AppLayout from "./layouts/AppLayout/AppLayout";
+import AuthLayout from "./layouts/AuthLayout";
 
 const HomePage = lazy(() => import("./pages/Home/HomePage"));
 const LoginPage = lazy(() => import("./pages/Auth/LoginPage"));
 const SignupPage = lazy(() => import("./pages/Auth/SignupPage"));
-const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
-const ResetPassword = lazy(() => import("./pages/Auth/ResetPasswordPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/Auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/Auth/ResetPasswordPage"));
 const ErrorPage = lazy(() => import("./pages/Auth/ErrorPage"));
 
 const ClientDashboard = lazy(() => import("./pages/Dashboards/ClientDashboard"));
@@ -37,23 +38,32 @@ const ContractorPublicProfilePage = lazy(() => import("./pages/Profiles/Contract
 const ClientPaymentSettingsPage = lazy(() => import("./pages/Settings/ClientPaymentSettingsPage"));
 const ContractorStripeSettingsPage = lazy(() => import("./pages/Settings/ContractorStripeSettingsPage"));
 
+const pageLoaderSx = {
+	minHeight: "100vh",
+	display: "grid",
+	placeItems: "center",
+};
+
+function PageLoader() {
+	return (
+		<Box sx={pageLoaderSx}>
+			<CircularProgress />
+		</Box>
+	);
+}
+
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
-			<Suspense
-				fallback={
-					<Box sx={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
-						<CircularProgress />
-					</Box>
-				}
-			>
+			<Suspense fallback={<PageLoader />}>
 				<Routes>
 					<Route path="/" element={<HomePage />} />
+
 					<Route element={<AuthLayout />}>
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/signup" element={<SignupPage />} />
-						<Route path="/forgot-password" element={<ForgotPassword />} />
-						<Route path="/reset-password" element={<ResetPassword />} />
+						<Route path="/forgot-password" element={<ForgotPasswordPage />} />
+						<Route path="/reset-password" element={<ResetPasswordPage />} />
 						<Route path="/error" element={<ErrorPage />} />
 					</Route>
 
@@ -70,6 +80,7 @@ function App() {
 							<Route path="stripe" element={<ClientPaymentSettingsPage />} />
 							<Route path="contractors/:contractorId" element={<ContractorPublicProfilePage />} />
 						</Route>
+
 						<Route path="/contractor" element={<RequireRole role={ROLES.CONTRACTOR} />}>
 							<Route index element={<Navigate to="dashboard" replace />} />
 							<Route path="dashboard" element={<ContractorDashboard />} />
@@ -83,7 +94,6 @@ function App() {
 						</Route>
 					</Route>
 
-					<Route path="/" element={<RoleRedirect />} />
 					<Route path="*" element={<RoleRedirect />} />
 				</Routes>
 			</Suspense>

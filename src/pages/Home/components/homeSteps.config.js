@@ -47,18 +47,18 @@ export const contractorSteps = [
 		text: "Share your proposal and portfolio.",
 	},
 	{
-		Icon: AccountBalanceWalletOutlinedIcon,
-		title: "Get hired & paid",
-		text: "Deliver great work and build reviews.",
+		Icon: DescriptionRoundedIcon,
+		title: "Review & sign contract",
+		text: "Review the terms and sign the contract securely.",
 	},
 	{
-		Icon: DescriptionRoundedIcon,
-		title: "Generate contract",
-		text: "Review and sign the contract securely.",
+		Icon: AccountBalanceWalletOutlinedIcon,
+		title: "Complete work & get paid",
+		text: "Deliver great work and receive secure payments.",
 	},
 	{
 		Icon: RateReviewRoundedIcon,
-		title: "Get reviewed",
-		text: "Build your reputation with client feedback.",
+		title: "Build your reputation",
+		text: "Grow your profile through client feedback.",
 	},
 ];

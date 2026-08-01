@@ -3,7 +3,7 @@ import { Box, Button, Card, Chip, Paper, Stack, Typography } from "@mui/material
 import { Link as RouterLink } from "react-router-dom";
 
 import { useAuth } from "../../../hooks/useAuth";
-import { sectionSx, sectionTitleSx } from "../../../theme/layout";
+import { fullHeightSectionSx, sectionTitleSx } from "../../../theme/layout";
 
 import { getActivityVisual } from "../dashboardActivity";
 import { getDashboardItemPath } from "../dashboardRoutes";
@@ -30,7 +30,7 @@ export default function RecentActivity({ activities = [] }) {
 	const visibleActivities = showAll ? activities : activities.slice(0, DEFAULT_VISIBLE_COUNT);
 
 	return (
-		<Paper elevation={0} sx={sectionSx}>
+		<Paper elevation={0} sx={fullHeightSectionSx}>
 			<Box sx={sectionHeaderSx}>
 				<Typography variant="h6" sx={sectionTitleSx}>
 					Recent activity

@@ -1,7 +1,8 @@
+import { Box, InputAdornment, Typography } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { Box, InputAdornment, TextField, Typography } from "@mui/material";
 
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
+import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import {
 	contentSx,
 	headerSx,
@@ -18,10 +19,9 @@ export default function SearchJobsHeader({ value = "", onChange, onSearch }) {
 		onChange?.(event.target.value);
 	};
 
-	const handleSearchKeyDown = (event) => {
-		if (event.key === "Enter") {
-			onSearch?.();
-		}
+	const handleSearchSubmit = (event) => {
+		event.preventDefault();
+		onSearch?.();
 	};
 
 	return (
@@ -40,13 +40,11 @@ export default function SearchJobsHeader({ value = "", onChange, onSearch }) {
 				</Typography>
 			</Box>
 
-			<Box sx={searchBarSx}>
-				<TextField
-					size="small"
+			<Box component="form" role="search" onSubmit={handleSearchSubmit} sx={searchBarSx}>
+				<PrimaryTextField
 					placeholder="Search by job title, category or keyword"
 					value={value}
 					onChange={handleSearchChange}
-					onKeyDown={handleSearchKeyDown}
 					sx={searchFieldSx}
 					slotProps={{
 						input: {
@@ -56,10 +54,13 @@ export default function SearchJobsHeader({ value = "", onChange, onSearch }) {
 								</InputAdornment>
 							),
 						},
+						htmlInput: {
+							"aria-label": "Search jobs",
+						},
 					}}
 				/>
 
-				<PrimaryButton onClick={onSearch} sx={searchButtonSx}>
+				<PrimaryButton type="submit" sx={searchButtonSx}>
 					Search Jobs
 				</PrimaryButton>
 			</Box>

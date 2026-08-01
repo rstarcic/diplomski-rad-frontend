@@ -1,59 +1,27 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Box, Grid, Stack } from "@mui/material";
-
-import AppAlert from "../../components/ui/AppAlert";
-import { BackButton } from "../../components/ui/BackButton";
-import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
-import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
-import ProfileInfoCard from "./components/public/ProfileInfoCard";
-import ProfileStatsSection from "./components/public/ProfileStatsSection";
+import { useParams } from "react-router-dom";
 
 import { getClientPublicProfile } from "../../api/core.api";
-import { PROFILE_ERRORS } from "../../constants/apiErrors";
-import { parseApiError } from "../../utils/parseApiError";
-import { profileStatCardConfig } from "./profileStats";
+import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
+import AppAlert from "../../components/ui/AppAlert";
+import { BackButton } from "../../components/ui/BackButton";
 
-const profileGridSx = {
-	alignItems: "flex-start",
-};
+import ProfileInfoCard from "./components/public/ProfileInfoCard";
+import ProfileStatsSection from "./components/public/ProfileStatsSection";
+import { profileGridSx, reviewsColumnSx } from "./components/public/publicProfile.styles";
+import { usePublicProfile } from "./hooks/usePublicProfile";
+import { profileStatCardConfig } from "./profileStats.config";
+
+const PROFILE_LOAD_ERROR_MESSAGE = "We couldn't load this client profile. Please try again later.";
 
 export default function ClientPublicProfilePage() {
 	const { clientId } = useParams();
-	const [client, setClient] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [loadError, setLoadError] = useState("");
-
-	useEffect(() => {
-		const controller = new AbortController();
-
-		async function loadPublicProfile() {
-			try {
-				setLoading(true);
-				setLoadError("");
-
-				const profileData = await getClientPublicProfile(clientId, controller.signal);
-				setClient(profileData);
-			} catch (error) {
-				if (error.name === "CanceledError" || error.name === "AbortError") return;
-
-				const apiError = parseApiError(
-					error,
-					PROFILE_ERRORS,
-					"We couldn't load this client profile. Please try again later.",
-				);
-
-				setLoadError(apiError.message);
-				setClient(null);
-			} finally {
-				if (!controller.signal.aborted) setLoading(false);
-			}
-		}
-
-		loadPublicProfile();
-
-		return () => controller.abort();
-	}, [clientId]);
+	const {
+		profileData: client,
+		loading,
+		loadError,
+	} = usePublicProfile(clientId, getClientPublicProfile, PROFILE_LOAD_ERROR_MESSAGE);
 
 	if (loading) {
 		return <AppAlert title="Loading profile">Please wait while we load this client profile.</AppAlert>;
@@ -95,11 +63,16 @@ export default function ClientPublicProfilePage() {
 							about={profile.about}
 						/>
 
-						<ProfileStatsSection stats={stats} config={profileStatCardConfig.client} columns={2} tone="violet" />
+						<ProfileStatsSection
+							stats={stats}
+							config={profileStatCardConfig.client}
+							columns={2}
+							tone="violet"
+						/>
 					</Stack>
 				</Grid>
 
-				<Grid size={{ xs: 12, lg: 4 }} sx={{ position: { lg: "sticky" }, top: { lg: 24 }, alignSelf: "flex-start" }}>
+				<Grid size={{ xs: 12, lg: 4 }} sx={reviewsColumnSx}>
 					<ReviewSummaryCard
 						title="Reviews about the client"
 						summary={reviews.summary ?? {}}

@@ -7,18 +7,20 @@ import { Avatar, Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import {
+	memberSinceBoxSx,
+	memberSinceTextSx,
+	profileContactIconSx,
+} from "../../../../components/profile/profileContact.styles";
 import { formatDate } from "../../../../utils/formatters";
 import {
 	aboutSx,
 	avatarSx,
 	clickableAvatarSx,
-	contactIconSx,
 	identityContentSx,
 	identityRowSx,
 	locationIconSx,
 	locationRowSx,
-	memberSinceSx,
-	memberSinceTextSx,
 	profileLinkSx,
 	profileNameLinkSx,
 	profileNameSx,
@@ -95,15 +97,12 @@ export default function ContractorProfileSection({ contractor, backTo }) {
 				<Divider />
 
 				<Stack spacing={1}>
-					<ProfileContactItem icon={EmailOutlinedIcon}>
-						{contractor.email ?? "Not provided"}
-					</ProfileContactItem>
-					<ProfileContactItem icon={PhoneOutlinedIcon}>
-						{contractor.phone ?? "Not provided"}
-					</ProfileContactItem>
+					<ProfileContactItem icon={EmailOutlinedIcon}>{contractor.email ?? "Not provided"}</ProfileContactItem>
+					<ProfileContactItem icon={PhoneOutlinedIcon}>{contractor.phone ?? "Not provided"}</ProfileContactItem>
 
-					<Box sx={memberSinceSx}>
-						<CalendarMonthRoundedIcon sx={contactIconSx} />
+					<Box sx={memberSinceBoxSx}>
+						<CalendarMonthRoundedIcon sx={profileContactIconSx} />
+
 						<Typography variant="body2" sx={memberSinceTextSx}>
 							Member since {formatDate(contractor.createdAt)}
 						</Typography>

@@ -17,10 +17,10 @@ const headerSx = {
 	boxShadow: 2,
 };
 
-export default function MobileHeader({ onMenuClick }) {
+export default function MobileHeader({ menuButtonRef, onMenuClick }) {
 	return (
 		<Box component="header" sx={headerSx}>
-			<IconButton onClick={onMenuClick} aria-label="Open sidebar" color="inherit">
+			<IconButton ref={menuButtonRef} onClick={onMenuClick} aria-label="Open sidebar" color="inherit">
 				<MenuIcon />
 			</IconButton>
 		</Box>

@@ -1,5 +1,41 @@
 import { surfaceSectionSx } from "../../../../theme/layout";
 
+export const centeredSectionSx = {
+	...surfaceSectionSx,
+	boxShadow: (theme) => theme.custom.shadows.surface,
+};
+
+export const sectionContentSx = {
+	alignItems: "center",
+	justifyContent: "space-between",
+};
+
+export const headerSx = {
+	alignItems: "center",
+	mb: 0.5,
+};
+
+export const headerIconSx = {
+	width: 42,
+	height: 42,
+	borderRadius: (theme) => theme.custom.radius.circle,
+	display: "grid",
+	placeItems: "center",
+	flexShrink: 0,
+	color: "primary.main",
+	bgcolor: "rgba(91, 63, 214, 0.1)",
+};
+
+export const descriptionSx = {
+	mb: 2,
+	maxWidth: 250,
+};
+
+export const uploadButtonSx = {
+	minHeight: 56,
+	borderStyle: "dashed",
+};
+
 export const avatarSx = {
 	width: 128,
 	height: 128,
@@ -7,18 +43,26 @@ export const avatarSx = {
 	color: "primary.contrastText",
 };
 
-export const imagePreviewSx = {
+export const imagePreviewButtonSx = {
 	width: 128,
 	height: 128,
-	borderRadius: "50%",
+	flexShrink: 0,
+	borderRadius: (theme) => theme.custom.radius.circle,
+	overflow: "hidden",
+
+	"&:focus-visible": {
+		outline: "3px solid",
+		outlineColor: "primary.light",
+		outlineOffset: 3,
+	},
+};
+
+export const imagePreviewSx = {
+	width: "100%",
+	height: "100%",
 	objectFit: "cover",
 	display: "block",
 	cursor: "zoom-in",
-};
-
-export const centeredSectionSx = {
-	...surfaceSectionSx,
-	boxShadow: "0 10px 28px rgba(37, 48, 82, 0.06)",
 };
 
 export const dialogPaperSx = {

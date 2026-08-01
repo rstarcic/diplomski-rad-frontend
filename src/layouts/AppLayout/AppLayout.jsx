@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Drawer } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
@@ -15,13 +15,19 @@ import Sidebar from "./Sidebar";
 
 export default function AppLayout() {
 	const [mobileOpen, setMobileOpen] = useState(false);
+	const menuButtonRef = useRef(null);
 
 	const openMobileMenu = () => {
+		menuButtonRef.current?.blur();
 		setMobileOpen(true);
 	};
 
 	const closeMobileMenu = () => {
 		setMobileOpen(false);
+	};
+
+	const restoreMenuButtonFocus = () => {
+		menuButtonRef.current?.focus();
 	};
 
 	return (
@@ -38,13 +44,16 @@ export default function AppLayout() {
 					paper: {
 						sx: mobileDrawerPaperSx,
 					},
+					transition: {
+						onExited: restoreMenuButtonFocus,
+					},
 				}}
 			>
 				<Sidebar onNavigate={closeMobileMenu} />
 			</Drawer>
 
 			<Box sx={contentSx}>
-				<MobileHeader onMenuClick={openMobileMenu} />
+				<MobileHeader menuButtonRef={menuButtonRef} onMenuClick={openMobileMenu} />
 
 				<Box sx={pageContentSx}>
 					<Outlet />

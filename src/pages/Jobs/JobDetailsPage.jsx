@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Box, CircularProgress, Grid, Stack, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
 
+import { createJobApplication, getJobDetails } from "../../api/core.api";
+
+import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
+import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
 import AppAlert from "../../components/ui/AppAlert";
 import { BackButton } from "../../components/ui/BackButton";
 import PageHeader from "../../components/ui/PageHeader";
-import ReviewSummaryCard from "../../components/reviews/ReviewSummaryCard";
-import { reviewCriteria } from "../../components/reviews/reviewCriteria.config";
+
+import { APPLICATION_ERRORS, JOB_ERRORS } from "../../constants/apiErrors";
+import { useAuth } from "../../hooks/useAuth";
+import { parseApiError } from "../../utils/parseApiError";
+
 import ApplyCard from "./components/details/ApplyCard";
 import ClientProfileSection from "./components/details/ClientProfileSection";
 import JobDetailsSection from "./components/details/JobDetailsSection";
-
-import { createJobApplication, getJobDetails } from "../../api/core.api";
-import { APPLICATION_ERRORS, JOB_ERRORS } from "../../constants/apiErrors";
-import { parseApiError } from "../../utils/parseApiError";
-import { useAuth } from "../../hooks/useAuth";
 
 const loadingContainerSx = {
 	minHeight: "50vh",
@@ -51,7 +53,6 @@ export default function JobDetailsPage() {
 				setError("");
 
 				const data = await getJobDetails(jobId, controller.signal);
-				console.log("Job details", data);
 				setDetails(data);
 			} catch (err) {
 				if (err.name === "CanceledError" || err.name === "AbortError") return;

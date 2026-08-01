@@ -29,7 +29,7 @@ const mobileSubmitWrapSx = {
 	gap: 0.75,
 };
 
-const initialJobData = {
+const createInitialJobData = () => ({
 	title: "",
 	category: "",
 	description: "",
@@ -43,12 +43,13 @@ const initialJobData = {
 	hoursPerWeek: "",
 	deliverables: "",
 	requirements: [""],
-};
+});
 
 export default function EditJobPage() {
 	const { accountSetup, role } = useAuth();
 	const { jobId } = useParams();
-	const [jobData, setJobData] = useState(initialJobData);
+	const [jobData, setJobData] = useState(createInitialJobData);
+	const [loading, setLoading] = useState(true);
 	const [jobTitle, setJobTitle] = useState("");
 	const [loadError, setLoadError] = useState("");
 	const [success, setSuccess] = useTimedAlert();
@@ -65,14 +66,14 @@ export default function EditJobPage() {
 	const missingFields = getMissingFields(jobData);
 	const formIsComplete = missingFields.length === 0;
 	const canSave = formIsComplete && !saving;
+	
 	useEffect(() => {
+		let ignore = false;
 		async function loadJob() {
-			setLoadError("");
-
 			try {
 				const job = await getJobById(jobId);
 				setJobData({
-					...initialJobData,
+					...createInitialJobData,
 					...job,
 					requirements: job.requirements?.length ? job.requirements : [""],
 				});
@@ -80,11 +81,20 @@ export default function EditJobPage() {
 			} catch (error) {
 				console.error("Error loading job:", error);
 				const apiError = parseApiError(error, JOB_ERRORS, "We couldn't load this job. Please try again later.");
+
 				setLoadError(apiError.message);
+			} finally {
+				if (!ignore) {
+					setLoading(false);
+				}
 			}
 		}
 
 		loadJob();
+
+		return () => {
+			ignore = true;
+		};
 	}, [jobId]);
 
 	const handleSubmit = async (event) => {
@@ -108,7 +118,7 @@ export default function EditJobPage() {
 		try {
 			const updatedJob = await updateJob(jobId, jobData);
 			setJobData({
-				...initialJobData,
+				...createInitialJobData(),
 				...updatedJob,
 				requirements: updatedJob.requirements?.length ? updatedJob.requirements : [""],
 			});
@@ -133,13 +143,14 @@ export default function EditJobPage() {
 				subtitle="Update the details below and save your changes."
 			/>
 
+			{loading && (
+				<AppAlert title="Loading job" sx={{ mt: 3 }}>
+					Please wait while we load the job details.
+				</AppAlert>
+			)}
+
 			{!accountIsComplete && (
-				<AccountSetupAlert
-					accountSetup={setup}
-					actionName="edit a job"
-					settingsPath="/client/profile"
-					sx={{ mt: 3 }}
-				/>
+				<AccountSetupAlert accountSetup={setup} actionName="edit a job" settingsPath="/client/profile" sx={{ mt: 3 }} />
 			)}
 
 			{loadError && (
@@ -166,14 +177,33 @@ export default function EditJobPage() {
 				</AppAlert>
 			)}
 
-			<Box component="form" noValidate sx={{ mt: 3 }} onSubmit={handleSubmit}>
-				<Grid container spacing={3}>
-					<Grid size={{ xs: 12, md: 8 }}>
-						<Stack spacing={3}>
-							<JobDetailsSection jobData={jobData} setJobData={setJobData} fieldSpacing={2.5} />
-							<ContractSection jobData={jobData} setJobData={setJobData} />
-							<Box sx={desktopSubmitWrapSx}>
-								<Stack spacing={0.75} sx={{ width: "50%" }}>
+			{!loading && !loadError && (
+				<Box component="form" noValidate sx={{ mt: 3 }} onSubmit={handleSubmit}>
+					<Grid container spacing={3}>
+						<Grid size={{ xs: 12, md: 8 }}>
+							<Stack spacing={3}>
+								<JobDetailsSection jobData={jobData} setJobData={setJobData} fieldSpacing={2.5} />
+								<ContractSection jobData={jobData} setJobData={setJobData} />
+								<Box sx={desktopSubmitWrapSx}>
+									<Stack spacing={0.75} sx={{ width: "50%" }}>
+										<PrimaryButton type="submit" size="large" fullWidth disabled={!canSave}>
+											{saving ? "Saving..." : "Save changes"}
+										</PrimaryButton>
+
+										{!formIsComplete && (
+											<Typography variant="caption" color="text.secondary">
+												Complete required fields to save changes.
+											</Typography>
+										)}
+									</Stack>
+								</Box>
+							</Stack>
+						</Grid>
+
+						<Grid size={{ xs: 12, md: 4 }}>
+							<Stack spacing={3}>
+								<BudgetWorkloadSection jobData={jobData} setJobData={setJobData} />
+								<Box sx={mobileSubmitWrapSx}>
 									<PrimaryButton type="submit" size="large" fullWidth disabled={!canSave}>
 										{saving ? "Saving..." : "Save changes"}
 									</PrimaryButton>
@@ -183,30 +213,13 @@ export default function EditJobPage() {
 											Complete required fields to save changes.
 										</Typography>
 									)}
-								</Stack>
-							</Box>
-						</Stack>
+								</Box>
+								<PreviewSection jobData={jobData} />
+							</Stack>
+						</Grid>
 					</Grid>
-
-					<Grid size={{ xs: 12, md: 4 }}>
-						<Stack spacing={3}>
-							<BudgetWorkloadSection jobData={jobData} setJobData={setJobData} />
-							<Box sx={mobileSubmitWrapSx}>
-								<PrimaryButton type="submit" size="large" fullWidth disabled={!canSave}>
-									{saving ? "Saving..." : "Save changes"}
-								</PrimaryButton>
-
-								{!formIsComplete && (
-									<Typography variant="caption" color="text.secondary">
-										Complete required fields to save changes.
-									</Typography>
-								)}
-							</Box>
-							<PreviewSection jobData={jobData} />
-						</Stack>
-					</Grid>
-				</Grid>
-			</Box>
+				</Box>
+			)}
 		</Box>
 	);
 }

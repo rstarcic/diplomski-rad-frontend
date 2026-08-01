@@ -1,7 +1,8 @@
 import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../../../../utils/jobs";
+
 import { detailGridSx, sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
+import { formatDeadline, formatOption, formatValue, getEstimatedCost } from "../../../../utils/jobs";
 import SectionHeading from "./SectionHeading";
 
 const previewCardSx = (theme) => ({
@@ -16,6 +17,17 @@ const metaRowSx = {
 	flexWrap: "wrap",
 	gap: 1,
 };
+
+const estimateRowSx = (theme) => ({
+	mt: 2,
+	px: 2,
+	py: 1.5,
+	alignItems: "center",
+	justifyContent: "space-between",
+	borderRadius: 2,
+	border: `1px solid ${theme.custom.jobForm.estimateBorder}`,
+	background: theme.custom.jobForm.estimateBackground,
+});
 
 export default function PreviewSection({ jobData }) {
 	const hasRequirements = jobData.requirements?.some(Boolean);
@@ -121,24 +133,8 @@ export default function PreviewSection({ jobData }) {
 					</Stack>
 				</Stack>
 			</Box>
-			<Stack
-				direction="row"
-				spacing={2}
-				sx={(theme) => ({
-					mt: 2,
-					px: 2,
-					py: 1.5,
-					alignItems: "center",
-					justifyContent: "space-between",
-					borderRadius: 2,
-					border: `1px solid ${theme.custom.jobForm.estimateBorder}`,
-					background: theme.custom.jobForm.estimateBackground,
-				})}
-			>
-				<Typography
-					variant="body2"
-					sx={(theme) => ({ color: theme.custom.jobForm.estimateLabel, fontWeight: 700 })}
-				>
+			<Stack direction="row" spacing={2} sx={estimateRowSx}>
+				<Typography variant="body2" sx={(theme) => ({ color: theme.custom.jobForm.estimateLabel, fontWeight: 700 })}>
 					Total estimated cost:
 				</Typography>
 

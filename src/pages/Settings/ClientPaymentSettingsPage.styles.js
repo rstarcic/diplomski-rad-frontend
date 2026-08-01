@@ -9,17 +9,25 @@ export const settingsCardSx = {
 };
 
 export const loadingStateSx = {
+	minHeight: 240,
 	display: "grid",
 	placeItems: "center",
-	minHeight: 240,
+};
+
+export const paymentHeadingRowSx = {
+	alignItems: "center",
+	justifyContent: "space-between",
 };
 
 export const paymentCardSx = (theme) => ({
 	position: "relative",
-	overflow: "hidden",
 	width: "100%",
 	maxWidth: 430,
 	aspectRatio: "1.65 / 1",
+	overflow: "hidden",
+	display: "flex",
+	flexDirection: "column",
+	justifyContent: "space-between",
 	padding: theme.spacing(3),
 	borderRadius: theme.shape.borderRadius * 1.35,
 	color: theme.palette.primary.contrastText,
@@ -30,20 +38,19 @@ export const paymentCardSx = (theme) => ({
 		${theme.palette.primary.light} 100%
 	)`,
 	boxShadow: `0 18px 40px ${alpha(theme.palette.primary.dark, 0.25)}`,
-	display: "flex",
-	flexDirection: "column",
-	justifyContent: "space-between",
+
 	[theme.breakpoints.down("sm")]: {
 		padding: theme.spacing(2),
 	},
+
 	"&::after": {
 		content: '""',
 		position: "absolute",
+		top: -100,
+		right: -70,
 		width: 220,
 		height: 220,
-		borderRadius: "50%",
-		right: -70,
-		top: -100,
+		borderRadius: (theme) => theme.custom.radius.circle,
 		backgroundColor: alpha(theme.palette.common.white, 0.12),
 	},
 });
@@ -53,15 +60,6 @@ export const cardLayerSx = {
 	zIndex: 1,
 	alignItems: "center",
 	justifyContent: "space-between",
-};
-
-export const cardFooterSx = {
-	position: "relative",
-	zIndex: 1,
-	display: "grid",
-	gridTemplateColumns: "max-content max-content",
-	alignItems: "end",
-	columnGap: { xs: 3, sm: 4, md: 5 },
 };
 
 export const cardIconSx = {
@@ -89,20 +87,24 @@ export const cardNumberSx = {
 	letterSpacing: { xs: 2.5, sm: 4 },
 };
 
+export const cardFooterSx = {
+	position: "relative",
+	zIndex: 1,
+	display: "grid",
+	gridTemplateColumns: "max-content max-content",
+	alignItems: "end",
+	columnGap: { xs: 3, sm: 4, md: 5 },
+};
+
 export const cardLabelSx = {
 	opacity: 0.72,
 	textTransform: "uppercase",
 };
 
-export const editAddressButtonSx = {
-	alignSelf: { xs: "stretch", sm: "flex-start" },
-};
-
-export const paymentHeadingRowSx = {
-	alignItems: "center",
-	justifyContent: "space-between",
-};
-
 export const expiryDetailsSx = {
 	alignItems: "flex-end",
+};
+
+export const editAddressButtonSx = {
+	alignSelf: { xs: "stretch", sm: "flex-start" },
 };

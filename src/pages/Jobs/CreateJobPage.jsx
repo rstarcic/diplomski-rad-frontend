@@ -18,7 +18,7 @@ import { createJob, getJobById } from "../../api/core.api";
 import { useAuth } from "../../hooks/useAuth";
 import { useTimedAlert } from "../../hooks/useTimedAlert";
 
-const initialJobData = {
+const createInitialJobData = () => ({
 	title: "",
 	category: "",
 	description: "",
@@ -32,7 +32,7 @@ const initialJobData = {
 	hoursPerWeek: "",
 	deliverables: "",
 	requirements: [""],
-};
+});
 
 export default function CreateJobPage() {
 	const { accountSetup, accountIsComplete, role } = useAuth();
@@ -41,9 +41,9 @@ export default function CreateJobPage() {
 	const duplicateFrom = searchParams.get("duplicateFrom");
 	const isCreatingCopy = Boolean(duplicateFrom);
 
-	const [jobData, setJobData] = useState(initialJobData);
+	const [jobData, setJobData] = useState(createInitialJobData);
 	const [sourceJobTitle, setSourceJobTitle] = useState("");
-	const [loadingSourceJob, setLoadingSourceJob] = useState(false);
+	const [loadingSourceJob, setLoadingSourceJob] = useState(Boolean(duplicateFrom));
 	const [sourceJobError, setSourceJobError] = useState("");
 
 	const [success, setSuccess] = useTimedAlert();
@@ -68,7 +68,7 @@ export default function CreateJobPage() {
 				if (ignore) return;
 
 				setJobData({
-					...initialJobData,
+					...createInitialJobData,
 					...job,
 
 					deadline: null,
@@ -140,7 +140,7 @@ export default function CreateJobPage() {
 			await createJob(jobToCreate);
 
 			setSuccess("Job created successfully.");
-			setJobData(initialJobData);
+			setJobData(createInitialJobData());
 			setSourceJobTitle("");
 		} catch (error) {
 			const apiError = parseApiError(error, JOB_ERRORS, "We couldn't create the job. Please try again later.");

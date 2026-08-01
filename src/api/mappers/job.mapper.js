@@ -127,7 +127,6 @@ export function mapJobListItemFromAPI(item = {}) {
 }
 
 export function mapJobDetailsPageFromAPI(data = {}) {
-	console.log(data?.application_status);
 	const client = data.client ?? {};
 	const job = data.job ?? {};
 

@@ -13,7 +13,7 @@ export const LOCATION_TYPES = [
 export const INITIAL_JOB_FILTERS = {
     search: "",
     category: "",
-    workMode: "",
+    locationType: "",
     city: "",
     budgetType: "",
     minBudget: "",

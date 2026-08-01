@@ -32,6 +32,9 @@ export default function JobDetailsSection({ job }) {
 	const budgetLabel = job.budgetType === "Hourly" ? "Hourly rate" : "Fixed budget";
 	const budgetValue = job.budgetType === "Hourly" ? `${job.budgetAmount} €/h` : `${job.budgetAmount} €`;
 
+	const requirements = job.requirements?.filter(Boolean) ?? [];
+	const hasRequirements = requirements.length > 0;
+
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
@@ -42,7 +45,7 @@ export default function JobDetailsSection({ job }) {
 							sx={(theme) => ({
 								width: 42,
 								height: 42,
-								borderRadius: "50%",
+								borderRadius: (theme) => theme.custom.radius.circle,
 								display: "grid",
 								placeItems: "center",
 								bgcolor: theme.custom.jobForm.sectionIconBackground,
@@ -58,10 +61,21 @@ export default function JobDetailsSection({ job }) {
 						</Typography>
 					</Stack>
 
-					<StatusChip status={job.status} config={JOB_STATUSES[job.status]} />
+					<StatusChip status={job.status} config={JOB_STATUSES} />
 				</Stack>
 
-				<Typography variant="subtitle2" sx={(theme) => ({ width: "fit-content", px: 1, py: 0.25, borderRadius: 1.5, bgcolor: theme.custom.jobForm.sectionIconBackground, color: theme.custom.jobForm.sectionIconColor, fontWeight: 900 })}>
+				<Typography
+					variant="subtitle2"
+					sx={(theme) => ({
+						width: "fit-content",
+						px: 1,
+						py: 0.25,
+						borderRadius: 1.5,
+						bgcolor: theme.custom.jobForm.sectionIconBackground,
+						color: theme.custom.jobForm.sectionIconColor,
+						fontWeight: 900,
+					})}
+				>
 					{job.category}
 				</Typography>
 
@@ -69,8 +83,7 @@ export default function JobDetailsSection({ job }) {
 					{job.description}
 				</Typography>
 
-				{/* Requirements */}
-				{job.requirements?.some(Boolean) && (
+				{hasRequirements && (
 					<>
 						<Divider />
 
@@ -78,7 +91,7 @@ export default function JobDetailsSection({ job }) {
 							<SectionTitle>Requirements</SectionTitle>
 
 							<Stack spacing={1}>
-								{job.requirements.filter(Boolean).map((requirement, index) => (
+								{requirements.map((requirement, index) => (
 									<Stack key={index} direction="row" spacing={1} sx={{ alignItems: "center" }}>
 										<CheckCircleRoundedIcon sx={{ color: "primary.main", fontSize: 17, flexShrink: 0 }} />
 										<Typography variant="body2" color="text.secondary">
@@ -100,7 +113,7 @@ export default function JobDetailsSection({ job }) {
 					<Box sx={detailGridSx}>
 						<DetailItem label={budgetLabel} value={budgetValue} />
 						<DetailItem label="Duration" value={job.durationDays ? `${job.durationDays} days` : "Not set"} />
-						<DetailItem label="Hours per week" value={job.hoursPerWeek || "Optional"} />
+						<DetailItem label="Hours per week" value={job.hoursPerWeek} />
 						<DetailItem label="Deadline" value={formatDate(job.deadline)} />
 					</Box>
 				</Stack>

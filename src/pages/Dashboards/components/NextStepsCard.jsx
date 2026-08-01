@@ -4,7 +4,7 @@ import { Box, Card, Chip, Paper, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 import { useAuth } from "../../../hooks/useAuth";
-import { sectionSx, sectionTitleSx } from "../../../theme/layout";
+import { fullHeightSectionSx, sectionTitleSx } from "../../../theme/layout";
 
 import { getActionPresentation } from "../dashboardActions";
 import { getDashboardItemPath } from "../dashboardRoutes";
@@ -25,7 +25,7 @@ export default function NextStepsCard({ actions = [] }) {
 	const { role } = useAuth();
 
 	return (
-		<Paper elevation={0} sx={sectionSx}>
+		<Paper elevation={0} sx={fullHeightSectionSx}>
 			<Typography variant="h6" sx={sectionTitleSx}>
 				Next steps
 			</Typography>

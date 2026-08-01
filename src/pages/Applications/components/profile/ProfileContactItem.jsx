@@ -1,16 +1,16 @@
 import { Box, Typography } from "@mui/material";
 
 import {
-	contactBoxSx,
-	contactIconSx,
-	contactTextSx,
-} from "./ContractorProfileSection.styles";
+	profileContactBoxSx,
+	profileContactIconSx,
+	profileContactTextSx,
+} from "../../../../components/profile/profileContact.styles";
 
 export default function ProfileContactItem({ icon: Icon, children }) {
 	return (
-		<Box sx={contactBoxSx}>
-			<Icon sx={contactIconSx} />
-			<Typography variant="body2" sx={contactTextSx}>
+		<Box sx={profileContactBoxSx}>
+			<Icon sx={profileContactIconSx} />
+			<Typography variant="body2" sx={profileContactTextSx}>
 				{children}
 			</Typography>
 		</Box>

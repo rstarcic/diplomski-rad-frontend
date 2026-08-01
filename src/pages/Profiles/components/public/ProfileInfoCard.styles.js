@@ -7,6 +7,11 @@ export const cardSx = {
 	bgcolor: "background.paper",
 };
 
+export const featuredCardSx = {
+	...cardSx,
+	p: { xs: 2.5, sm: 3 },
+};
+
 export const headerSx = {
 	alignItems: { xs: "center", sm: "flex-start" },
 };
@@ -20,9 +25,29 @@ export const avatarSx = {
 	flexShrink: 0,
 };
 
-export const clickableAvatarSx = {
-	...avatarSx,
-	cursor: "zoom-in",
+export const avatarButtonSx = {
+	flexShrink: 0,
+	borderRadius: (theme) => theme.custom.radius.circle,
+
+	"&:focus-visible": {
+		outline: "3px solid",
+		outlineColor: "primary.light",
+		outlineOffset: 3,
+	},
+};
+
+export const profileContentSx = {
+	flex: 1,
+	minWidth: 0,
+};
+
+export const nameRowSx = {
+	alignItems: {
+		xs: "center",
+		sm: "flex-start",
+		md: "center",
+	},
+	mb: 2,
 };
 
 export const nameSx = {
@@ -30,6 +55,33 @@ export const nameSx = {
 	fontSize: { xs: "1.4rem", sm: "1.65rem" },
 	mb: 2,
 	textAlign: { xs: "center", sm: "left" },
+};
+
+export const memberSinceBadgeSx = {
+	alignItems: "center",
+	px: 1.25,
+	py: 0.65,
+	borderRadius: 99,
+	color: "primary.main",
+	bgcolor: "rgba(91, 63, 214, 0.08)",
+};
+
+export const featuredInfoGridSx = {
+	display: "grid",
+	gridTemplateColumns: {
+		xs: "1fr",
+		md: "repeat(2, minmax(0, 1fr))",
+	},
+	columnGap: 4,
+	rowGap: 1.75,
+};
+
+export const iconWrapSx = {
+	display: "flex",
+	alignItems: "center",
+	flexShrink: 0,
+	mt: "2px",
+	color: "primary.main",
 };
 
 export const infoRowSx = {
@@ -40,6 +92,16 @@ export const infoLabelSx = {
 	color: "text.secondary",
 	minWidth: 0,
 	flexShrink: 0,
+};
+
+export const compactInfoSx = {
+	alignItems: "center",
+	minWidth: 0,
+};
+
+export const compactInfoWrapSx = {
+	...iconWrapSx,
+	mt: 0,
 };
 
 export const aboutSx = {

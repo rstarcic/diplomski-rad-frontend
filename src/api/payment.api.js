@@ -13,8 +13,8 @@ export async function createStripeConnectAccount(billingDetails) {
 	return mapStripeOnboardingFromAPI(data);
 }
 
-export async function getMyBillingDetails() {
-	const { data } = await api.get("/payments/status");
+export async function getMyBillingDetails(signal) {
+	const { data } = await api.get("/payments/status", { signal });
 	return mapBillingDetailsFromAPI(data);
 }
 
@@ -37,12 +37,13 @@ export async function getMyPaymentStatus() {
 	};
 }
 
-export async function getMyTransactions({ page = 1, pageSize = 10 } = {}) {
+export async function getMyTransactions({ page = 1, pageSize = 10 } = {}, signal) {
 	const { data } = await api.get("/payments/transactions", {
 		params: {
 			page,
 			page_size: pageSize,
 		},
+		signal,
 	});
 
 	return {

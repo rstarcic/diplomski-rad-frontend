@@ -18,7 +18,7 @@ export const timelineRailSx = {
 export const timelineDotSx = (isLast) => ({
 	width: 10,
 	height: 10,
-	borderRadius: "50%",
+	borderRadius: (theme) => theme.custom.radius.circle,
 	flexShrink: 0,
 	bgcolor: isLast ? "primary.main" : "background.paper",
 	border: "2px solid",

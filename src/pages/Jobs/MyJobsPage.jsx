@@ -1,29 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
 import { Box, Grid, Stack, Typography } from "@mui/material";
+
+import { getMyJobs } from "../../api/core.api";
+
+import AppAlert from "../../components/ui/AppAlert";
 import PageHeader from "../../components/ui/PageHeader";
 import StatusFilter from "../../components/ui/StatusFilter";
-import MyJobCard from "./components/my-jobs/MyJobCard";
-import AppAlert from "../../components/ui/AppAlert";
+
+import { JOB_ERRORS } from "../../constants/apiErrors";
 import { JOB_STATUSES } from "../../constants/statuses";
 import { findStatusKey } from "../../utils/jobs";
-import { getMyJobs } from "../../api/core.api";
 import { parseApiError } from "../../utils/parseApiError";
-import { JOB_ERRORS } from "../../constants/apiErrors";
+
+import MyJobCard from "./components/my-jobs/MyJobCard";
 
 export default function MyJobsPage() {
-	const [selectedStatus, setSelectedStatus] = useState("all");
 	const [jobs, setJobs] = useState([]);
-	const [loadError, setLoadError] = useState("");
+	const [selectedStatus, setSelectedStatus] = useState("all");
 	const [loading, setLoading] = useState(true);
+	const [loadError, setLoadError] = useState("");
 
-	const filteredJobs = useMemo(
-		() =>
-			jobs.filter((job) => {
-				if (selectedStatus === "all") return true;
-				return findStatusKey(job.status, JOB_STATUSES) === selectedStatus;
-			}),
-		[jobs, selectedStatus],
-	);
+	const filteredJobs = useMemo(() => {
+		if (selectedStatus === "all") {
+			return jobs;
+		}
+
+		return jobs.filter((job) => findStatusKey(job.status, JOB_STATUSES) === selectedStatus);
+	}, [jobs, selectedStatus]);
 
 	useEffect(() => {
 		async function loadMyJobs() {
@@ -34,7 +37,6 @@ export default function MyJobsPage() {
 				const jobs = await getMyJobs();
 				setJobs(jobs);
 			} catch (error) {
-				console.error("Error loading jobs:", error);
 				const apiError = parseApiError(error, JOB_ERRORS, "We couldn't load your jobs. Please try again later.");
 				setLoadError(apiError.message);
 			} finally {

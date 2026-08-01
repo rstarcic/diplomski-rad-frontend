@@ -1,58 +1,99 @@
 import dayjs from "dayjs";
 
-const hasPositiveNumber = (value) => {
-    if (value === null || value === undefined || value === "") return false;
+const LOCATION_REQUIRED_TYPES = ["onsite", "hybrid"];
 
-    return Number(value) > 0;
+const hasValue = (value) =>
+    value !== null &&
+    value !== undefined &&
+    value !== "";
+
+const hasText = (value) =>
+    typeof value === "string" &&
+    value.trim().length > 0;
+
+const hasPositiveNumber = (value) =>
+    hasValue(value) &&
+    Number.isFinite(Number(value)) &&
+    Number(value) > 0;
+
+const isFutureDate = (value) => {
+    if (!value) return false;
+
+    const date = dayjs(value);
+
+    return date.isValid() && date.isAfter(dayjs(), "day");
 };
 
-const hasText = (value) => typeof value === "string" && value.trim().length > 0;
-
-export const getMissingFields = (jobData) => {
+export const getMissingFields = (jobData = {}) => {
     const missingFields = [];
 
-    if (!hasText(jobData.title)) missingFields.push("job title");
-    if (!hasText(jobData.category)) missingFields.push("category");
-    if (!hasText(jobData.description)) missingFields.push("description");
-    if (!jobData.locationType) missingFields.push("location type");
+    if (!hasText(jobData.title)) {
+        missingFields.push("job title");
+    }
 
-    if ((jobData.locationType === "onsite" || jobData.locationType === "hybrid") && !hasText(jobData.location)) {
+    if (!hasText(jobData.category)) {
+        missingFields.push("category");
+    }
+
+    if (!hasText(jobData.description)) {
+        missingFields.push("description");
+    }
+
+    if (!jobData.locationType) {
+        missingFields.push("location type");
+    }
+
+    const locationIsRequired =
+        LOCATION_REQUIRED_TYPES.includes(jobData.locationType);
+
+    if (
+        locationIsRequired &&
+        !hasText(jobData.location)
+    ) {
         missingFields.push("location");
     }
 
     if (!jobData.deadline) {
         missingFields.push("application deadline");
-    } else if (!dayjs(jobData.deadline).isAfter(dayjs(), "day")) {
-        missingFields.push("Application deadline must be in the future");
+    } else if (!isFutureDate(jobData.deadline)) {
+        missingFields.push(
+            "a valid application deadline in the future",
+        );
     }
 
-    if (!jobData.budgetType) missingFields.push("budget type");
-    if (!jobData.budgetAmount) {
-        missingFields.push("budget/rate");
-    } else if (!hasPositiveNumber(jobData.budgetAmount)) {
-        missingFields.push("Budget must be greater than 0");
+    if (!jobData.budgetType) {
+        missingFields.push("budget type");
     }
 
-    if (!jobData.durationDays) {
-        missingFields.push("duration");
-    } else if (!hasPositiveNumber(jobData.durationDays)) {
-        missingFields.push("Duration must begreater than 0");
+    if (!hasPositiveNumber(jobData.budgetAmount)) {
+        missingFields.push(
+            "budget or hourly rate greater than 0",
+        );
     }
 
-    if (!jobData.hoursPerWeek) {
-        missingFields.push("hours per week");
-    } else if (!hasPositiveNumber(jobData.hoursPerWeek)) {
-        missingFields.push("Hours per week greater than 0");
+    if (!hasPositiveNumber(jobData.durationDays)) {
+        missingFields.push("duration greater than 0");
     }
 
-    if (!hasText(jobData.deliverables)) missingFields.push("deliverables");
-    if (!jobData.requirements?.some(hasText)) missingFields.push("requirements");
+    if (!hasPositiveNumber(jobData.hoursPerWeek)) {
+        missingFields.push("hours per week greater than 0");
+    }
+
+    if (!hasText(jobData.deliverables)) {
+        missingFields.push("deliverables");
+    }
+
+    if (!jobData.requirements?.some(hasText)) {
+        missingFields.push("at least one requirement");
+    }
 
     return missingFields;
 };
 
-export const getMissingFieldsMessage = (missingFields) => {
-    if (!missingFields.length) return "";
+export const getMissingFieldsMessage = (
+    missingFields = [],
+) => {
+    if (missingFields.length === 0) return "";
 
-    return `${missingFields.join(", ")}.`;
+    return `Please provide: ${missingFields.join(", ")}.`;
 };

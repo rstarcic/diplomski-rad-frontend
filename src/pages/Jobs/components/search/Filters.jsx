@@ -1,6 +1,3 @@
-import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
-import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import {
 	Autocomplete,
 	Box,
@@ -12,10 +9,12 @@ import {
 	MenuItem,
 	Select,
 	Stack,
-	TextField,
 	ToggleButton,
 	ToggleButtonGroup,
 } from "@mui/material";
+import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
@@ -73,7 +72,7 @@ export default function Filters({
 	};
 
 	const handleReset = () => {
-		onChange?.(INITIAL_JOB_FILTERS);
+		onChange?.({ ...INITIAL_JOB_FILTERS });
 		onReset?.();
 	};
 
@@ -149,7 +148,9 @@ export default function Filters({
 						getOptionLabel={getOptionLabel}
 						isOptionEqualToValue={(option, value) => getOptionValue(option) === getOptionValue(value)}
 						onChange={handleCityChange}
-						renderInput={(params) => <TextField {...params} label="City" placeholder="All cities" size="small" />}
+						renderInput={(params) => (
+							<PrimaryTextField {...params} label="City" placeholder="All cities" size="small" />
+						)}
 					/>
 				)}
 
@@ -167,7 +168,7 @@ export default function Filters({
 					))}
 				</ToggleButtonGroup>
 
-				<TextField
+				<PrimaryTextField
 					label="Min"
 					type="number"
 					disabled={!hasBudgetType}
@@ -181,7 +182,7 @@ export default function Filters({
 					}}
 				/>
 
-				<TextField
+				<PrimaryTextField
 					label="Max"
 					type="number"
 					disabled={!hasBudgetType}

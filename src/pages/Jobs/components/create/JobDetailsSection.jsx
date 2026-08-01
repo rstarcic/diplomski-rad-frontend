@@ -1,10 +1,10 @@
 import { Box, Grid, MenuItem, Stack } from "@mui/material";
-import { DateField } from "@mui/x-date-pickers";
 import WorkRoundedIcon from "@mui/icons-material/WorkRounded";
+import { DateField } from "@mui/x-date-pickers";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import { surfaceSectionSx } from "../../../../theme/layout";
 import { LOCATION_TYPES } from "../../../../constants/jobFilters";
+import { surfaceSectionSx } from "../../../../theme/layout";
 import SectionHeading from "./SectionHeading";
 
 const dateFieldSx = (theme) => ({
@@ -18,6 +18,8 @@ const dateFieldSx = (theme) => ({
 		lineHeight: 1.35,
 	},
 });
+
+const LOCATION_REQUIRED_TYPES = ["onsite", "hybrid"];
 
 export default function JobDetailsSection({ jobData, setJobData, fieldSpacing = 2 }) {
 	const requiresLocation = jobData.locationType === "onsite" || jobData.locationType === "hybrid";
@@ -36,7 +38,7 @@ export default function JobDetailsSection({ jobData, setJobData, fieldSpacing = 
 		setJobData((prev) => ({
 			...prev,
 			locationType,
-			location: ["onsite", "hybrid"].includes(locationType) ? prev.location : "",
+			location: LOCATION_REQUIRED_TYPES.includes(locationType) ? prev.location : "",
 		}));
 	};
 
@@ -46,6 +48,7 @@ export default function JobDetailsSection({ jobData, setJobData, fieldSpacing = 
 			deadline: value,
 		}));
 	};
+
 	return (
 		<Box sx={surfaceSectionSx}>
 			<SectionHeading icon={<WorkRoundedIcon />} subtitle="Basic information about the job you want to post.">

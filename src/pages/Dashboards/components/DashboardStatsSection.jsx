@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-import StatsCard from "./StatsCard";
+import StatsCard from "../../../components/stats/StatsCard";
 
 const statsGridSx = {
 	mt: { xs: 3.5, md: 5 },

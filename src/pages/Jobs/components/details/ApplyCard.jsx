@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Box, Card, CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+
 import AccountSetupAlert from "../../../../components/account/AccountAlert";
+import ApplicationStatusChip from "../../../../components/ui/ApplicationStatusChip";
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
-import ApplicationStatusChip from "../../../../components/ui/ApplicationStatusChip";
 import { APPLICATION_STATUSES } from "../../../../constants/statuses";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { findStatusKey } from "../../../../utils/jobs";
@@ -14,7 +15,8 @@ const COVER_LETTER_MIN = 50;
 
 const APPLICATION_STATUS_MESSAGES = {
 	pending: "Your application is waiting for the client to review it.",
-	accepted: "The client accepted your application. Continue from your applications page.",
+	selected: "The client selected your application. Review the offer from your applications page.",
+	accepted: "You accepted the client's offer. Continue from your applications page.",
 	rejected: "The client did not accept this application.",
 	withdrawn: "You withdrew this application.",
 	incomplete: "This application was not completed.",
@@ -32,6 +34,23 @@ const applicationMessageSx = {
 	maxWidth: 480,
 	mx: "auto",
 };
+
+function getCoverLetterHelperText(error, trimmedLength) {
+	if (error) return error;
+
+	if (trimmedLength >= COVER_LETTER_MIN) {
+		return "Looks good — you're ready to apply.";
+	}
+
+	if (trimmedLength === 0) {
+		return `Write at least ${COVER_LETTER_MIN} characters about yourself to enable applying.`;
+	}
+
+	const remainingCharacters = COVER_LETTER_MIN - trimmedLength;
+	const suffix = remainingCharacters === 1 ? "" : "s";
+
+	return `${remainingCharacters} more character${suffix} to go.`;
+}
 
 export default function ApplyCard({
 	job,
@@ -51,6 +70,15 @@ export default function ApplyCard({
 	const clientName = job?.client?.fullName || "the client";
 	const statusKey = findStatusKey(applicationStatus || "pending", APPLICATION_STATUSES);
 	const statusMessage = APPLICATION_STATUS_MESSAGES[statusKey] ?? APPLICATION_STATUS_MESSAGES.pending;
+	const helperText = getCoverLetterHelperText(error, trimmedLength);
+
+	const updateCoverLetter = (event) => {
+		setCoverLetter(event.target.value.slice(0, COVER_LETTER_MAX));
+
+		if (error) {
+			setError("");
+		}
+	};
 
 	const handleApply = async () => {
 		if (!canApply) return;
@@ -67,14 +95,6 @@ export default function ApplyCard({
 			setIsSubmitting(false);
 		}
 	};
-
-	const helperText = error
-		? error
-		: trimmedLength >= COVER_LETTER_MIN
-			? "Looks good — you're ready to apply."
-			: trimmedLength === 0
-				? `Write at least ${COVER_LETTER_MIN} characters about yourself to enable applying.`
-				: `${COVER_LETTER_MIN - trimmedLength} more character${COVER_LETTER_MIN - trimmedLength === 1 ? "" : "s"} to go.`;
 
 	if (alreadyApplied) {
 		return (
@@ -99,7 +119,7 @@ export default function ApplyCard({
 	if (submitted) {
 		return (
 			<Card elevation={0} sx={surfaceSectionSx}>
-				<Stack spacing={1.5} sx={{ alignItems: "center", textAlign: "center", py: 2 }}>
+				<Stack spacing={1.5} sx={applicationStateSx}>
 					<CheckCircleRoundedIcon sx={{ fontSize: 56, color: "success.main" }} />
 
 					<Box>
@@ -155,7 +175,7 @@ export default function ApplyCard({
 
 					<PrimaryTextField
 						value={coverLetter}
-						onChange={(e) => setCoverLetter(e.target.value.slice(0, COVER_LETTER_MAX))}
+						onChange={updateCoverLetter}
 						multiline
 						minRows={6}
 						placeholder="Introduce yourself and explain why you're the right fit for this job…"

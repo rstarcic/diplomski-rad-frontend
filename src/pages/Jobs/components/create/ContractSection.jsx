@@ -1,13 +1,18 @@
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 
 import PrimaryTextField from "../../../../components/ui/PrimaryTextField";
 import { surfaceSectionSx } from "../../../../theme/layout";
 import SectionHeading from "./SectionHeading";
 
-const addRequirementSx = { mt: 1.5, fontWeight: 800 };
+const MAX_REQUIREMENTS = 5;
+
+const addRequirementSx = {
+	mt: 1.5,
+	fontWeight: 800,
+};
 
 const requirementRowSx = {
 	display: "grid",
@@ -35,7 +40,7 @@ export default function ContractSection({ jobData, setJobData }) {
 
 	const addRequirement = () => {
 		setJobData((prev) => {
-			if (prev.requirements.length >= 5) {
+			if (prev.requirements.length >= MAX_REQUIREMENTS) {
 				return prev;
 			}
 
@@ -55,7 +60,10 @@ export default function ContractSection({ jobData, setJobData }) {
 
 	return (
 		<Box sx={surfaceSectionSx}>
-			<SectionHeading icon={<DescriptionRoundedIcon />} subtitle="Describe the deliverables and requirements for this job.">
+			<SectionHeading
+				icon={<DescriptionRoundedIcon />}
+				subtitle="Describe the deliverables and requirements for this job."
+			>
 				Contract expectations
 			</SectionHeading>
 
@@ -86,7 +94,7 @@ export default function ContractSection({ jobData, setJobData }) {
 								/>
 
 								<IconButton
-									aria-label="Remove requirement"
+									aria-label={`Remove requirement ${index + 1}`}
 									onClick={() => removeRequirement(index)}
 									disabled={jobData.requirements.length <= 1}
 									sx={{ mt: 0.25 }}
@@ -102,7 +110,7 @@ export default function ContractSection({ jobData, setJobData }) {
 						variant="text"
 						startIcon={<AddCircleOutlineRoundedIcon />}
 						onClick={addRequirement}
-						disabled={jobData.requirements.length >= 5}
+						disabled={jobData.requirements.length >= MAX_REQUIREMENTS}
 						sx={addRequirementSx}
 					>
 						Add requirement

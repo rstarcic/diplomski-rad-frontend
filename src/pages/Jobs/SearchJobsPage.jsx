@@ -4,13 +4,14 @@ import { Box, Drawer, Pagination } from "@mui/material";
 
 import AppAlert from "../../components/ui/AppAlert";
 import SecondaryButton from "../../components/ui/SecondaryButton";
-import Filters from "./components/search/Filters";
-import SearchJobsHeader from "./components/search/SearchJobsHeader";
-import JobsResultsSection from "./components/search/JobsResultsSection";
 
-import { useJobSearch } from "../../hooks/useJobSearch";
-import { useJobFilterOptions } from "../../hooks/useJobFilterOptions";
 import { INITIAL_JOB_FILTERS } from "../../constants/jobFilters";
+import { useJobFilterOptions } from "../../hooks/useJobFilterOptions";
+import { useJobSearch } from "../../hooks/useJobSearch";
+
+import Filters from "./components/search/Filters";
+import JobsResultsSection from "./components/search/JobsResultsSection";
+import SearchJobsHeader from "./components/search/SearchJobsHeader";
 
 const mobileFilterButtonSx = {
 	display: { xs: "flex", md: "none" },

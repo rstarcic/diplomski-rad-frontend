@@ -1,86 +1,36 @@
+import { Avatar, Box, Card, Divider, Stack, Typography } from "@mui/material";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import PersonOutlineRoundedIcon from "@mui/icons-material/PersonOutlineRounded";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import { Avatar, Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
+import {
+	memberSinceBoxSx,
+	memberSinceTextSx,
+	profileContactBoxSx,
+	profileContactIconSx,
+	profileContactTextSx,
+} from "../../../../components/profile/profileContact.styles";
 import { sectionTitleSx, surfaceSectionSx } from "../../../../theme/layout";
 import { formatDate } from "../../../../utils/formatters";
 
-const avatarSx = {
-	width: 64,
-	height: 64,
-	bgcolor: "primary.light",
-	flexShrink: 0,
-};
-
-const profileLinkSx = {
-	color: "inherit",
-	textDecoration: "none",
-	borderRadius: 2,
-	"&:focus-visible": {
-		outline: "2px solid",
-		outlineColor: "primary.main",
-		outlineOffset: 3,
-	},
-};
-
-const clickableAvatarSx = {
-	...avatarSx,
-	transition: "transform 160ms ease, box-shadow 160ms ease",
-	"&:hover": {
-		transform: "scale(1.05)",
-		boxShadow: 3,
-	},
-};
-
-const profileNameLinkSx = {
-	...profileLinkSx,
-	display: "inline-block",
-	fontWeight: 900,
-	lineHeight: 1.25,
-	"&:hover": {
-		color: "primary.main",
-		textDecoration: "underline",
-	},
-};
-
-const contactBoxSx = {
-	display: "flex",
-	alignItems: "center",
-	gap: 1,
-	p: 1.25,
-	border: "1px solid",
-	borderColor: "divider",
-	borderRadius: 2,
-	overflow: "hidden",
-	minWidth: 0,
-};
-
-const contactIconSx = {
-	fontSize: 18,
-	color: "primary.main",
-	flexShrink: 0,
-};
-
-const memberSinceSx = (theme) => ({
-	display: "flex",
-	alignItems: "center",
-	gap: 1,
-	p: 1.25,
-	border: "1px solid",
-	borderColor: theme.custom.tint.primaryBorder,
-	borderRadius: 2,
-	bgcolor: theme.custom.tint.primarySubtle,
-});
+import {
+	avatarSx,
+	clickableAvatarSx,
+	profileLinkSx,
+	profileNameLinkSx,
+} from "./ClientProfileSection.styles";
 
 export default function ClientProfileSection({ client }) {
 	if (!client) return null;
 
+	const clientName = client.fullName || "Client";
 	const location = client.city && client.country ? `${client.city}, ${client.country}` : "Location not provided";
-	const memberSince = client.createdAt;
+
+	const memberSince = client.createdAt ? formatDate(client.createdAt) : "Not provided";
+
 	const clientProfilePath = client.id ? `/contractor/clients/${client.id}` : null;
 
 	return (
@@ -97,15 +47,15 @@ export default function ClientProfileSection({ client }) {
 						<Box
 							component={RouterLink}
 							to={clientProfilePath}
-							aria-label={`View ${client.fullName}'s public profile`}
+							aria-label={`View ${clientName}'s public profile`}
 							sx={profileLinkSx}
 						>
-							<Avatar alt={client.fullName} src={client.profileImageUrl} sx={clickableAvatarSx}>
+							<Avatar alt={clientName} src={client.profileImageUrl} sx={clickableAvatarSx}>
 								<PersonOutlineRoundedIcon />
 							</Avatar>
 						</Box>
 					) : (
-						<Avatar alt={client.fullName} src={client.profileImageUrl} sx={avatarSx}>
+						<Avatar alt={clientName} src={client.profileImageUrl} sx={avatarSx}>
 							<PersonOutlineRoundedIcon />
 						</Avatar>
 					)}
@@ -113,16 +63,35 @@ export default function ClientProfileSection({ client }) {
 					<Box sx={{ minWidth: 0 }}>
 						{clientProfilePath ? (
 							<Typography component={RouterLink} to={clientProfilePath} variant="subtitle1" sx={profileNameLinkSx}>
-								{client.fullName}
+								{clientName}
 							</Typography>
 						) : (
-							<Typography variant="subtitle1" sx={{ fontWeight: 900, lineHeight: 1.25 }}>
-								{client.fullName}
+							<Typography
+								variant="subtitle1"
+								sx={{
+									fontWeight: 900,
+									lineHeight: 1.25,
+								}}
+							>
+								{clientName}
 							</Typography>
 						)}
 
-						<Stack direction="row" spacing={0.5} sx={{ mt: 0.5, alignItems: "center" }}>
-							<LocationOnRoundedIcon sx={{ fontSize: 15, color: "text.secondary" }} />
+						<Stack
+							direction="row"
+							spacing={0.5}
+							sx={{
+								mt: 0.5,
+								alignItems: "center",
+							}}
+						>
+							<LocationOnRoundedIcon
+								sx={{
+									fontSize: 15,
+									color: "text.secondary",
+								}}
+							/>
+
 							<Typography variant="body2" color="text.secondary" noWrap>
 								{location}
 							</Typography>
@@ -139,31 +108,27 @@ export default function ClientProfileSection({ client }) {
 				<Divider />
 
 				<Stack spacing={1}>
-					<Stack spacing={1}>
-						<Box sx={contactBoxSx}>
-							<EmailOutlinedIcon sx={contactIconSx} />
-							<Typography
-								variant="body2"
-								sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-							>
-								{client.email ?? "Not provided"}
-							</Typography>
-						</Box>
-						<Box sx={contactBoxSx}>
-							<PhoneOutlinedIcon sx={contactIconSx} />
-							<Typography
-								variant="body2"
-								sx={{ fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-							>
-								{client.phone ?? "Not provided"}
-							</Typography>
-						</Box>
-					</Stack>
+					<Box sx={profileContactBoxSx}>
+						<EmailOutlinedIcon sx={profileContactIconSx} />
 
-					<Box sx={memberSinceSx}>
-						<CalendarMonthRoundedIcon sx={contactIconSx} />
-						<Typography variant="body2" sx={{ fontWeight: 700 }}>
-							Member since {formatDate(memberSince)}
+						<Typography variant="body2" sx={profileContactTextSx}>
+							{client.email || "Not provided"}
+						</Typography>
+					</Box>
+
+					<Box sx={profileContactBoxSx}>
+						<PhoneOutlinedIcon sx={profileContactIconSx} />
+
+						<Typography variant="body2" sx={profileContactTextSx}>
+							{client.phone || "Not provided"}
+						</Typography>
+					</Box>
+
+					<Box sx={memberSinceBoxSx}>
+						<CalendarMonthRoundedIcon sx={profileContactIconSx} />
+
+						<Typography variant="body2" sx={memberSinceTextSx}>
+							Member since {memberSince}
 						</Typography>
 					</Box>
 				</Stack>

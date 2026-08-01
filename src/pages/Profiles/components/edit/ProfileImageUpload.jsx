@@ -1,35 +1,40 @@
 import { useEffect, useMemo, useState } from "react";
-
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import PhotoRoundedIcon from "@mui/icons-material/PhotoRounded";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import { Avatar, Box, Dialog, Stack, Typography } from "@mui/material";
+import { Avatar, Box, ButtonBase, Dialog, DialogActions, DialogContent, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
+import SecondaryButton from "../../../../components/ui/SecondaryButton";
 import { sectionTitleSx } from "../../../../theme/layout";
+
 import {
 	avatarSx,
 	centeredSectionSx,
+	descriptionSx,
 	dialogActionsSx,
 	dialogContentSx,
 	dialogPaperSx,
 	enlargedImageSx,
+	headerIconSx,
+	headerSx,
+	imagePreviewButtonSx,
 	imagePreviewSx,
+	sectionContentSx,
+	uploadButtonSx,
 } from "./ProfileImageUpload.styles";
 
 const VisuallyHiddenInput = styled("input")({
-	clip: "rect(0 0 0 0)",
-	clipPath: "inset(50%)",
-	height: 1,
-	overflow: "hidden",
 	position: "absolute",
-	bottom: 0,
-	left: 0,
-	whiteSpace: "nowrap",
 	width: 1,
+	height: 1,
+	padding: 0,
+	margin: -1,
+	overflow: "hidden",
+	clip: "rect(0 0 0 0)",
+	whiteSpace: "nowrap",
+	border: 0,
 });
 
 export default function ProfileImageUpload({ image, onImageChange }) {
@@ -48,9 +53,13 @@ export default function ProfileImageUpload({ image, onImageChange }) {
 	}, [image]);
 
 	useEffect(() => {
-		if (!imagePreview?.startsWith("blob:")) return undefined;
+		if (!imagePreview?.startsWith("blob:")) {
+			return undefined;
+		}
 
-		return () => URL.revokeObjectURL(imagePreview);
+		return () => {
+			URL.revokeObjectURL(imagePreview);
+		};
 	}, [imagePreview]);
 
 	const handleImageChange = (event) => {
@@ -62,39 +71,65 @@ export default function ProfileImageUpload({ image, onImageChange }) {
 		event.target.value = "";
 	};
 
+	const openPreview = () => {
+		setPreviewOpen(true);
+	};
+
+	const closePreview = () => {
+		setPreviewOpen(false);
+	};
+
 	return (
 		<Box sx={centeredSectionSx}>
-			<Stack direction={{ xs: "column", sm: "row" }} spacing={2.5} sx={{ alignItems: "center", justifyContent: "space-between" }}>
-				<Box sx={{ textAlign: "left", flex: 1 }}>
-					<Stack direction="row" spacing={1.25} sx={{ alignItems: "center", mb: 0.5 }}>
-						<Box sx={{ width: 42, height: 42, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: "rgba(91,63,214,.1)", color: "primary.main", flexShrink: 0 }}>
+			<Stack direction={{ xs: "column", sm: "row" }} spacing={2.5} sx={sectionContentSx}>
+				<Box sx={{ flex: 1 }}>
+					<Stack direction="row" spacing={1.25} sx={headerSx}>
+						<Box sx={headerIconSx}>
 							<PhotoRoundedIcon sx={{ fontSize: 21 }} />
 						</Box>
-						<Typography variant="h6" sx={sectionTitleSx}>Profile photo</Typography>
+
+						<Typography variant="h6" sx={sectionTitleSx}>
+							Profile photo
+						</Typography>
 					</Stack>
 
-					<Typography variant="body2" color="text.secondary" sx={{ mb: 2, maxWidth: 250 }}>
+					<Typography variant="body2" color="text.secondary" sx={descriptionSx}>
 						A clear photo helps contractors recognize and remember you.
 					</Typography>
 
-					<PrimaryButton component="label" variant="outlined" startIcon={<AddPhotoAlternateRoundedIcon />} sx={{ borderStyle: "dashed", minHeight: 56 }}>
+					<SecondaryButton component="label" startIcon={<AddPhotoAlternateRoundedIcon />} sx={uploadButtonSx}>
 						Upload image
 						<VisuallyHiddenInput type="file" accept="image/*" onChange={handleImageChange} />
-					</PrimaryButton>
+					</SecondaryButton>
 				</Box>
 
 				{imagePreview ? (
-					<Box component="img" src={imagePreview} alt="Profile preview" referrerPolicy="no-referrer" sx={imagePreviewSx} onClick={() => setPreviewOpen(true)} />
+					<ButtonBase aria-label="Open profile image preview" onClick={openPreview} sx={imagePreviewButtonSx}>
+						<Box
+							component="img"
+							src={imagePreview}
+							alt="Profile preview"
+							referrerPolicy="no-referrer"
+							sx={imagePreviewSx}
+						/>
+					</ButtonBase>
 				) : (
-					<Avatar sx={avatarSx}><PersonRoundedIcon sx={{ fontSize: 48 }} /></Avatar>
+					<Avatar sx={avatarSx}>
+						<PersonRoundedIcon sx={{ fontSize: 48 }} />
+					</Avatar>
 				)}
 			</Stack>
+
 			<Dialog
-				open={previewOpen}
-				onClose={() => setPreviewOpen(false)}
+				open={previewOpen && Boolean(imagePreview)}
+				onClose={closePreview}
 				fullWidth
 				maxWidth="md"
-				PaperProps={{ sx: dialogPaperSx }}
+				slotProps={{
+					paper: {
+						sx: dialogPaperSx,
+					},
+				}}
 			>
 				<DialogContent sx={dialogContentSx}>
 					<Box
@@ -107,7 +142,7 @@ export default function ProfileImageUpload({ image, onImageChange }) {
 				</DialogContent>
 
 				<DialogActions sx={dialogActionsSx}>
-					<PrimaryButton onClick={() => setPreviewOpen(false)}>Close</PrimaryButton>
+					<PrimaryButton onClick={closePreview}>Close</PrimaryButton>
 				</DialogActions>
 			</Dialog>
 		</Box>
