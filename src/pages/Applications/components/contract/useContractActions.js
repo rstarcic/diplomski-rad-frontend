@@ -4,6 +4,7 @@ import {
     downloadContractPdf,
     emailContractPdf,
 } from "../../../../api/core.api";
+import { CONTRACT_ERRORS } from "../../../../constants/apiErrors";
 import { useTimedAlert } from "../../../../hooks/useTimedAlert";
 import {
     parseApiError,
@@ -19,7 +20,7 @@ export function useContractActions({
     const [signing, setSigning] = useState(false);
     const [downloading, setDownloading] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
-    const [signFeedback, setSignFeedback] = useTimedAlert();
+    const [signFeedback, setSignFeedback] = useTimedAlert(null, 6000);
 
     const openSignDialog = () => {
         setSignDialogOpen(true);
@@ -61,7 +62,7 @@ export function useContractActions({
         } catch (error) {
             const apiError = parseApiError(
                 error,
-                {},
+                CONTRACT_ERRORS,
                 "The contract could not be signed. Please try again.",
             );
 
@@ -101,7 +102,7 @@ export function useContractActions({
         } catch (error) {
             const apiError = await parseBlobApiError(
                 error,
-                {},
+                CONTRACT_ERRORS,
                 "The contract PDF could not be downloaded. Please try again.",
             );
 
@@ -134,7 +135,7 @@ export function useContractActions({
         } catch (error) {
             const apiError = parseApiError(
                 error,
-                {},
+                CONTRACT_ERRORS,
                 "The contract could not be sent to your email. Please try again.",
             );
 

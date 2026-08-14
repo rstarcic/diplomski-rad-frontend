@@ -51,11 +51,6 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 	return (
 		<Card elevation={0} sx={surfaceSectionSx}>
 			<Stack spacing={2}>
-				{signFeedback && (
-					<AppAlert severity={signFeedback.severity} title={signFeedback.title} onClose={clearSignFeedback}>
-						{signFeedback.message}
-					</AppAlert>
-				)}
 				<Stack direction="row" spacing={2} sx={headerSx}>
 					<Typography variant="h6" sx={sectionTitleSx}>
 						Contract
@@ -120,6 +115,12 @@ export default function ContractDetailsSection({ contract, job, role = "client",
 						{sendingEmail ? "Sending..." : "Send to my email"}
 					</Button>
 				</Stack>
+
+				{signFeedback && (
+					<AppAlert severity={signFeedback.severity} title={signFeedback.title} onClose={clearSignFeedback}>
+						{signFeedback.message}
+					</AppAlert>
+				)}
 			</Stack>
 
 			<SignContractDialog

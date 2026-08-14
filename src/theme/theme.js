@@ -3,6 +3,7 @@ import { createTheme } from "@mui/material/styles";
 const colors = {
 	primary: "#5b3fd6",
 	primaryDark: "#46309f",
+	primaryDeep: "#32216f",
 	primaryLight: "#7c63f0",
 	secondary: "#8b6fe8",
 	secondaryDark: "#7456d8",
@@ -377,6 +378,7 @@ const theme = createTheme({
 		primary: {
 			main: colors.primary,
 			dark: colors.primaryDark,
+			deep: colors.primaryDeep,
 			light: colors.primaryLight,
 			contrastText: colors.white,
 		},

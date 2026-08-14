@@ -32,37 +32,34 @@ export const acceptBtnSx = {
 	"& .MuiSvgIcon-root": { fontSize: 18 },
 };
 
-export const rejectBtnSx = {
+export const rejectBtnSx = (theme) => ({
 	minHeight: 36,
 	fontSize: "0.8125rem",
 	fontWeight: 650,
 	textTransform: "none",
 	borderRadius: 1.5,
-	bgcolor: "rgba(255, 255, 255, 0.72)",
+	background: theme.custom.gradients.primarySoft,
 	borderColor: "rgba(239, 68, 68, 0.38)",
 	color: "error.main",
 	px: 1.5,
 	py: 0.75,
 	boxShadow: "none",
 	"&:hover": {
-		bgcolor: "error.main",
+		background: theme.palette.error.main,
 		borderColor: "error.main",
 		color: "common.white",
 		boxShadow: "none",
 	},
 	"& .MuiButton-startIcon": { mr: 0.75 },
 	"& .MuiSvgIcon-root": { fontSize: 18 },
-};
+});
 
 export const counterBtnSx = {
 	minHeight: 36,
 	fontSize: "0.8125rem",
-	fontWeight: 650,
-	textTransform: "none",
 	px: 1.75,
 	py: 0.75,
 	borderRadius: 1.5,
-	bgcolor: "rgba(255, 255, 255, 0.7)",
 	"& .MuiButton-startIcon": { mr: 0.75 },
 	"& .MuiSvgIcon-root": { fontSize: 18 },
 };

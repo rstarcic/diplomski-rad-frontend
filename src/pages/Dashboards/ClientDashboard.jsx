@@ -12,7 +12,11 @@ import NextStepsCard from "./components/NextStepsCard";
 import RecentActivity from "./components/RecentActivity";
 import { dashboardStatCardConfig } from "./dashboardStats";
 import { useDashboard } from "./hooks/useDashboard";
-import { dashboardContentSx } from "./Dashboard.styles";
+import {
+	dashboardContentSx,
+	dashboardPrimaryActionSx,
+	dashboardSecondaryActionSx,
+} from "./Dashboard.styles";
 
 export default function ClientDashboardPage() {
 	const { data: dashboardData, loading, error } = useDashboard();
@@ -33,8 +37,7 @@ export default function ClientDashboardPage() {
 						component={RouterLink}
 						to="/client/jobs"
 						variant="contained"
-						color="primary"
-						sx={{ width: { xs: "100%", sm: "auto" } }}
+						sx={dashboardPrimaryActionSx}
 					>
 						View My Jobs
 					</PrimaryButton>
@@ -45,7 +48,7 @@ export default function ClientDashboardPage() {
 						variant="contained"
 						color="secondary"
 						startIcon={<AddCircleOutlineRoundedIcon />}
-						sx={{ width: { xs: "100%", sm: "auto" } }}
+						sx={dashboardSecondaryActionSx}
 					>
 						Create Job
 					</SecondaryButton>

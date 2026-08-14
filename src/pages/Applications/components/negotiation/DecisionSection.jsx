@@ -1,17 +1,20 @@
-import { Box, Stack, TextField, Typography } from "@mui/material";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
+import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+
 import PrimaryButton from "../../../../components/ui/PrimaryButton";
+import SecondaryButton from "../../../../components/ui/SecondaryButton";
+
 import {
 	actionCardSx,
-	waitingCardSx,
 	acceptBtnSx,
-	rejectBtnSx,
-	counterBtnSx,
 	cancelBtnSx,
+	counterBtnSx,
 	messageFieldSx,
+	rejectBtnSx,
+	waitingCardSx,
 } from "./DecisionSection.styles";
 
 function EditingCard({ message, onMessageChange, onSubmit, onCancel, isSubmitting }) {
@@ -37,7 +40,6 @@ function EditingCard({ message, onMessageChange, onSubmit, onCancel, isSubmittin
 				/>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
 					<PrimaryButton
-						variant="outlined"
 						startIcon={<SwapHorizRoundedIcon />}
 						onClick={onSubmit}
 						disabled={isSubmitting}
@@ -45,9 +47,14 @@ function EditingCard({ message, onMessageChange, onSubmit, onCancel, isSubmittin
 					>
 						{isSubmitting ? "Submitting..." : "Submit counter-offer"}
 					</PrimaryButton>
-					<PrimaryButton variant="outlined" startIcon={<CloseRoundedIcon />} onClick={onCancel} disabled={isSubmitting} sx={cancelBtnSx}>
+					<SecondaryButton
+						startIcon={<CloseRoundedIcon />}
+						onClick={onCancel}
+						disabled={isSubmitting}
+						sx={cancelBtnSx}
+					>
 						Cancel
-					</PrimaryButton>
+					</SecondaryButton>
 				</Stack>
 			</Stack>
 		</Box>
@@ -68,22 +75,35 @@ function ActionCard({ role, onAccept, onReject, onCounterOffer, canCounterOffer 
 					{question}
 				</Typography>
 				<Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ alignItems: { sm: "center" } }}>
-					<PrimaryButton variant="contained" startIcon={<CheckRoundedIcon />} onClick={onAccept} sx={acceptBtnSx}>
+					<Button
+						variant="contained"
+						color="success"
+						startIcon={<CheckRoundedIcon />}
+						onClick={onAccept}
+						sx={acceptBtnSx}
+					>
 						Accept
-					</PrimaryButton>
+					</Button>
+
 					{canCounterOffer && (
-						<PrimaryButton
-							variant="outlined"
+						<SecondaryButton
 							startIcon={<SwapHorizRoundedIcon />}
 							onClick={onCounterOffer}
 							sx={counterBtnSx}
 						>
-							Counter-Offer
-						</PrimaryButton>
+							Counter-offer
+						</SecondaryButton>
 					)}
-					<PrimaryButton variant="outlined" startIcon={<CloseRoundedIcon />} onClick={onReject} sx={rejectBtnSx}>
+
+					<Button
+						variant="outlined"
+						color="error"
+						startIcon={<CloseRoundedIcon />}
+						onClick={onReject}
+						sx={rejectBtnSx}
+					>
 						Reject
-					</PrimaryButton>
+					</Button>
 				</Stack>
 			</Stack>
 		</Box>

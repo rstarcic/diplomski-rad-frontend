@@ -12,7 +12,7 @@ import NextStepsCard from "./components/NextStepsCard";
 import RecentActivity from "./components/RecentActivity";
 import { dashboardStatCardConfig } from "./dashboardStats";
 import { useDashboard } from "./hooks/useDashboard";
-import { dashboardContentSx } from "./Dashboard.styles";
+import { dashboardContentSx, dashboardPrimaryActionSx, dashboardSecondaryActionSx } from "./Dashboard.styles";
 
 export default function ContractorDashboardPage() {
 	const { data: dashboardData, loading, error } = useDashboard();
@@ -33,8 +33,7 @@ export default function ContractorDashboardPage() {
 						component={RouterLink}
 						to="/contractor/jobs/search"
 						variant="contained"
-						color="primary"
-						sx={{ width: { xs: "100%", sm: "auto" } }}
+						sx={dashboardPrimaryActionSx}
 					>
 						Find Jobs
 					</PrimaryButton>
@@ -45,7 +44,7 @@ export default function ContractorDashboardPage() {
 						variant="contained"
 						color="secondary"
 						startIcon={<StickyNote2RoundedIcon />}
-						sx={{ width: { xs: "100%", sm: "auto" } }}
+						sx={dashboardSecondaryActionSx}
 					>
 						View Applications
 					</SecondaryButton>
