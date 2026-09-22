@@ -1,11 +1,16 @@
 # Razvoj mikroservisne web-aplikacije za upravljanje poslovnim angažmanima i digitalnim ugovorima – korisnički sloj
 
-**Sveučilište:** [Sveučilište Jurja Dobrile u Puli](https://www.unipu.hr/) <br>
-**Fakultet:** [Fakultet informatike u Puli](https://fipu.unipu.hr/) <br>
-**Studijski smjer:** Informatika <br>
-**Kolegij:** Raspodijeljeni sustavi <br>
-**Studentica:** Roberta Starčić <br>
-**Mentor:** izv. prof. dr. sc. Nikola Tanković <br>
+**Sveučilište:** [Sveučilište Jurja Dobrile u Puli](https://www.unipu.hr/)<br>
+**Fakultet:** [Fakultet informatike u Puli](https://fipu.unipu.hr/)<br>
+**Studentica:** Roberta Starčić<br>
+**JMBAG:** 0351011388<br>
+**Studijski smjer:** Informatika<br>
+**Kolegij:** Raspodijeljeni sustavi<br>
+**Znanstveno područje:** Društvene znanosti<br>
+**Znanstveno polje:** Informacijske znanosti<br>
+**Znanstvena grana:** Informacijski sustavi i informatologija<br>
+**Mentor:** izv. prof. dr. sc. Nikola Tanković<br>
+**Mjesto i datum:** Pula, rujan 2026.
 
 Ovaj repozitorij sadržava izvorni kod korisničkog sloja sustava **WorkLink**, razvijenog kao praktični dio diplomskog rada pod naslovom *Razvoj mikroservisne web-aplikacije za upravljanje poslovnim angažmanima i digitalnim ugovorima*.
 
